@@ -1,10 +1,19 @@
-import HomeView from '@/views/HomeView.vue'
+import BaseLayout from '@/views/BaseLayout.vue';
+import type { RouteRecordRaw } from 'vue-router';
 
-export const routes = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'root',
+    redirect(_to) {
+      return { path: '/base' };
+    },
+  },
+  {
+    path: '/base',
+    name: 'base',
+    component: BaseLayout,
+    children: [],
   },
   {
     path: '/about',
@@ -15,3 +24,4 @@ export const routes = [
     component: () => import('../views/AboutView.vue')
   }
 ]
+export default routes;

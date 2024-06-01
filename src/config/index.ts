@@ -1,4 +1,1 @@
-
-export const setting = {
-
-};
+export * from './uiStyle';
