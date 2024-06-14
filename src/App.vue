@@ -3,23 +3,21 @@ import { computed } from 'vue'
 import { RouterView } from 'vue-router';
 import { NConfigProvider, zhCN, enUS, dateEnUS, dateZhCN, darkTheme } from 'naive-ui';
 import AppProvider from '@/components/popups/AppProvider.vue';
-import { useStyleStore } from '@/stores/styleStore';
-import { useLangStore } from '@/stores/langStore';
+import { useUiStore } from '@/stores/uiStore';
 import { LanguageEnum } from '@/config';
 import { useHLJSInit } from '@/hooks';
 
-const styleStore = useStyleStore();
-const langStore = useLangStore();
+const uiStore = useUiStore();
 const hlJS = useHLJSInit();
 
 const dark = computed(() => {
-  return styleStore.getTheme === 'dark' ? darkTheme : undefined;
+  return uiStore.getTheme === 'dark' ? darkTheme : undefined;
 });
 const locale = computed(() => {
-  return langStore.getLang === LanguageEnum.ZH ? zhCN : enUS;
+  return uiStore.getLang === LanguageEnum.ZH ? zhCN : enUS;
 });
 const dateLocale = computed(() => {
-  return langStore.getLang === LanguageEnum.ZH ? dateZhCN : dateEnUS;
+  return uiStore.getLang === LanguageEnum.ZH ? dateZhCN : dateEnUS;
 })
 
 </script>

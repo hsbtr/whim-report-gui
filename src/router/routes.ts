@@ -13,15 +13,44 @@ const routes: RouteRecordRaw[] = [
     path: '/base',
     name: 'base',
     component: BaseLayout,
-    children: [],
+    children: [
+      {
+        path: 'home',
+        name: 'home',
+        meta: {
+          title: '首页',
+        },
+        component: () => import('@/views/HomeView.vue'),
+      },
+      {
+        path: 'test',
+        name: 'test',
+        meta: {
+          title: '测试',
+        },
+        redirect() {
+            return { path: '/base/test/about' };
+        },
+        children: [
+          {
+            path: 'about',
+            name: 'about',
+            meta: {
+              title: '关于',
+            },
+            component: () => import('@/views/AboutView.vue'),
+          }
+        ],
+      },
+      {
+        path: 'project',
+        name: 'project',
+        meta: {
+          title: '项目',
+        },
+        component: () => import('@/views/MyProject.vue'),
+      },
+    ],
   },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (About.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import('../views/AboutView.vue')
-  }
 ]
 export default routes;
