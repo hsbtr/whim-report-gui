@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, onMounted, watch } from 'vue';
-import { NGrid, NGridItem, NPagination, NCard, NImage, NText } from 'naive-ui';
+import { NGrid, NGridItem, NPagination, NCard, NImage, NText, NEllipsis } from 'naive-ui';
 import { CodeStatus } from '@/config';
 import { getProjectPage } from '@/api/myProject';
 import type { ProjectInfo, ProjectPageQuery } from '@/api/myProject';
@@ -62,7 +62,9 @@ onMounted(() => {
       <n-card content-class="customize-card-content" size="small" hoverable>
         <n-image :src="val.src" height="200" />
         <template #footer>
-          <n-text>{{val.title || val.id || '未命名'}}</n-text>
+          <n-ellipsis>
+            {{val.title || val.id || '未命名'}}
+          </n-ellipsis>
           <n-text>
             {{renderText(val.status, { options: projectStatusOptions })}}
           </n-text>
