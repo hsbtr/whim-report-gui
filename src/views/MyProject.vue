@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { reactive, onMounted, watch } from 'vue';
-import { NGrid, NGridItem, NPagination, NCard, NImage, NText, NEllipsis } from 'naive-ui';
+import { NGrid, NGridItem, NPagination, NCard, NImage, NText, NEllipsis, NDropdown, NButton, NIcon } from 'naive-ui';
+import { EllipsisHorizontal } from '@vicons/ionicons5';
 import { CodeStatus } from '@/config';
 import { getProjectPage } from '@/api/myProject';
 import type { ProjectInfo, ProjectPageQuery } from '@/api/myProject';
+import type { DropdownProps } from 'naive-ui';
 
 type SearchOpt = { dataSource: ProjectInfo[]; total: number };
 type OptionType = { label: string; value: string | number };
@@ -19,6 +21,25 @@ const pagination = reactive({ current: 1, pageSize: 15 });
 const projectStatusOptions = [
   { label: '未发布', value: 'unpublished' },
   { label: '已发布', value: 'published' },
+];
+
+const dropdownMenuItems: DropdownProps['options'] = [
+  {
+    label: '编辑',
+    key: 'edit',
+  },
+  {
+    label: '预览',
+    key: 'preview',
+  },
+  {
+    label: '发布',
+    key: 'release',
+  },
+  {
+    label: '删除',
+    key: 'delete',
+  },
 ];
 
 const getProjectDataSource = async (params: ProjectPageQuery) => {
@@ -59,18 +80,24 @@ onMounted(() => {
 <div class="project-wrapper">
   <n-grid :x-gap="20" :y-gap="20" :cols="5" responsive="screen">
     <n-grid-item v-for="val in searchOpt.dataSource" :key="val.id">
-      <n-card content-class="customize-card-content" size="small" hoverable>
+      <n-card content-class="customize-card-content" size="small" footer-class="project-item-footer" hoverable>
         <n-image :src="val.src" height="200" />
         <template #footer>
-          <n-ellipsis>
+          <n-ellipsis class="title">
             {{val.title || val.id || '未命名'}}
           </n-ellipsis>
           <n-text>
             {{renderText(val.status, { options: projectStatusOptions })}}
           </n-text>
-        </template>
-        <template #action>
-
+          <n-dropdown :options="dropdownMenuItems">
+            <n-button size="small">
+              <template #icon>
+                <n-icon size="small">
+                  <EllipsisHorizontal />
+                </n-icon>
+              </template>
+            </n-button>
+          </n-dropdown>
         </template>
       </n-card>
     </n-grid-item>
@@ -95,6 +122,15 @@ onMounted(() => {
 <style scoped lang="scss">
 .project-wrapper {
   width: 100%;
+  :deep(.project-item-footer) {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    .title {
+      width: 40%;
+      max-width: 40%;
+    }
+  }
   :deep(.customize-pagination) {
     margin: 16px 0 0 0;
     justify-content: right;

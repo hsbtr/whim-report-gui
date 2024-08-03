@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { RouterView } from 'vue-router';
 import { NConfigProvider, zhCN, enUS, dateEnUS, dateZhCN, darkTheme } from 'naive-ui';
-import AppProvider from '@/components/popups/AppProvider.vue';
+import AppProvider from '@/components/Popups/AppProvider.vue';
 import { useUiStore } from '@/stores/uiStore';
 import { LanguageEnum } from '@/config';
 import { useHLJSInit } from '@/hooks';

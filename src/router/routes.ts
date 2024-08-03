@@ -13,6 +13,9 @@ const routes: RouteRecordRaw[] = [
     path: '/base',
     name: 'base',
     component: BaseLayout,
+    redirect() {
+        return { path: '/base/home', };
+    },
     children: [
       {
         path: 'home',
