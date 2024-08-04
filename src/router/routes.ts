@@ -53,7 +53,31 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import('@/views/MyProject.vue'),
       },
+      {
+        path: 'data/source',
+        name: 'data_source',
+        meta: {
+          title: '数据源',
+        },
+        component: () => import('@/views/DataSource.vue'),
+      },
     ],
+  },
+  {
+    path: '/chart/editor',
+    name: 'chart_editor',
+    meta: {
+      title: '项目编辑',
+    },
+    component: () => import('@/views/ChartEditor.vue'),
+  },
+  {
+    path: '/chart/preview',
+    name: 'chart_preview',
+    meta: {
+      title: '项目预览',
+    },
+    component: () => import('@/views/ChartPreview.vue'),
   },
 ]
 export default routes;

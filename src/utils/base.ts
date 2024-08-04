@@ -12,3 +12,4 @@ export const mapArrayItem = <U extends RefersToObject, T extends RefersToObject 
     return newItem;
   });
 };
+

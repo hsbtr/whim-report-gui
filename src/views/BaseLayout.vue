@@ -5,9 +5,9 @@ import { NLayout, NLayoutHeader, NLayoutContent, NMenu, NButton, NAvatar, NIcon,
 import { LightModeFilled, DarkModeOutlined } from '@vicons/material';
 import { useUiStore } from '@/stores/uiStore';
 import { useCurrentRoutes } from '@/hooks';
-import { mapArrayItem } from '@/utils';
+import { mapArrayItem, renderIcon } from '@/utils';
 import { setting } from '@/config';
-import type { Component, VNodeChild } from 'vue';
+import type { VNodeChild } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
 import type { MenuOption } from 'naive-ui';
 
@@ -18,10 +18,6 @@ const newRoutes = useCurrentRoutes();
 const uiStore = useUiStore();
 const menuSelected = ref(typeof route.name === 'string' ? route.name : '');
 
-const renderIcon = (icon?: Component) => {
-  if (!icon) return;
-  return () => h(NIcon, null, { default: () => h(icon) });
-}
 const dropdownItems = [
   {
     key: 'quit',
