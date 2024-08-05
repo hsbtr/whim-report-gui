@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
-import { LanguageEnum, setting, ThemeEnum } from '@/config'
+import { LanguageEnum, setting, ThemeEnum } from '@/config';
 import type { Ref } from 'vue';
 import type { SettingOpt } from '@/config';
 
@@ -28,7 +28,7 @@ export const useUiStore = defineStore('ui', () => {
   };
   const setPrimaryColor = (color: string) => {
     style.value.primaryColor = color;
-  }
+  };
   const updateLang = (language: LanguageEnum) => {
     if (lang.value === language) return;
     lang.value = language;

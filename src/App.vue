@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from 'vue';
 import { RouterView } from 'vue-router';
 import { NConfigProvider, zhCN, enUS, dateEnUS, dateZhCN, darkTheme } from 'naive-ui';
 import AppProvider from '@/components/Popups/AppProvider.vue';
@@ -18,7 +18,7 @@ const locale = computed(() => {
 });
 const dateLocale = computed(() => {
   return uiStore.getLang === LanguageEnum.ZH ? dateZhCN : dateEnUS;
-})
+});
 
 </script>
 

@@ -79,5 +79,5 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('@/views/ChartPreview.vue'),
   },
-]
+];
 export default routes;

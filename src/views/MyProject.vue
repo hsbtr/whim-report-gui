@@ -8,6 +8,7 @@ import { renderIcon } from '@/utils';
 import { getProjectPage } from '@/api/myProject';
 import type { ProjectInfo, ProjectPageQuery } from '@/api/myProject';
 import type { DropdownProps, MenuOption } from 'naive-ui';
+import type { RouteLocationRaw } from 'vue-router';
 
 type SearchOpt = { dataSource: ProjectInfo[]; total: number };
 type OptionType = { label: string; value: string | number };
@@ -20,7 +21,6 @@ const searchOpt = reactive<SearchOpt>({
   total: 0,
 });
 const pagination = reactive({ current: 1, pageSize: 15 });
-console.log(router)
 const projectStatusOptions = [
   { label: '未发布', value: 'unpublished' },
   { label: '已发布', value: 'published' },
@@ -49,6 +49,10 @@ const dropdownMenuItems: DropdownProps['options'] = [
   },
 ];
 
+const navigateToNewTab = (to: RouteLocationRaw) => {
+  const { href } = router.resolve(to);
+  window.open(href, '_blank');
+};
 const renderText = (text: string, { options }: RenderTextConfig) => {
   if (options && Array.isArray(options)) {
     const findItem = options.find((v) => v.value === text);
@@ -74,15 +78,16 @@ const onPaginationChange = (page: number, pageSize: number) => {
   pagination.current = page;
   pagination.pageSize = pageSize;
 };
-const onMenuSelect = (key: string | number, option: MenuOption, item: ProjectInfo) => {
-  if (key === 'edit') return router.push({ path: '/chart/edit', query: { id: item.id }, });
+const onMenuSelect = (key: string | number, _option: MenuOption, item: ProjectInfo) => {
+  if (key === 'edit') return navigateToNewTab({ path: '/chart/edit', query: { id: item.id } });
+  if (key === 'preview') return navigateToNewTab({ path: '/chart/preview' });
 };
 watch(pagination, (newValue) => {
   getProjectDataSource({ ...newValue });
-})
+});
 onMounted(() => {
   getProjectDataSource({  pageSize: pagination.pageSize, current: 1 });
-})
+});
 
 </script>
 

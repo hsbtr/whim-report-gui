@@ -1,18 +1,18 @@
-import './assets/main.css'
+import './assets/main.css';
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 
-import App from './App.vue'
-import router from './router'
+import App from './App.vue';
+import router from './router';
 
 async function init() {
-  const app = createApp(App)
+  const app = createApp(App);
 
-  app.use(createPinia())
-  app.use(router)
+  app.use(createPinia());
+  app.use(router);
   await router.isReady();
 
-  app.mount('#app')
+  app.mount('#app');
 }
-init()
+init();
