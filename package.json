@@ -25,11 +25,13 @@
     "@vicons/material": "^0.12.0",
     "@vicons/tabler": "^0.12.0",
     "axios": "^1.7.2",
+    "echarts": "^5.5.1",
     "highlight.js": "^11.9.0",
     "naive-ui": "^2.38.2",
     "pinia": "^2.1.7",
     "qs": "^6.12.1",
     "vue": "^3.4.21",
+    "vue-echarts": "^7.0.1",
     "vue-i18n": "9",
     "vue-router": "^4.3.0"
   },
