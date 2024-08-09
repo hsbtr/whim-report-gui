@@ -79,7 +79,7 @@ const onPaginationChange = (page: number, pageSize: number) => {
   pagination.pageSize = pageSize;
 };
 const onMenuSelect = (key: string | number, _option: MenuOption, item: ProjectInfo) => {
-  if (key === 'edit') return navigateToNewTab({ path: '/chart/edit', query: { id: item.id } });
+  if (key === 'edit') return navigateToNewTab({ path: '/chart/editor', query: { id: item.id } });
   if (key === 'preview') return navigateToNewTab({ path: '/chart/preview' });
 };
 watch(pagination, (newValue) => {
