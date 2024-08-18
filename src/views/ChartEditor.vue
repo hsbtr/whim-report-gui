@@ -14,7 +14,14 @@ onMounted(() => {
     <n-layout content-class="customize-editor">
       <n-layout-header class="head-tools" bordered inverted></n-layout-header>
       <n-layout-content sider-placement="left" has-sider>
-        <n-layout-sider content-class="chart-options" show-trigger="bar" bordered inverted>
+        <n-layout-sider
+          content-class="chart-options"
+          collapse-mode="width"
+          :collapsed-width="64"
+          collapsed="collapsed"
+          bordered
+          inverted
+        >
           <chart-option />
         </n-layout-sider>
         <div></div>
