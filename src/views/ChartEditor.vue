@@ -18,7 +18,7 @@ onMounted(() => {
           content-class="chart-options"
           collapse-mode="width"
           :collapsed-width="64"
-          collapsed="collapsed"
+          collapsed
           bordered
           inverted
         >
