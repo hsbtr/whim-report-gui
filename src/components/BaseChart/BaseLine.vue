@@ -2,7 +2,7 @@
 import { ref, provide, computed } from 'vue';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
-import { PieChart } from 'echarts/charts';
+import { LineChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent } from 'echarts/components';
 import VChart, { THEME_KEY } from 'vue-echarts';
 import type { LineSeriesOption } from 'echarts';
@@ -17,7 +17,7 @@ const defaultOpt = {
   },
 };
 
-use([CanvasRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent]);
+use([CanvasRenderer, LineChart, TitleComponent, TooltipComponent, LegendComponent]);
 provide(THEME_KEY, 'dark');
 
 const props = defineProps<LineProps>();
@@ -29,7 +29,12 @@ const option = computed(() => {
   };
 });
 
+const item = {
+  name: '',
+  group: '',
+  xAxis: 'a',
 
+}
 </script>
 
 <template>

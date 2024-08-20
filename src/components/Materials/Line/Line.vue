@@ -10,7 +10,7 @@ const props = defineProps({
 });
 const getDataSource = async (params) => {
   const { result, code } = await http.get(props.url, { data: params });
-  
+
 };
 
 </script>
