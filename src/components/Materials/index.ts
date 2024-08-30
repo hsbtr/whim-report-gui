@@ -2,6 +2,8 @@ export * from './Line/Line.vue';
 // export * from './Bar';
 // export * from './List';
 // export * from './Frame';
+
+import { vIonIcons } from '@/components/Icons';
 import type { LineMeta, LineMetaProps } from './Line/meta';
 import type { BarMeta, BarMetaProps } from './Bar/meta';
 import type { ListMeta, ListMetaProps } from './List/meta';
@@ -40,6 +42,7 @@ const materialSeries = [
   {
     title: '图表',
     series: 'chart',
+    icon: 'StatsChartOutline',
   },
   {
     title: '信息',
@@ -53,8 +56,13 @@ const materialSeries = [
 
 export const createMaterialOptions = () => {
   console.log(materialNotes);
-  const series = materialSeries.map(({ series, title }) => {
-    return { label: title, key: series };
+  const series = materialSeries.map(({ series, title, icon }) => {
+
+    return {
+      label: title,
+      key: series,
+      icon: vIonIcons({ type: icon })
+    };
   });
   return {
     packages,

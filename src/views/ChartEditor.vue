@@ -4,7 +4,7 @@ import { NLayout, NLayoutHeader, NLayoutSider, NLayoutContent } from 'naive-ui';
 import ContextProvider from '@/components/CodeKit/ContextProvider.vue';
 import ChartOption from '@/components/CodeKit/ChartOption.vue';
 onMounted(() => {
-  console.log(1);
+  // console.log(1);
 });
 
 </script>
