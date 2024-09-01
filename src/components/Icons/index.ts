@@ -1,5 +1,7 @@
 import { h } from 'vue';
-import IonIcons from '@/components/Icons/IonIcons.vue';
-export const vIonIcons = (props: typeof IonIcons) => {
-  return () => h(IonIcons, props as any);
+import { NIcon } from 'naive-ui';
+import type { DefineComponent } from 'vue';
+
+export const vIonIcons = (component: DefineComponent, props?: typeof NIcon) => {
+  return () => h(NIcon, props, { default: () => h(component) });
 };

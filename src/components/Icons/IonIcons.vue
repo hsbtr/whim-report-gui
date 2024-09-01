@@ -8,10 +8,8 @@ type IonIconsProps = {
   size?: number | string;
   type: string;
 }
-console.log(1);
+ const props = defineProps<IonIconsProps>();
 
-const props = defineProps<IonIconsProps>();
-console.log(props);
 </script>
 
 <template>

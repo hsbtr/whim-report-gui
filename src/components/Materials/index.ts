@@ -1,3 +1,5 @@
+import { CardSharp, GameController, StatsChartOutline } from '@vicons/ionicons5';
+
 export * from './Line/Line.vue';
 // export * from './Bar';
 // export * from './List';
@@ -8,6 +10,7 @@ import type { LineMeta, LineMetaProps } from './Line/meta';
 import type { BarMeta, BarMetaProps } from './Bar/meta';
 import type { ListMeta, ListMetaProps } from './List/meta';
 import type { FrameMeta, FrameMetaProps } from './Frame/meta';
+import type { DefineComponent } from 'vue';
 
 type NotesType = LineMeta | BarMeta | ListMeta | FrameMeta;
 type SeriesType = NotesType['belong'];
@@ -42,15 +45,17 @@ const materialSeries = [
   {
     title: '图表',
     series: 'chart',
-    icon: 'StatsChartOutline',
+    icon: StatsChartOutline,
   },
   {
     title: '信息',
     series: 'view',
+    icon: CardSharp,
   },
   {
     title: '控件',
     series: 'control',
+    icon: GameController,
   },
 ];
 
@@ -61,7 +66,7 @@ export const createMaterialOptions = () => {
     return {
       label: title,
       key: series,
-      icon: vIonIcons({ type: icon })
+      icon: vIonIcons(icon as DefineComponent)
     };
   });
   return {
