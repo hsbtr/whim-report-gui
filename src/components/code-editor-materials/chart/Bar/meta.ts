@@ -1,13 +1,9 @@
-export type BarMetaProps = {
-  title: string;
-  type: string;
-};
-export type BarMeta = {
-  title: string;
+import type { MetaCfg, PkgCfg } from '../../types';
+
+export interface BarMeta extends MetaCfg {
   type: 'bar';
-  belong: 'chart';
-  props: BarMetaProps[];
-};
+  props: PkgCfg[];
+}
 export default {
   title: '柱状图',
   type: 'bar',

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, provide } from 'vue';
-import { layerCurrentlySelected, layerSelectionEvent } from '@/components/CodeKit/context';
+import { layerCurrentlySelected, layerSelectionEvent } from './context';
 
 type ChartCfg = {
   title: string;

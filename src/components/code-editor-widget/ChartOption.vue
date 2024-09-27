@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NMenu } from 'naive-ui';
-import { createMaterialOptions } from '@/components/Materials';
+import { createMaterialOptions } from '@/components/code-editor-materials';
 const { series, packages } = createMaterialOptions();
 console.log(series);
 console.log(packages);

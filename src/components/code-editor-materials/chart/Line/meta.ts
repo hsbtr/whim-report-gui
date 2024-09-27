@@ -1,14 +1,9 @@
+import type { MetaCfg, PkgCfg } from '../../types';
 
-export type LineMetaProps = {
-  title: string;
-  type: string;
-};
-export type LineMeta = {
-  title: string;
+export interface LineMeta extends MetaCfg {
   type: 'line';
-  belong: 'chart';
-  props: LineMetaProps[];
-};
+  props: PkgCfg[];
+}
 
 export default {
   title: '折线图',

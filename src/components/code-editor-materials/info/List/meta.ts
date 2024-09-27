@@ -1,12 +1,8 @@
-export type ListMetaProps = {
-  title: string;
-  type: string;
-};
-export type ListMeta = {
-  title: string;
+import type { MetaCfg, PkgCfg } from '../../types';
+
+export interface ListMeta extends MetaCfg {
   type: 'list';
-  belong: 'view';
-  props: ListMetaProps[];
+  props: PkgCfg[];
 };
 export default {
   title: '列表',

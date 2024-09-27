@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, provide, computed } from 'vue';
+import { provide, computed } from 'vue';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { LineChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent } from 'echarts/components';
 import VChart, { THEME_KEY } from 'vue-echarts';
-import type { LineSeriesOption } from 'echarts';
+import type { LineSeriesOption } from 'echarts/charts';
 
 type LineProps = {
   title: string;
@@ -34,7 +34,7 @@ const item = {
   group: '',
   xAxis: 'a',
 
-}
+};
 </script>
 
 <template>

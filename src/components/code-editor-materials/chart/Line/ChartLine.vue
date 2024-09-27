@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BaseLine from '@/components/BaseChart/BaseLine.vue';
+import VLine from '@/components/ve-chart/VLine.vue';
 import http from '@/http';
 
 const props = defineProps({
@@ -16,7 +16,7 @@ const getDataSource = async (params) => {
 </script>
 
 <template>
-  <base-line title="" data-source="" />
+  <v-line title="" data-source="" />
 </template>
 
 <style scoped>
