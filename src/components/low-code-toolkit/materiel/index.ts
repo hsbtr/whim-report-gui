@@ -2,16 +2,20 @@ import { autoModuleConversionSchema } from '@/utils';
 import type { MetaCfg, PkgCfg } from './types';
 
 type PkgModules = Record<string, { default: MetaCfg }>;
+export type SchemaItem = SchemaMetaCfg & PkgCfg;
+export type SchemaMetaCfg = MetaCfg & {
+  key: string;
+  pkgs: PkgCfg[];
+}
 
 const materialNotes: PkgModules = import.meta.glob('./*/index.ts', { eager: true });
 
-const pkgArray = autoModuleConversionSchema<PkgModules, MetaCfg, PkgCfg>(materialNotes, (item) => {
+export const materialSchemas = autoModuleConversionSchema<PkgModules, SchemaMetaCfg, SchemaItem>(materialNotes, (item) => {
   return { ...item, label: item.title };
 });
-console.log(pkgArray);
 export const createMaterialOptions = () => {
 
   return {
-    menuItems: pkgArray,
+    menuItems: materialSchemas,
   };
 };

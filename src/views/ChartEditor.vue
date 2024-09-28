@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { NLayout, NLayoutHeader, NLayoutSider, NLayoutContent } from 'naive-ui';
-import ContextProvider from '@/components/code-editor-widget/provider/ContextProvider.vue';
-import ChartOption from '@/components/code-editor-widget/ChartOption.vue';
+import { ContextProvider, InventoryPanel } from '@/components/low-code-toolkit';
 onMounted(() => {
   // console.log(1);
 });
@@ -17,12 +16,12 @@ onMounted(() => {
         <n-layout-sider
           content-class="chart-options"
           collapse-mode="width"
-          :collapsed-width="64"
+          :collapsed-width="400"
           collapsed
           bordered
           inverted
         >
-          <chart-option />
+          <inventory-panel />
         </n-layout-sider>
         <div></div>
       </n-layout-content>
