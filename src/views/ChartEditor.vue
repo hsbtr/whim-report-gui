@@ -16,7 +16,8 @@ onMounted(() => {
         <n-layout-sider
           content-class="chart-options"
           collapse-mode="width"
-          :collapsed-width="400"
+          :collapsed-width="300"
+          width="300px"
           collapsed
           bordered
           inverted

@@ -1,24 +1,21 @@
 import { autoModuleConversionSchema } from '@/utils';
-import type { MetaCfg, PkgCfg } from '../types';
+import type { ListMeta } from './list/meta';
 
-type InfoType = 'bar' | 'line';
-interface InfoMeta extends MetaCfg {
-  type: InfoType;
-  props: PkgCfg[];
-}
-interface PkgType extends InfoMeta {
+export type InfoType = ListMeta['type'];
+type InfoSchema = ListMeta;
+export type InfoPkgType = InfoSchema & {
   belong: 'info';
 }
-type InfoModules = Record<string, { default: InfoMeta }>;
+type InfoModules = Record<string, { default: InfoSchema }>;
 
 const infoModules: InfoModules = import.meta.glob('./*/meta.ts', { eager: true });
 
-export const pkgSchema = autoModuleConversionSchema<InfoModules, PkgType, InfoMeta>(infoModules, (item) => {
+export const pkgSchema = autoModuleConversionSchema<InfoModules, InfoPkgType, InfoSchema>(infoModules, (item) => {
   return { ...item, belong: 'info' };
 });
 
 export default {
   title: '信息',
   key: 'info',
-  pkgs: pkgSchema,
+  components: pkgSchema,
 };

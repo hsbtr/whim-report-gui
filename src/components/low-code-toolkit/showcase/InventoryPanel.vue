@@ -1,30 +1,90 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { NSelect, NInput, useThemeVars } from 'naive-ui';
+import { ref, reactive, computed } from 'vue';
+import { NSelect, NInput, NIcon, NScrollbar, useThemeVars } from 'naive-ui';
+import { SearchOutline } from '@vicons/ionicons5';
 import { materialSchemas } from '../materiel';
-import type { SchemaMetaCfg } from '../materiel';
+import type { SchemaMetaCfg, ComponentType, ComponentCfg } from '../materiel';
 
-const theme = useThemeVars();
-const menuSelectKey = ref(materialSchemas[0].key);
-const onMenuChange = ({ key }: SchemaMetaCfg) => {
-  menuSelectKey.value = key;
+type ModuleType = ComponentType | 'all';
+
+const [defaultSelected] = materialSchemas;
+
+const globalTheme = useThemeVars();
+const menuSelected = reactive({ key: defaultSelected.key, components: defaultSelected.components });
+const componentType = ref<ModuleType>('all');
+const supplementTypeOpt = { title: '全部', type: 'all' };
+const primaryColor = computed(() => {
+  return globalTheme.value.primaryColor;
+});
+const typeOptions = computed(() => {
+  const [defaultItem] = menuSelected.components;
+  if (defaultItem.type !== 'all') {
+    const options = menuSelected.components.map((v) => {
+      return { label: v.title, value: v.type };
+    });
+    return [{ label: supplementTypeOpt.title, value: supplementTypeOpt.type }, ...options];
+  }
+  return menuSelected.components.map((v) => {
+    return { label: v.title, value: v.type };
+  });
+});
+const componentGroup = computed<ComponentCfg>(() => {
+  if (componentType.value === 'all') {
+    const array = [];
+    menuSelected.components.forEach((v) => {
+      if (Array.isArray(v.props)) {
+        array.push(...v.props);
+      }
+    });
+    return array;
+  }
+  const current = menuSelected.components.find((v) => v.type === componentType.value);
+  if (current) {
+    return current.props.map((v) => {
+      return { ...v };
+    });
+  }
+  return [];
+});
+const onMenuChange = ({ key, pkgs }: SchemaMetaCfg) => {
+  menuSelected.key = key;
+  menuSelected.components = [supplementTypeOpt, ...pkgs];
 };
-console.log(theme);
+const onSelectChange = (value) => {
+  componentType.value = value;
+};
+const onSearch = () => {
+
+};
 
 </script>
 
 <template>
   <div class="inventory-wrapper">
     <div class="category-menu">
-      <div :class="['custom-menu-item', { 'custom-menu-item-active': item.key === menuSelectKey}]" v-for="item in materialSchemas" :key="item.key" @click="onMenuChange(item)">
+      <div :class="['custom-menu-item', { 'custom-menu-item-active': item.key === menuSelected.key }]" v-for="item in materialSchemas" :key="item.key" @click="onMenuChange(item)">
         <span class="custom-menu-item-title">{{item.title}}</span>
       </div>
     </div>
     <div class="component-area">
       <div class="head-search-filter">
-        <NSelect />
-        <NInput type="text" />
+        <NInput type="text" placeholder="输入组件名" >
+          <template #prefix>
+            <n-icon :component="SearchOutline" />
+          </template>
+        </NInput>
+        <NSelect :options="typeOptions" :value="componentType" @update:value="onSelectChange" />
       </div>
+      <n-scrollbar content-class="component-list" style="height: 100%">
+        <div class="component-list-item" v-for="item in componentGroup" :key="item.type">
+          <div class="thumbnail">
+            <img src="" alt="" >
+          </div>
+          <div class="title">
+            <span>{{item.title}}</span>
+          </div>
+        </div>
+      </n-scrollbar>
     </div>
   </div>
 </template>
@@ -48,13 +108,45 @@ console.log(theme);
       }
     }
     .custom-menu-item-active {
-      //background: v-bind(theme.primaryColor);
+      background: #18a058;
     }
   }
   .component-area {
     flex: 1 1 auto;
     .head-search-filter {
       display: flex;
+      //flex-direction: column;
+      margin: 0 0 12px 0;
+    }
+
+  }
+
+}
+:deep() {
+  .component-list {
+    padding: 0 12px;
+    box-sizing: border-box;
+    .component-list-item {
+      width: 100%;
+      margin: 0 0 12px 0;
+      .thumbnail {
+        width: 100%;
+        height: 100px;
+        overflow: hidden;
+        border-radius: 4px;
+        border: 1px solid v-bind(primaryColor);
+        img {
+          width: 100%;
+          height:  100%;
+        }
+      }
+      .title {
+        width: 100%;
+        text-align: center;
+        span {
+          font-size: 14px;
+        }
+      }
     }
   }
 }

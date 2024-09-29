@@ -1,24 +1,21 @@
 import { autoModuleConversionSchema } from '@/utils';
-import type { MetaCfg, PkgCfg } from '../types';
+import type { FrameMeta } from './frame/meta';
 
-type ControlType = 'frame';
-interface ControlMeta extends MetaCfg {
-  type: ControlType;
-  props: PkgCfg[];
-}
-interface PkgType extends ControlMeta {
+export type ControlType = FrameMeta['type'];
+type ControlSchema = FrameMeta;
+export type ControlPkgType = ControlSchema & {
   belong: 'control';
 }
 type ChartModules = Record<string, { default: ControlType }>;
 
 const controlModules: ChartModules = import.meta.glob('./*/meta.ts', { eager: true });
 
-export const pkgSchema = autoModuleConversionSchema<ChartModules, PkgType, ControlMeta>(controlModules, (item) => {
+export const pkgSchema = autoModuleConversionSchema<ChartModules, ControlPkgType, ControlSchema>(controlModules, (item) => {
   return { ...item, belong: 'control' };
 });
 
 export default {
   title: '控件',
   key: 'control',
-  pkgs: pkgSchema,
+  components: pkgSchema,
 };
