@@ -4,6 +4,9 @@ export interface ListMeta extends MetaCfg {
   type: 'list';
   props: PkgCfg[];
 }
+export interface ListProp extends PkgCfg {
+
+}
 export default {
   title: '列表',
   type: 'list',

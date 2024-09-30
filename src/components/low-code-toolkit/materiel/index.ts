@@ -1,13 +1,13 @@
 import { autoModuleConversionSchema } from '@/utils';
-import type { MetaCfg, PkgCfg } from './types';
-import type { ChartPkgType, ChartType } from './chart';
-import type { ControlPkgType, ControlType } from './control';
-import type { InfoPkgType, InfoType } from './info';
+import type { MetaCfg } from './types';
+import type { ChartPkgType, ChartType, ChartProp } from './chart';
+import type { ControlPkgType, ControlType, ControlProp } from './control';
+import type { InfoPkgType, InfoType, InfoProp } from './info';
 
 type PkgModules = Record<string, { default: MetaCfg }>;
 type SchemaOpt = ChartPkgType | ControlPkgType | InfoPkgType;
 export type ComponentType = ChartType | ControlType | InfoType;
-export type ComponentCfg = ChartPkgType['props'] | ControlPkgType['props'] | InfoPkgType['props'];
+export type ComponentCfg = ChartProp | ControlProp | InfoProp;
 export type SchemaMetaCfg = MetaCfg & {
   label?: string;
   key: ComponentType;

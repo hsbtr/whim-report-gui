@@ -1,7 +1,8 @@
 import { autoModuleConversionSchema } from '@/utils';
-import type { FrameMeta } from './frame/meta';
+import type { FrameMeta, FrameProp } from './frame/meta';
 
 export type ControlType = FrameMeta['type'];
+export type ControlProp = FrameProp;
 type ControlSchema = FrameMeta;
 export type ControlPkgType = ControlSchema & {
   belong: 'control';

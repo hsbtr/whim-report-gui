@@ -1,7 +1,8 @@
 import { autoModuleConversionSchema } from '@/utils';
-import type { ListMeta } from './list/meta';
+import type { ListMeta, ListProp } from './list/meta';
 
 export type InfoType = ListMeta['type'];
+export type InfoProp = ListProp;
 type InfoSchema = ListMeta;
 export type InfoPkgType = InfoSchema & {
   belong: 'info';

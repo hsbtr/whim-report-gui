@@ -2,7 +2,10 @@ import type { MetaCfg, PkgCfg } from '../../types';
 
 export interface FrameMeta extends MetaCfg {
   type: 'frame';
-  props: PkgCfg[];
+  props: FrameProp[];
+}
+export interface FrameProp extends PkgCfg {
+
 }
 export default {
   title: '边框',

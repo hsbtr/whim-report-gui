@@ -2,7 +2,10 @@ import type { MetaCfg, PkgCfg } from '../../types';
 
 export interface BarMeta extends MetaCfg {
   type: 'bar';
-  props: PkgCfg[];
+  props: BarProp[];
+}
+export interface BarProp extends PkgCfg {
+
 }
 export default {
   title: '柱状图',

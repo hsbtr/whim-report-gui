@@ -8,5 +8,4 @@ export interface MetaCfg {
 export interface PkgCfg {
   title: string;
   type: string;
-  props: PkgCfg[];
 }

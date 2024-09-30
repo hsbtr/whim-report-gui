@@ -1,8 +1,9 @@
 import { autoModuleConversionSchema } from '@/utils';
-import type { LineMeta } from './line/meta';
-import type { BarMeta } from './bar/meta';
+import type { LineMeta, LineProp } from './line/meta';
+import type { BarMeta, BarProp } from './bar/meta';
 
 export type ChartType = LineMeta['type'] | BarMeta['type'];
+export type ChartProp = LineProp | BarProp;
 type ChartSchema = BarMeta | LineMeta;
 export type ChartPkgType = ChartSchema & {
   belong: 'chart';

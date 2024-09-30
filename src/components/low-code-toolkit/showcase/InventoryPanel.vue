@@ -2,60 +2,62 @@
 import { ref, reactive, computed } from 'vue';
 import { NSelect, NInput, NIcon, NScrollbar, useThemeVars } from 'naive-ui';
 import { SearchOutline } from '@vicons/ionicons5';
+import { useDebounceFn } from '@vueuse/core';
 import { materialSchemas } from '../materiel';
 import type { SchemaMetaCfg, ComponentType, ComponentCfg } from '../materiel';
 
 type ModuleType = ComponentType | 'all';
+type SelectedMenuItem = { key: ComponentType; components: SchemaMetaCfg['components'] };
 
 const [defaultSelected] = materialSchemas;
 
 const globalTheme = useThemeVars();
-const menuSelected = reactive({ key: defaultSelected.key, components: defaultSelected.components });
+const menuSelected = reactive<SelectedMenuItem>({ key: defaultSelected.key, components: defaultSelected.components });
 const componentType = ref<ModuleType>('all');
-const supplementTypeOpt = { title: '全部', type: 'all' };
+const searchValue = ref('');
+
+const supplementTypeOpt = { label: '全部', value: 'all' };
 const primaryColor = computed(() => {
   return globalTheme.value.primaryColor;
 });
 const typeOptions = computed(() => {
-  const [defaultItem] = menuSelected.components;
-  if (defaultItem.type !== 'all') {
-    const options = menuSelected.components.map((v) => {
-      return { label: v.title, value: v.type };
-    });
-    return [{ label: supplementTypeOpt.title, value: supplementTypeOpt.type }, ...options];
-  }
-  return menuSelected.components.map((v) => {
+  const options = menuSelected.components.map((v) => {
     return { label: v.title, value: v.type };
   });
+  return [supplementTypeOpt, ...options];
 });
-const componentGroup = computed<ComponentCfg>(() => {
+const componentGroup = computed<ComponentCfg[]>(() => {
   if (componentType.value === 'all') {
-    const array = [];
+    const array: ComponentCfg[] = [];
     menuSelected.components.forEach((v) => {
       if (Array.isArray(v.props)) {
         array.push(...v.props);
       }
     });
+    if (searchValue.value) {
+      return array.filter((v) => v.title.includes(searchValue.value));
+    }
     return array;
   }
   const current = menuSelected.components.find((v) => v.type === componentType.value);
   if (current) {
-    return current.props.map((v) => {
-      return { ...v };
-    });
+    if (searchValue.value) {
+      return (current.props as ComponentCfg[]).filter((v) => v.title.includes(searchValue.value));
+    }
+    return current.props;
   }
   return [];
 });
-const onMenuChange = ({ key, pkgs }: SchemaMetaCfg) => {
+const onMenuChange = ({ key, components }: SchemaMetaCfg) => {
   menuSelected.key = key;
-  menuSelected.components = [supplementTypeOpt, ...pkgs];
+  menuSelected.components = components;
 };
 const onSelectChange = (value) => {
   componentType.value = value;
 };
-const onSearch = () => {
-
-};
+const onSearchChange = useDebounceFn((value) => {
+  searchValue.value = value;
+}, 1000);
 
 </script>
 
@@ -68,14 +70,14 @@ const onSearch = () => {
     </div>
     <div class="component-area">
       <div class="head-search-filter">
-        <NInput type="text" placeholder="输入组件名" >
-          <template #prefix>
+        <NSelect class="custom-select-style" :options="typeOptions" :value="componentType" @update:value="onSelectChange" />
+        <NInput type="text" placeholder="输入组件名" @update:value="onSearchChange">
+          <template #suffix>
             <n-icon :component="SearchOutline" />
           </template>
         </NInput>
-        <NSelect :options="typeOptions" :value="componentType" @update:value="onSelectChange" />
       </div>
-      <n-scrollbar content-class="component-list" style="height: 100%">
+      <n-scrollbar class="component-list">
         <div class="component-list-item" v-for="item in componentGroup" :key="item.type">
           <div class="thumbnail">
             <img src="" alt="" >
@@ -91,6 +93,8 @@ const onSearch = () => {
 
 <style lang="scss" scoped>
 .inventory-wrapper {
+  width: 100%;
+  height: 100%;
   display: flex;
   .category-menu {
     flex: 0 0 64px;
@@ -113,41 +117,48 @@ const onSearch = () => {
   }
   .component-area {
     flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
     .head-search-filter {
       display: flex;
       //flex-direction: column;
       margin: 0 0 12px 0;
+      padding: 8px;
+      box-sizing: border-box;
+      .custom-select-style {
+        flex: 0 0 90px;
+      }
     }
-
-  }
-
-}
-:deep() {
-  .component-list {
-    padding: 0 12px;
-    box-sizing: border-box;
-    .component-list-item {
-      width: 100%;
-      margin: 0 0 12px 0;
-      .thumbnail {
-        width: 100%;
-        height: 100px;
-        overflow: hidden;
-        border-radius: 4px;
-        border: 1px solid v-bind(primaryColor);
-        img {
+    :deep(.component-list) {
+      flex: 1 1 auto;
+      .n-scrollbar-content {
+        padding: 0 18px;
+        box-sizing: border-box;
+        .component-list-item {
           width: 100%;
-          height:  100%;
-        }
-      }
-      .title {
-        width: 100%;
-        text-align: center;
-        span {
-          font-size: 14px;
+          margin: 0 0 12px 0;
+          .thumbnail {
+            width: 100%;
+            height: 100px;
+            overflow: hidden;
+            border-radius: 4px;
+            border: 1px solid v-bind(primaryColor);
+            img {
+              width: 100%;
+              height:  100%;
+            }
+          }
+          .title {
+            width: 100%;
+            text-align: center;
+            span {
+              font-size: 14px;
+            }
+          }
         }
       }
     }
   }
 }
+
 </style>
