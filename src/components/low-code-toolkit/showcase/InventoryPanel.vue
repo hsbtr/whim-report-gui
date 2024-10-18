@@ -3,8 +3,9 @@ import { ref, reactive, computed } from 'vue';
 import { NSelect, NInput, NIcon, NScrollbar, useThemeVars } from 'naive-ui';
 import { SearchOutline } from '@vicons/ionicons5';
 import { useDebounceFn } from '@vueuse/core';
-import { materialSchemas } from '../materiel';
-import type { SchemaMetaCfg, ComponentType, ComponentCfg } from '../materiel';
+import { materialSchemas } from '../packages';
+import { dragRegisterGraphics } from '../tools';
+import type { SchemaMetaCfg, ComponentType, ComponentCfg } from '../packages';
 
 type ModuleType = ComponentType | 'all';
 type SelectedMenuItem = { key: ComponentType; components: SchemaMetaCfg['components'] };
@@ -58,6 +59,9 @@ const onSelectChange = (value) => {
 const onSearchChange = useDebounceFn((value) => {
   searchValue.value = value;
 }, 1000);
+const onDragStart = (event: DragEvent, item: ComponentCfg) => {
+  dragRegisterGraphics<ComponentCfg>(event, item);
+};
 
 </script>
 
@@ -78,7 +82,7 @@ const onSearchChange = useDebounceFn((value) => {
         </NInput>
       </div>
       <n-scrollbar class="component-list">
-        <div class="component-list-item" v-for="item in componentGroup" :key="item.type">
+        <div class="component-list-item" v-for="item in componentGroup" :key="item.type" @dragstart="onDragStart($event, item)" :draggable="true">
           <div class="thumbnail">
             <img src="" alt="" >
           </div>

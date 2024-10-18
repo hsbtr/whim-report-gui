@@ -17,10 +17,11 @@ const defaultOpt = {
   },
 };
 
+const props = defineProps<LineProps>();
 use([CanvasRenderer, LineChart, TitleComponent, TooltipComponent, LegendComponent]);
 provide(THEME_KEY, 'dark');
 
-const props = defineProps<LineProps>();
+
 
 const option = computed(() => {
   return {

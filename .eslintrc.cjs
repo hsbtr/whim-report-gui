@@ -15,7 +15,7 @@ module.exports = {
         'cypress/e2e/**/*.{cy,spec}.{js,ts,jsx,tsx}',
         'cypress/support/**/*.{js,ts,jsx,tsx}'
       ],
-      'extends': [
+      extends: [
         'plugin:cypress/recommended'
       ]
     }
@@ -24,6 +24,6 @@ module.exports = {
     ecmaVersion: 'latest'
   },
   rules: {
-    semi: ['error', 'always'],
+    'semi': ['error', 'always'],
   }
 };

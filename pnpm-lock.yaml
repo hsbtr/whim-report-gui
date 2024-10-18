@@ -68,6 +68,9 @@ importers:
       vue-router:
         specifier: ^4.3.0
         version: 4.3.2(vue@3.4.27(typescript@5.4.5))
+      vuedraggable:
+        specifier: ^4.1.0
+        version: 4.1.0(vue@3.4.27(typescript@5.4.5))
     devDependencies:
       '@rushstack/eslint-patch':
         specifier: ^1.8.0
@@ -2498,6 +2501,9 @@ packages:
     resolution: {integrity: sha512-qMCMfhY040cVHT43K9BFygqYbUPFZKHOg7K73mtTWJRb8pyP3fzf4Ixd5SzdEJQ6MRUg/WBnOLxghZtKKurENQ==}
     engines: {node: '>=10'}
 
+  sortablejs@1.14.0:
+    resolution: {integrity: sha512-pBXvQCs5/33fdN1/39pPL0NZF20LeRbLQ5jtnheIPN9JQAaufGjKdWduZn4U7wCtVuzKhmRkI0DFYHYRbB2H1w==}
+
   source-map-js@1.2.0:
     resolution: {integrity: sha512-itJW8lvSA0TXEphiRoawsCksnlf8SyvmFzIhltqAHluXd88pkCd+cXJVHTDwdCr0IzwptSm035IHQktUu1QUMg==}
     engines: {node: '>=0.10.0'}
@@ -2901,6 +2907,11 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  vuedraggable@4.1.0:
+    resolution: {integrity: sha512-FU5HCWBmsf20GpP3eudURW3WdWTKIbEIQxh9/8GE806hydR9qZqRRxRE3RjqX7PkuLuMQG/A7n3cfj9rCEchww==}
+    peerDependencies:
+      vue: ^3.0.1
 
   vueuc@0.4.58:
     resolution: {integrity: sha512-Wnj/N8WbPRSxSt+9ji1jtDHPzda5h2OH/0sFBhvdxDRuyCZbjGg3/cKMaKqEoe+dErTexG2R+i6Q8S/Toq1MYg==}
@@ -5453,6 +5464,8 @@ snapshots:
       astral-regex: 2.0.0
       is-fullwidth-code-point: 3.0.0
 
+  sortablejs@1.14.0: {}
+
   source-map-js@1.2.0: {}
 
   speakingurl@14.0.1: {}
@@ -5854,6 +5867,11 @@ snapshots:
       '@vue/shared': 3.4.27
     optionalDependencies:
       typescript: 5.4.5
+
+  vuedraggable@4.1.0(vue@3.4.27(typescript@5.4.5)):
+    dependencies:
+      sortablejs: 1.14.0
+      vue: 3.4.27(typescript@5.4.5)
 
   vueuc@0.4.58(vue@3.4.27(typescript@5.4.5)):
     dependencies:

@@ -9,3 +9,7 @@ export interface PkgCfg {
   title: string;
   type: string;
 }
+
+export interface MaterialPackage {
+  ChartLine: any;
+}

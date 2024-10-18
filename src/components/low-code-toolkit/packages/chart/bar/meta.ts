@@ -7,18 +7,22 @@ export interface BarMeta extends MetaCfg {
 export interface BarProp extends PkgCfg {
 
 }
+
+const presetTemplates = [
+  {
+    title: '普通柱状图',
+    key: 'bar-1',
+  },
+  {
+    title: '普通柱状图',
+    key: 'bar-2',
+  },
+];
+
 export default {
+  name: 'ChartBar',
   title: '柱状图',
   type: 'bar',
   belong: 'chart',
-  props: [
-    {
-      title: '普通柱状图',
-      type: 'bar-1',
-    },
-    {
-      title: '普通柱状图',
-      type: 'bar-2',
-    },
-  ]
+  presetTemplates: presetTemplates,
 };

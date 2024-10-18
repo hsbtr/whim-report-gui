@@ -1,7 +1,7 @@
-import ContextProvider from './provider/ContextProvider.vue';
+import ContextProvider from './core/LowCodeLayout.vue';
 import InventoryPanel from './showcase/InventoryPanel.vue';
 
-export * from './materiel';
+export * from './packages';
 export * from './provider/context';
 
 export { ContextProvider, InventoryPanel };

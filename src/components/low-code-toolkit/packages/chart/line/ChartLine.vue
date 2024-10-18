@@ -16,7 +16,7 @@ const getDataSource = async (params) => {
 </script>
 
 <template>
-  <v-line title="" data-source="" />
+  <v-line title="" :data-source="[]" />
 </template>
 
 <style scoped>
