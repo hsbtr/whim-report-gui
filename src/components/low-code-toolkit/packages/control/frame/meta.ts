@@ -1,22 +1,24 @@
-import type { MetaCfg, PkgCfg } from '../../types';
+import type { MetaCfg, PkgCfg, PkgType } from '../../types';
 
-export interface FrameMeta extends MetaCfg {
-  type: 'frame';
-  props: FrameProp[];
-}
+export type ComponentName = 'Frame';
 export interface FrameProp extends PkgCfg {
-
+  type: PkgType.control;
+  series: ComponentName;
 }
-const presetTemplates = [
+export interface FrameMeta extends MetaCfg {
+  name: ComponentName;
+  type: PkgType.control;
+  templates: Omit<FrameProp, 'type' | 'series'>[];
+}
+
+const templates: Omit<FrameProp, 'type' | 'series'>[] = [
   {
     title: '普通边框',
-    type: 'frame-1',
+    key: 'frame-1',
   }
 ];
 export default {
-  name: 'ControlFrame',
+  name: 'Frame',
   title: '边框',
-  type: 'frame',
-  belong: 'control',
-  presetTemplates: presetTemplates,
+  templates: templates,
 };

@@ -1,4 +1,4 @@
-import { autoModuleConversionSchema } from '@/utils';
+import { generatedSchemas } from '../tools';
 import type { DefineComponent } from 'vue';
 import type { MetaCfg, MaterialPackage } from './types';
 import type { ChartPkgType, ChartType, ChartProp } from './chart';
@@ -17,10 +17,9 @@ export type SchemaMetaCfg = MetaCfg & {
 type PackageKey = keyof MaterialPackage;
 
 const materialNotes: PkgModules<MetaCfg> = import.meta.glob('./*/index.ts', { eager: true });
-console.log(materialNotes);
+
 
 const pkgGlob: PkgModules<DefineComponent<{}, any>> = import.meta.glob('./*/*/*.vue', { eager: true });
-console.log(pkgGlob);
 
 const packages: Partial<MaterialPackage> = {};
 Object.keys(pkgGlob).forEach((key) => {
@@ -37,6 +36,6 @@ Object.keys(pkgGlob).forEach((key) => {
 });
 
 
-export const materialSchemas = autoModuleConversionSchema<PkgModules, SchemaMetaCfg, Omit<SchemaMetaCfg, 'label'>>(materialNotes, (item) => {
-  return { ...item, label: item.title };
+export const materialSchemas = generatedSchemas<PkgModules, SchemaMetaCfg, Omit<SchemaMetaCfg, 'label'>>(materialNotes, (item) => {
+  return item;
 });

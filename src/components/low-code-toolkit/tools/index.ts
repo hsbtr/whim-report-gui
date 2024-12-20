@@ -11,9 +11,9 @@ export const dragRegisterGraphics = <T extends ItemType>(event: DragEvent, item:
 
 
 /**
- * 将模块对象转化为Schema
+ * 将模块配置转化为Schema
  */
-export const generatedSchema = <U extends ItemType, T extends ItemType, K extends ItemType>(modules: U, processFn: (item: K) => T): T[] => {
+export const generatedSchemas = <U extends ItemType, T extends ItemType, K extends ItemType>(modules: U, processFn: (item: K) => T): T[] => {
   const schemas: T[] = [];
   Object.keys(modules).forEach((key) => {
     const cfg = modules[key].default;

@@ -1,36 +1,40 @@
-import type { MetaCfg, PkgCfg } from '../../types';
+import type { MetaCfg, PkgCfg, PkgType } from '../../types';
 
-export interface LineMeta extends MetaCfg {
-  type: 'line';
-  props: LineProp[];
+export type ComponentName = 'ChartLine';
+export interface LineProp extends PkgCfg {
+  type: PkgType.chart;
+  series: ComponentName;
 }
-export interface LineProp extends PkgCfg {}
-const presetTemplates = [
+export interface LineMeta extends MetaCfg {
+  name: ComponentName;
+  type: PkgType.chart;
+  templates: Omit<LineProp, 'type' | 'series'>[];
+}
+
+const templates: Omit<LineProp, 'type' | 'series'>[] = [
   {
     title: '普通折线图',
-    type: 'line-1',
+    key: 'line-1',
   },
   {
     title: '普通折线图',
-    type: 'line-2',
+    key: 'line-2',
   },
   {
     title: '普通折线图',
-    type: 'line-3',
+    key: 'line-3',
   },
   {
     title: '普通折线图',
-    type: 'line-4',
+    key: 'line-4',
   },
   {
     title: '普通折线图',
-    type: 'line-5',
+    key: 'line-5',
   }
 ];
 export default {
   name: 'ChartLine',
   title: '折线图',
-  type: 'line',
-  belong: 'chart',
-  presetTemplates: presetTemplates,
+  templates: templates,
 };

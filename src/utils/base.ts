@@ -1,4 +1,22 @@
 
+type TypeofProValue = "array" | "string" | "boolean" | "number" | "function" | "object" | "undefined" | "null";
+/**
+ * 精准类型识别
+ * @param value
+ */
+export const typeofs = (value: any): TypeofProValue => {
+  // 直接排除 null 和 undefined，避免不必要的调用
+  if (value === null) return "null";
+  if (value === undefined) return "undefined";
+  // 使用 Object.prototype.toString 判断类型
+  const type = Object.prototype.toString.call(value).slice(8, -1).toLowerCase() as TypeofProValue;
+
+  // 特殊处理 array 类型
+  if (type === "array") return "array";
+
+  return type;
+};
+
 type RefersToObject = Record<string, any>;
 /**
  * 格式化数组对象
@@ -18,19 +36,4 @@ export const mapArrayItem = <U extends RefersToObject, T extends RefersToObject 
     return newItem;
   });
 };
-/**
- * 自动将模块转化为Schema表
- */
-export const autoModuleConversionSchema = <U extends RefersToObject, T extends RefersToObject, K extends RefersToObject>(modules: U, processFn: (item: K) => T): T[] => {
-  const schemas: T[] = [];
-  Object.keys(modules).forEach((key) => {
-    const cfg = modules[key].default;
-    if (typeof processFn === 'function') {
-      const schema = processFn(cfg);
-      schemas.push(schema);
-    } else {
-      schemas.push({ ...cfg });
-    }
-  });
-  return schemas;
-};
+

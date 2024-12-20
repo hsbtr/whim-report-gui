@@ -1,20 +1,24 @@
-import type { MetaCfg, PkgCfg } from '../../types';
+import type { MetaCfg, PkgCfg, PkgType } from '../../types';
 
-export interface ListMeta extends MetaCfg {
-  type: 'list';
-  props: PkgCfg[];
+export type ComponentName = 'List';
+export interface ListProp extends PkgCfg {
+  type: PkgType.info;
+  series: ComponentName;
 }
-export interface ListProp extends PkgCfg {}
+export interface ListMeta extends MetaCfg {
+  name: ComponentName;
+  type: PkgType.info;
+  templates: Omit<ListProp, 'type' | 'series'>[];
+}
 
-const presetTemplates = [
+const templates: Omit<ListProp, 'type' | 'series'>[] = [
   {
     title: '普通列表',
-    type: 'list-1',
+    key: 'list-1',
   }
 ];
 export default {
+  name: 'List',
   title: '列表',
-  type: 'list',
-  belong: 'view',
-  presetTemplates: presetTemplates,
+  templates: templates,
 };

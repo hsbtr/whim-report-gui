@@ -5,5 +5,7 @@
   "singleQuote": true,
   "printWidth": 120,
   "trailingComma": "none",
-  "endOfLine": "lf"
+  "endOfLine": "lf",
+  "bracketSpacing": true,
+  "arrowParens": true
 }

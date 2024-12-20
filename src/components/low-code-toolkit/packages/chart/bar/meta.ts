@@ -1,14 +1,17 @@
-import type { MetaCfg, PkgCfg } from '../../types';
+import type { MetaCfg, PkgCfg, PkgType } from '../../types';
 
-export interface BarMeta extends MetaCfg {
-  type: 'bar';
-  props: BarProp[];
-}
+export type ComponentName = 'ChartBar';
 export interface BarProp extends PkgCfg {
-
+  type: PkgType.chart;
+  series: ComponentName;
+}
+export interface BarMeta extends MetaCfg {
+  name: ComponentName;
+  type: PkgType.chart;
+  templates: Omit<BarProp, 'type' | 'series'>[];
 }
 
-const presetTemplates = [
+const templates: Omit<BarProp, 'type' | 'series'>[] = [
   {
     title: '普通柱状图',
     key: 'bar-1',
@@ -22,7 +25,5 @@ const presetTemplates = [
 export default {
   name: 'ChartBar',
   title: '柱状图',
-  type: 'bar',
-  belong: 'chart',
-  presetTemplates: presetTemplates,
+  templates: templates,
 };

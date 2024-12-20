@@ -14,25 +14,25 @@ const [defaultSelected] = materialSchemas;
 
 const globalTheme = useThemeVars();
 const menuSelected = reactive<SelectedMenuItem>({ key: defaultSelected.key, components: defaultSelected.components });
-const componentType = ref<ModuleType>('all');
+const currentType = ref({ ...defaultSelected });
+const currentSeries = ref<ModuleType>('all');
 const searchValue = ref('');
 
-const supplementTypeOpt = { label: '全部', value: 'all' };
+const supplementTypeOpt = { title: '全部', type: 'all' };
 const primaryColor = computed(() => {
   return globalTheme.value.primaryColor;
 });
-const typeOptions = computed(() => {
-  const options = menuSelected.components.map((v) => {
-    return { label: v.title, value: v.type };
-  });
-  return [supplementTypeOpt, ...options];
+const seriesOptions = computed(() => {
+  const { components } = currentType.value;
+  return [supplementTypeOpt, ...components];
 });
-const componentGroup = computed<ComponentCfg[]>(() => {
-  if (componentType.value === 'all') {
+
+const componentGroup = computed(() => {
+  if (currentSeries.value === 'all') {
     const array: ComponentCfg[] = [];
     menuSelected.components.forEach((v) => {
-      if (Array.isArray(v.props)) {
-        array.push(...v.props);
+      if (Array.isArray(v.templates)) {
+        array.push(...v.templates);
       }
     });
     if (searchValue.value) {
@@ -40,21 +40,21 @@ const componentGroup = computed<ComponentCfg[]>(() => {
     }
     return array;
   }
-  const current = menuSelected.components.find((v) => v.type === componentType.value);
+  const current = menuSelected.components.find((v) => v.type === currentSeries.value);
   if (current) {
     if (searchValue.value) {
-      return (current.props as ComponentCfg[]).filter((v) => v.title.includes(searchValue.value));
+      return (current.templates as ComponentCfg[]).filter((v) => v.title.includes(searchValue.value));
     }
-    return current.props;
+    return current.templates;
   }
   return [];
 });
-const onMenuChange = ({ key, components }: SchemaMetaCfg) => {
-  menuSelected.key = key;
-  menuSelected.components = components;
+
+const onTypeChange = (value, option) => {
+  currentType.value = option;
 };
-const onSelectChange = (value) => {
-  componentType.value = value;
+const onSeriesChange = (value) => {
+  currentSeries.value = value;
 };
 const onSearchChange = useDebounceFn((value) => {
   searchValue.value = value;
@@ -67,19 +67,30 @@ const onDragStart = (event: DragEvent, item: ComponentCfg) => {
 
 <template>
   <div class="inventory-wrapper">
-    <div class="category-menu">
-      <div :class="['custom-menu-item', { 'custom-menu-item-active': item.key === menuSelected.key }]" v-for="item in materialSchemas" :key="item.key" @click="onMenuChange(item)">
-        <span class="custom-menu-item-title">{{item.title}}</span>
-      </div>
-    </div>
     <div class="component-area">
       <div class="head-search-filter">
-        <NSelect class="custom-select-style" :options="typeOptions" :value="componentType" @update:value="onSelectChange" />
-        <NInput type="text" placeholder="输入组件名" @update:value="onSearchChange">
+        <div class="filter-space">
+          <n-select
+            class="custom-select-size"
+            :options="materialSchemas"
+            label-field="title"
+            value-field="key"
+            :value="currentType.key"
+            @update:value="onTypeChange"
+          />
+          <n-select
+            class="custom-select-size"
+            :options="seriesOptions"
+            label-field="title" value-field="type"
+            :value="currentSeries"
+            @update:value="onSeriesChange"
+          />
+        </div>
+        <n-input class="search-input" type="text" placeholder="输入组件名" @update:value="onSearchChange">
           <template #suffix>
             <n-icon :component="SearchOutline" />
           </template>
-        </NInput>
+        </n-input>
       </div>
       <n-scrollbar class="component-list">
         <div class="component-list-item" v-for="item in componentGroup" :key="item.type" @dragstart="onDragStart($event, item)" :draggable="true">
@@ -124,11 +135,19 @@ const onDragStart = (event: DragEvent, item: ComponentCfg) => {
     display: flex;
     flex-direction: column;
     .head-search-filter {
-      display: flex;
-      //flex-direction: column;
       margin: 0 0 12px 0;
-      padding: 8px;
+      padding: 8px 18px;
       box-sizing: border-box;
+      .filter-space {
+        display: flex;
+        justify-content: space-between;
+        .custom-select-size {
+          width: 49%;
+        }
+      }
+      .search-input {
+        margin: 4px 0 0 0;
+      }
       .custom-select-style {
         flex: 0 0 90px;
       }
