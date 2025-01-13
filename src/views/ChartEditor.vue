@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { NLayout, NLayoutHeader, NLayoutSider, NLayoutContent } from 'naive-ui';
-import { ContextProvider, InventoryPanel } from '@/components/low-code-toolkit';
+import { LowCode, StencilArea, PaintingArea } from '@/components/low-code-toolkit';
 onMounted(() => {
   // console.log(1);
 });
@@ -9,7 +9,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <ContextProvider>
+  <low-code>
     <n-layout content-class="customize-editor">
       <n-layout-header class="head-tools" bordered inverted></n-layout-header>
       <n-layout-content sider-placement="left" has-sider>
@@ -22,12 +22,14 @@ onMounted(() => {
           bordered
           inverted
         >
-          <inventory-panel />
+          <stencil-area />
         </n-layout-sider>
-        <div></div>
+        <div class="paint-main">
+          <painting-area/>
+        </div>
       </n-layout-content>
     </n-layout>
-  </ContextProvider>
+  </low-code>
 </template>
 
 <style lang="scss" scoped>
@@ -40,5 +42,8 @@ onMounted(() => {
     height: 93vh;
   }
 }
-
+.paint-main {
+  width: 100%;
+  align-self: stretch;
+}
 </style>

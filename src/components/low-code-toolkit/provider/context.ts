@@ -1,7 +1,10 @@
 
-export const layerSelectionEvent = 'onSelected';
+export const editorOptions = 'editorOptions';
 
-export const layerCurrentlySelected = 'selected';
-
-export const editorCfg = 'editorCfg';
-
+export enum LowCodeEvent {
+  selected = 'onSelect',
+  addNode = 'addNode',
+}
+export enum LowCodeOpts {
+  shareState = 'shareState',
+}

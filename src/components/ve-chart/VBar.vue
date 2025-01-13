@@ -25,9 +25,11 @@ provide(THEME_KEY, 'dark');
 </script>
 
 <template>
-  <v-chart />
+  <v-chart class="chart-box" />
 </template>
 
-<style scoped>
-
+<style lang="scss" scoped>
+.chart-box {
+  height: 200px;
+}
 </style>

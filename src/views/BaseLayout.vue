@@ -121,7 +121,7 @@ const onMenuUpdate = (key: string) => {
 }
 .layout-content {
   min-height: 100vh;
-  padding: 54px 16px 0 16px;
+  padding: 70px 16px 0 16px;
   box-sizing: border-box;
 }
 </style>

@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, inject } from 'vue';
 import { NSelect, NInput, NIcon, NScrollbar, useThemeVars } from 'naive-ui';
 import { SearchOutline } from '@vicons/ionicons5';
 import { useDebounceFn } from '@vueuse/core';
 import { materialSchemas } from '../packages';
-import { dragRegisterGraphics } from '../tools';
-import type { SchemaMetaCfg, ComponentType, ComponentCfg } from '../packages';
+import { jsonStringify } from '../tools';
+import { LowCodeEvent } from '../provider/context';
+import type { ComponentType, ComponentCfg } from '../packages';
 
-type ModuleType = ComponentType | 'all';
-type SelectedMenuItem = { key: ComponentType; components: SchemaMetaCfg['components'] };
 
 const [defaultSelected] = materialSchemas;
 
+const addNode = inject(LowCodeEvent.addNode);
 const globalTheme = useThemeVars();
-const menuSelected = reactive<SelectedMenuItem>({ key: defaultSelected.key, components: defaultSelected.components });
 const currentType = ref({ ...defaultSelected });
-const currentSeries = ref<ModuleType>('all');
+const currentSeries = ref({ templates: [], type: 'all' });
 const searchValue = ref('');
 
 const supplementTypeOpt = { title: '全部', type: 'all' };
+
 const primaryColor = computed(() => {
   return globalTheme.value.primaryColor;
 });
@@ -28,45 +28,40 @@ const seriesOptions = computed(() => {
 });
 
 const componentGroup = computed(() => {
-  if (currentSeries.value === 'all') {
+  const { templates, type } = currentSeries.value;
+  if (type === 'all') {
     const array: ComponentCfg[] = [];
-    menuSelected.components.forEach((v) => {
+    currentType.value.components.forEach((v) => {
       if (Array.isArray(v.templates)) {
         array.push(...v.templates);
       }
     });
-    if (searchValue.value) {
-      return array.filter((v) => v.title.includes(searchValue.value));
-    }
     return array;
   }
-  const current = menuSelected.components.find((v) => v.type === currentSeries.value);
-  if (current) {
-    if (searchValue.value) {
-      return (current.templates as ComponentCfg[]).filter((v) => v.title.includes(searchValue.value));
-    }
-    return current.templates;
-  }
+  if (type !== 'all') return templates;
   return [];
 });
 
 const onTypeChange = (value, option) => {
   currentType.value = option;
 };
-const onSeriesChange = (value) => {
-  currentSeries.value = value;
+const onSeriesChange = (value, option) => {
+  currentSeries.value = option;
 };
 const onSearchChange = useDebounceFn((value) => {
   searchValue.value = value;
 }, 1000);
 const onDragStart = (event: DragEvent, item: ComponentCfg) => {
-  dragRegisterGraphics<ComponentCfg>(event, item);
+  event.dataTransfer?.setData('low-code', jsonStringify(item));
+};
+const onDragEnd = (event: DragEvent, item: ComponentCfg) => {
+  addNode(item);
 };
 
 </script>
 
 <template>
-  <div class="inventory-wrapper">
+  <div class="stencil-wrapper">
     <div class="component-area">
       <div class="head-search-filter">
         <div class="filter-space">
@@ -81,8 +76,9 @@ const onDragStart = (event: DragEvent, item: ComponentCfg) => {
           <n-select
             class="custom-select-size"
             :options="seriesOptions"
-            label-field="title" value-field="type"
-            :value="currentSeries"
+            label-field="title"
+            value-field="type"
+            :value="currentSeries.type"
             @update:value="onSeriesChange"
           />
         </div>
@@ -93,21 +89,30 @@ const onDragStart = (event: DragEvent, item: ComponentCfg) => {
         </n-input>
       </div>
       <n-scrollbar class="component-list">
-        <div class="component-list-item" v-for="item in componentGroup" :key="item.type" @dragstart="onDragStart($event, item)" :draggable="true">
-          <div class="thumbnail">
-            <img src="" alt="" >
+        <template v-for="item in componentGroup" :key="item.key">
+          <div
+            class="component-list-item"
+            v-if="item.title.includes(searchValue)"
+            :key="item.key"
+            @dragstart="onDragStart($event, item)"
+            @dragend="onDragEnd($event, item)"
+            :draggable="item.disabled || true"
+          >
+            <div class="thumbnail">
+              <img :src="item.icon" alt="" >
+            </div>
+            <div class="title">
+              <span>{{item.title}}</span>
+            </div>
           </div>
-          <div class="title">
-            <span>{{item.title}}</span>
-          </div>
-        </div>
+        </template>
       </n-scrollbar>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.inventory-wrapper {
+.stencil-wrapper {
   width: 100%;
   height: 100%;
   display: flex;
