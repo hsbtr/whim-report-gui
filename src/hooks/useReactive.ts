@@ -2,37 +2,32 @@ import { reactive, toRaw } from 'vue';
 import { typeofs } from '@/utils';
 import type { Reactive } from 'vue';
 
-type SetStateFn<T extends Record<string, any>> = (newState: T) => T;
+type StateUpdater<T extends Record<string, any>> = (prevState: T) => T;
+type StateInput<T extends Record<string, any>> = StateUpdater<T> | T;
+
 export const useReactive = <T extends Record<string, any>>(initialState: T) => {
   const state = reactive<T>(initialState);
 
   const basicTypes = ['boolean', 'string', 'number', 'undefined', 'null'];
-  const update = (currentState: Reactive<T>, newState: T) => {
+  const update = (currentState: Reactive<T>, newState: T): void => {
     for (const newStateKey in newState) {
       const newValue = newState[newStateKey];
       const oldValue = currentState[newStateKey];
-      if (oldValue !== newValue) {
-        if (basicTypes.includes(typeofs(newValue))) {
-          currentState[newStateKey as any] = newValue;
-        } else if (typeofs(newValue) === 'object') {
-          update(oldValue, newState);
-        } else if (Array.isArray(newValue)) {
-          // 调用数组更新
+      if (newValue === oldValue) continue;
+      if (basicTypes.includes(typeofs(newValue))) {
+        currentState[newStateKey as any] = newValue;
+      } else if (typeofs(newValue) === 'object') {
+        update(oldValue, newState);
+      } else if (Array.isArray(newValue)) {
+        // 调用数组更新
 
-        }
       }
     }
   };
-  const setState = (newState: SetStateFn<T> | T) => {
-    if (typeof newState === 'function') {
-      // 如果传入的是一个函数，像 React 的 setState 那样处理
-      // Object.assign(state, newState({ ...state } as T));
-      update(state, newState(toRaw(state) as T));
-    } else {
-      // Object.assign(state, newState);
-      update(state, newState);
-    }
+  const setState = (newState: StateInput<T>): void => {
+    const updateState = typeof newState === 'function' ? (newState as StateUpdater<T>)(toRaw(state) as T) : newState;
+    update(state, updateState);
   };
 
-  return [state, setState];
+  return [state, setState] as const;
 };
