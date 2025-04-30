@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, provide } from 'vue';
-import { LowCodeEvent, editorOptions } from '../provider/context';
+import { LowCodeEvent, LowCodeShare } from '../types';
 import PaintingArea from './PaintingArea.vue';
 
 type ChartCfg = {
@@ -10,9 +10,10 @@ type ChartCfg = {
 };
 type ChartCfgKey = keyof ChartCfg;
 
-const drawOptions = reactive({
+const lowCodeStore = reactive({
   nodes: [],
   selected: {},
+  mode: 'edit',
 });
 
 const onSelected = () => {
@@ -22,10 +23,10 @@ const onUpdateNode = (chartCfg: ChartCfg) => {
   (Object.keys(chartCfg) as ChartCfgKey[]).forEach((key) => {});
 };
 const onAddNode = (node) => {
-  drawOptions.nodes.push(node);
+  lowCodeStore.nodes.push(node);
 };
 
-provide(editorOptions, drawOptions);
+provide(LowCodeShare.LowCodeStore, lowCodeStore);
 provide(LowCodeEvent.selected, onSelected);
 provide(LowCodeEvent.addNode, onAddNode);
 </script>

@@ -13,9 +13,9 @@ type InfoModules = Record<string, { default: InfoSchema }>;
 
 const infoModules: InfoModules = import.meta.glob('./*/meta.ts', { eager: true });
 
-export const pkgSchema = generatedSchemas<InfoModules, InfoPkgType, Omit<InfoSchema, 'type'>>(infoModules, ({ templates, ...rest }, filePath) => {
+export const pkgSchema = generatedSchemas<InfoModules, InfoPkgType, Omit<InfoSchema, 'type'>>(infoModules, ({ templates, ...rest }, series) => {
   const temps: InfoProp[] = templates.map((temp) => {
-    return { ...temp, type: PkgType.info, series: rest.name, loadPath: `/${filePath}/${rest.name}` };
+    return { ...temp, name: rest.name, type: PkgType.info, series: series || '' };
   });
   return { ...rest, type: PkgType.info, templates: temps };
 });

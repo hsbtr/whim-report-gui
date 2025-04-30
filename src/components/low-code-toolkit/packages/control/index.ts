@@ -13,9 +13,9 @@ type ChartModules = Record<string, { default: ControlType }>;
 
 const controlModules: ChartModules = import.meta.glob('./*/meta.ts', { eager: true });
 
-export const pkgSchema = generatedSchemas<ChartModules, ControlPkgType, Omit<ControlSchema, 'type'>>(controlModules, ({ templates, ...rest }, filePath) => {
+export const pkgSchema = generatedSchemas<ChartModules, ControlPkgType, Omit<ControlSchema, 'type'>>(controlModules, ({ templates, ...rest }, series) => {
   const temps: ControlProp[] = templates.map((temp) => {
-    return { ...temp, type: PkgType.control, series: rest.name, loadPath: `/${filePath}/${rest.name}` };
+    return { ...temp, name: rest.name, type: PkgType.control, series: series || '' };
   });
   return { ...rest, type: PkgType.control, templates: temps };
 });

@@ -1,14 +1,24 @@
 <script setup lang="ts">
-import { ref, provide } from 'vue';
+import { reactive, provide } from 'vue';
 import { NForm } from 'naive-ui';
 
-const formValue = ref();
-provide('formValue', formValue);
+export interface FormState {
+  [key: string]: any;
+}
+
+const formState = reactive<FormState>({});
+const update = (key: string, value: any) => {
+  formState[key] = value;
+};
+provide('update', update);
+provide('formState', formState);
 
 </script>
 
 <template>
-  <n-form></n-form>
+  <n-form :model="formState">
+    <slot></slot>
+  </n-form>
 </template>
 
 <style scoped>

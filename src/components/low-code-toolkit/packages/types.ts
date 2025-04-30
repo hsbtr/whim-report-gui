@@ -8,7 +8,6 @@ export interface PkgCfg {
   title: string;
   key: string;
   icon?: DefineComponent;
-  loadPath?: string;
 }
 
 export interface MaterialPackage {

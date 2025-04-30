@@ -13,11 +13,13 @@ export type ChartPkgType = Omit<ChartSchema, 'templates'> & {
 
 type ChartModules = Record<string, { default: ChartSchema }>;
 
+const chartMaps = import.meta.glob('./*/*.vue', { eager: true });
 const chartModules: ChartModules = import.meta.glob('./*/meta.ts', { eager: true });
+console.log(chartMaps);
 
-export const pkgSchemas = generatedSchemas<ChartModules, ChartPkgType, Omit<ChartSchema, 'type'>>(chartModules, ({ templates, ...rest }, filePath) => {
+export const pkgSchemas = generatedSchemas<ChartModules, ChartPkgType, Omit<ChartSchema, 'type'>>(chartModules, ({ templates, ...rest }, series) => {
   const temps: ChartProp[] = templates.map((temp) => {
-    return { ...temp, type: PkgType.chart, series: rest.name, loadPath: `/${filePath}/${rest.name}` };
+    return { ...temp, series: series || '', name: rest.name, type: PkgType.chart };
   });
   return { ...rest, type: PkgType.chart, templates: temps };
 });

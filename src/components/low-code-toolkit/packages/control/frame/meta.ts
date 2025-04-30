@@ -2,16 +2,18 @@ import type { MetaCfg, PkgCfg, PkgType } from '../../types';
 
 export type ComponentName = 'Frame';
 export interface FrameProp extends PkgCfg {
+  name: ComponentName;
   type: PkgType.control;
-  series: ComponentName;
+  series: string;
 }
+type FrameTempProp = Omit<FrameProp, 'name' | 'type' | 'series'>;
 export interface FrameMeta extends MetaCfg {
   name: ComponentName;
   type: PkgType.control;
-  templates: Omit<FrameProp, 'type' | 'series'>[];
+  templates: FrameTempProp[];
 }
 
-const templates: Omit<FrameProp, 'type' | 'series'>[] = [
+const templates: FrameTempProp[] = [
   {
     title: '普通边框',
     key: 'frame-1',

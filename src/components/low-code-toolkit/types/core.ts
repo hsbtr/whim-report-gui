@@ -5,6 +5,6 @@ export enum LowCodeEvent {
   selected = 'onSelect',
   addNode = 'addNode',
 }
-export enum LowCodeOpts {
-  shareState = 'shareState',
+export enum LowCodeShare {
+  LowCodeStore = 'lowCodeStore',
 }

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, reactive, computed, inject } from 'vue';
+import { ref, computed, inject } from 'vue';
 import { NSelect, NInput, NIcon, NScrollbar, useThemeVars } from 'naive-ui';
 import { SearchOutline } from '@vicons/ionicons5';
 import { useDebounceFn } from '@vueuse/core';
 import { materialSchemas } from '../packages';
 import { jsonStringify } from '../tools';
-import { LowCodeEvent } from '../provider/context';
-import type { ComponentType, ComponentCfg } from '../packages';
+import { LowCodeEvent } from '../types/core';
+import type { ComponentCfg } from '../packages';
 
 
 const [defaultSelected] = materialSchemas;
@@ -88,10 +88,10 @@ const onDragEnd = (event: DragEvent, item: ComponentCfg) => {
           </template>
         </n-input>
       </div>
-      <n-scrollbar class="component-list">
+      <n-scrollbar class="sten-cli-main">
         <template v-for="item in componentGroup" :key="item.key">
           <div
-            class="component-list-item"
+            class="component-item"
             v-if="item.title.includes(searchValue)"
             :key="item.key"
             @dragstart="onDragStart($event, item)"
@@ -115,28 +115,9 @@ const onDragEnd = (event: DragEvent, item: ComponentCfg) => {
 .stencil-wrapper {
   width: 100%;
   height: 100%;
-  display: flex;
-  .category-menu {
-    flex: 0 0 64px;
-    height: 100%;
-    .custom-menu-item {
-      width: 100%;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      box-sizing: border-box;
-      .custom-menu-item-title {
-        width: 100%;
-        text-align: center;
-        font-size: 14px;
-      }
-    }
-    .custom-menu-item-active {
-      background: #18a058;
-    }
-  }
   .component-area {
-    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     .head-search-filter {
@@ -157,33 +138,34 @@ const onDragEnd = (event: DragEvent, item: ComponentCfg) => {
         flex: 0 0 90px;
       }
     }
-    :deep(.component-list) {
+    .component-item {
+      width: 100%;
+      margin: 0 0 12px 0;
+      .thumbnail {
+        width: 100%;
+        height: 100px;
+        overflow: hidden;
+        border-radius: 4px;
+        border: 1px solid v-bind(primaryColor);
+        img {
+          width: 100%;
+          height:  100%;
+        }
+      }
+      .title {
+        width: 100%;
+        text-align: center;
+        span {
+          font-size: 14px;
+        }
+      }
+    }
+    :deep(.sten-cli-main) {
       flex: 1 1 auto;
+      height: 80vh;
       .n-scrollbar-content {
         padding: 0 18px;
         box-sizing: border-box;
-        .component-list-item {
-          width: 100%;
-          margin: 0 0 12px 0;
-          .thumbnail {
-            width: 100%;
-            height: 100px;
-            overflow: hidden;
-            border-radius: 4px;
-            border: 1px solid v-bind(primaryColor);
-            img {
-              width: 100%;
-              height:  100%;
-            }
-          }
-          .title {
-            width: 100%;
-            text-align: center;
-            span {
-              font-size: 14px;
-            }
-          }
-        }
       }
     }
   }

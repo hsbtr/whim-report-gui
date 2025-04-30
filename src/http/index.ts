@@ -3,18 +3,13 @@ import Qs from "qs";
 import { Download, getCookie } from "./tool.method";
 import { codeMessage } from "./tool.constant";
 import { DataConfig, failureCodeGroup, cookieKey, noAccessRedirectPath } from "@/config";
+import { getEnvCfg } from '@/utils';
 import type { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 import type { ResponseDataType } from "@/config";
 
-let env;
-try {
-  // @ts-ignore
-  env = process.env;
-} catch (e) {
-  env = import.meta.env;
-}
-// const mode = env.NODE_ENV || env.MODE;
-const APP_BASE_URL = env.VITE_APP_HTTP_PREFIX;
+
+const { VITE_APP_HTTP_PREFIX, MODE } = getEnvCfg();
+const APP_BASE_URL = VITE_APP_HTTP_PREFIX;
 
 const http = axios.create({
   baseURL: APP_BASE_URL || "/api/",
@@ -31,16 +26,16 @@ const http = axios.create({
 });
 
 // 此处判断用来更改基础 url前缀
-// if (mode === "production") {
-//   // 生产环境 production
-//   http.defaults.baseURL = APP_BASE_URL || "/api/";
-// } else if (mode === "test") {
-//   // 测试环境 test
-//   http.defaults.baseURL = APP_BASE_URL || "/api/";
-// } else {
-//   // 开发环境 development
-//   http.defaults.baseURL = APP_BASE_URL || "/api/";
-// }
+if (MODE === "production") {
+  // 生产环境 production
+  http.defaults.baseURL = APP_BASE_URL || "/api/";
+} else if (MODE === "test") {
+  // 测试环境 test
+  http.defaults.baseURL = APP_BASE_URL || "/api/";
+} else {
+  // 开发环境 development
+  http.defaults.baseURL = APP_BASE_URL || "/api/";
+}
 
 // 请求拦截器
 http.interceptors.request.use(

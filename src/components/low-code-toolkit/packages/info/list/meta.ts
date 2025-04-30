@@ -2,16 +2,18 @@ import type { MetaCfg, PkgCfg, PkgType } from '../../types';
 
 export type ComponentName = 'List';
 export interface ListProp extends PkgCfg {
+  name: ComponentName;
   type: PkgType.info;
-  series: ComponentName;
+  series: string;
 }
+type ListTempProp = Omit<ListProp, 'name' | 'type' | 'series'>;
 export interface ListMeta extends MetaCfg {
   name: ComponentName;
   type: PkgType.info;
-  templates: Omit<ListProp, 'type' | 'series'>[];
+  templates: ListTempProp[];
 }
 
-const templates: Omit<ListProp, 'type' | 'series'>[] = [
+const templates: ListTempProp[] = [
   {
     title: '普通列表',
     key: 'list-1',

@@ -9,6 +9,7 @@ interface ImportMetaEnv {
   VITE_DEV_PATH: string;
   // 生产地址
   VITE_PRO_PATH: string;
+  // 请求地址前缀
   VITE_APP_HTTP_PREFIX: string;
 }
 

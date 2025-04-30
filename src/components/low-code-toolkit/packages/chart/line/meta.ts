@@ -3,15 +3,17 @@ import type { MetaCfg, PkgCfg, PkgType } from '../../types';
 export type ComponentName = 'ChartLine';
 export interface LineProp extends PkgCfg {
   type: PkgType.chart;
-  series: ComponentName;
+  name: ComponentName;
+  series: string;
 }
+type LineTempProp = Omit<LineProp, 'type' | 'series' | 'name'>;
 export interface LineMeta extends MetaCfg {
   name: ComponentName;
   type: PkgType.chart;
-  templates: Omit<LineProp, 'type' | 'series'>[];
+  templates: LineTempProp[];
 }
 
-const templates: Omit<LineProp, 'type' | 'series'>[] = [
+const templates: LineTempProp[] = [
   {
     title: '普通折线图',
     key: 'line-1',

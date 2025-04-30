@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { inject } from 'vue';
-import { NFormItem, NSelect } from 'naive-ui';
-import type { FormItemProps, SelectProps } from 'naive-ui';
+import { NFormItem, NInput } from 'naive-ui';
+import type { FormItemProps, InputProps } from 'naive-ui';
 import type { FormState } from './BaseForm.vue';
 
-type ProFormSelectProps = FormItemProps & { filedProps: SelectProps };
+type ProFormTextProps = FormItemProps & { filedProps: InputProps };
 
 const formState = inject<FormState>('formState') || {};
 const update = inject('update');
-const props = defineProps<ProFormSelectProps>();
+const props = defineProps<ProFormTextProps>();
 
 </script>
 
 <template>
   <n-form-item :label="props.label" :path="props.path" >
-    <n-select v-model:value="formState[props.path || '']" />
+    <n-input type="text" v-model="formState[props.path || '']" />
   </n-form-item>
 </template>
 

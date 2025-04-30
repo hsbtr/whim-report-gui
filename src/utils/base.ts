@@ -2,7 +2,8 @@
 type TypeofProValue = "array" | "string" | "boolean" | "number" | "function" | "object" | "undefined" | "null";
 /**
  * 精准类型识别
- * @param value
+ * @param {array | object | function | string | number | boolean | null | undefined} value
+ * @returns {"array" | "string" | "boolean" | "number" | "function" | "object" | "undefined" | "null"}
  */
 export const typeofs = (value: any): TypeofProValue => {
   // 直接排除 null 和 undefined，避免不必要的调用
@@ -37,3 +38,11 @@ export const mapArrayItem = <U extends RefersToObject, T extends RefersToObject 
   });
 };
 
+export const getEnvCfg = () => {
+  try {
+    // @ts-ignore
+    return process.env;
+  } catch (e) {
+    return import.meta.env;
+  }
+};
