@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:mock": "cross-env VITE_APP_HTTP_PREFIX=/mock-api/ vite",
+    "dev:mock": "cross-env VITE_APP_MOCK=enable VITE_APP_HTTP_PREFIX=/mock-api/ vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",

@@ -10,6 +10,7 @@ import { setting } from '@/config';
 import type { VNodeChild } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
 import type { MenuOption } from 'naive-ui';
+import type { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface';
 
 type LabelType = string | (() => VNodeChild);
 
@@ -18,7 +19,7 @@ const newRoutes = useCurrentRoutes();
 const uiStore = useUiStore();
 const menuSelected = ref(typeof route.name === 'string' ? route.name : '');
 
-const dropdownItems = [
+const dropdownItems: DropdownMixedOption[] = [
   {
     key: 'quit',
     label: '退出',

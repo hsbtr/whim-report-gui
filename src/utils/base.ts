@@ -38,7 +38,11 @@ export const mapArrayItem = <U extends RefersToObject, T extends RefersToObject 
   });
 };
 
-export const getEnvCfg = () => {
+/**
+ * 检索特定于运行时环境的环境配置对象。
+ * @returns {Object} 包含环境变量的键值对的环境配置对象。
+ */
+export const getEnvCfg = (): ImportMetaEnv => {
   try {
     // @ts-ignore
     return process.env;
