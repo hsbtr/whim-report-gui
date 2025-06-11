@@ -3,7 +3,7 @@ import { ref, h } from 'vue';
 import { RouterView, RouterLink, useRoute } from 'vue-router';
 import { NLayout, NLayoutHeader, NLayoutContent, NMenu, NButton, NAvatar, NIcon, NFlex, NDropdown } from 'naive-ui';
 import { LightModeFilled, DarkModeOutlined } from '@vicons/material';
-import { useUiStore } from '@/stores/uiStore';
+import { useUiStore } from '@/stores';
 import { useCurrentRoutes } from '@/hooks';
 import { mapArrayItem, renderIcon } from '@/utils';
 import { setting } from '@/config';

@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { RouterView } from 'vue-router';
 import { NConfigProvider, zhCN, enUS, dateEnUS, dateZhCN, darkTheme } from 'naive-ui';
 import AppProvider from '@/components/popups/AppProvider.vue';
-import { useUiStore } from '@/stores/uiStore';
+import { useUiStore } from '@/stores';
 import { LanguageEnum } from '@/config';
 import { useHLJSInit } from '@/hooks';
 import type { ConfigProviderProps } from 'naive-ui';
