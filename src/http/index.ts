@@ -1,12 +1,12 @@
 import axios from "axios";
 import Qs from "qs";
 import { errorMessages } from '@/http/tool.constant';
-import { download, getCookie } from "./tool.method";
+import { download, getCookie, GroupedNotificationQueue } from "./tool.method";
 import { DataConfig, httpConfig, noAccessRedirectPath } from "@/config";
 import { getEnvCfg, getQueryParams } from '@/utils';
 import { useAccountStore } from '@/stores';
 import router from '@/router';
-import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from "axios";
+import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosRequestConfig } from "axios";
 import type { ResponseDataType } from "@/config";
 
 interface CustomConfigMeta {
@@ -26,6 +26,7 @@ interface CustomConfigMeta {
 }
 
 const { VITE_APP_HTTP_PREFIX } = getEnvCfg();
+const errorQueue = new GroupedNotificationQueue();
 
 const http: AxiosInstance = axios.create({
   baseURL: VITE_APP_HTTP_PREFIX || "/api/",
@@ -71,14 +72,13 @@ http.interceptors.request.use(
     if (authorization) {
       config.headers[httpConfig.authKey] = authorization;
     }
-    if (["post", "put"].includes(method)) {
-      // 参数统一处理，请求都使用data传参
-      config.data = config.data?.data;
-    } else if (["get"].includes(method)) {
+    if (["get"].includes(method)) {
       // 参数统一处理
-      config.params = config.data;
+      if (!config.params && config.data) {
+        config.params = config.data;
+        delete config.data;
+      }
       config.headers!["Accept"] = "application/json";
-      delete config.data;
     }
     if (!config.headers["Content-Type"] && ["post", "put", "patch"].includes(method)) {
       const isUpload = config.data instanceof FormData;
@@ -96,15 +96,19 @@ http.interceptors.request.use(
 // 响应拦截
 http.interceptors.response.use(
   async (response: AxiosResponse): Promise<any> => {
+    const notifyType = response.config?.meta?.notifyType ?? 'notification';
     if (response && response.data) {
       if (response.data instanceof Blob) {
-        const downloadResult = await download({ response, fileType: 'xlsx' });
+        const customFileConfig = response.config?.meta?.downFileConfig ?? { fileType: 'xlsx' };
+        const downloadResult = await download({ ...customFileConfig, response });
         if (downloadResult.code === 1) {
           return dataAdapters(downloadResult);
         }
-        window.$notification.error({
-          title: "下载失败",
-          description: downloadResult.code + "：" + downloadResult.message,
+        errorQueue.notify({
+          notifyType,
+          title: '下载失败',
+          description: downloadResult.message,
+          source: response.config?.url || ''
         });
         return dataAdapters(downloadResult);
       }
@@ -112,16 +116,18 @@ http.interceptors.response.use(
     const { skipErrorHandler = false, actionName } = response.config?.meta || {};
     const responseData = dataAdapters(response.data);
     if (httpConfig.actionSuccessCode !== responseData[DataConfig.CODE] && !skipErrorHandler) {
-      window.$notification.error({
+      errorQueue.notify({
         title: `${actionName || '操作'}失败`,
         description: responseData[DataConfig.MESSAGE],
+        notifyType,
+        source: response.config?.url || '',
       });
     }
     return responseData;
   },
   (error: any): any => {
-    const { status, data, config } = error.response || {};
-    const { skipErrorHandler, authErrorHandler = 'redirectAndStore' } = config?.meta || {};
+    const { status, data, config } = (error.response as AxiosResponse) ?? {};
+    const { skipErrorHandler, authErrorHandler = 'redirectAndStore', notifyType = 'notification' } = config?.meta || {};
     const UNAUTHORIZED = 401;
     if (skipErrorHandler) return Promise.reject(error);
     if (status === UNAUTHORIZED) {
@@ -130,9 +136,11 @@ http.interceptors.response.use(
       if (pathname === noAccessRedirectPath) return Promise.reject();
       // 只有符合其中一个才会通知
       if (authErrorHandler === 'notify' || authErrorHandler === 'redirectAndFull') {
-        window.$notification.error({
-          title: "授权过期",
-          description: "2秒后跳转登录页面",
+        errorQueue.notify({
+          notifyType,
+          title: '认证过期',
+          description: '即将跳转登录页',
+          source: config?.url || ''
         });
       }
       // 只有符合其中一个才会清除全局store
@@ -153,16 +161,138 @@ http.interceptors.response.use(
       }
       return Promise.reject();
     }
-    const errorDescription = data[DataConfig.MESSAGE] ?? error.message ?? errorMessages[status];
+    const realErrorMessage = data && typeof data === 'object' ? (data as Record<string, any>)[DataConfig.MESSAGE] : undefined;
+    const errorDescription = realErrorMessage ?? error.message ?? errorMessages[status as number];
     // 优先使用接口返回的错误报告
-    window.$notification.error({
+    errorQueue.notify({
+      notifyType,
       title: `接口错误代码：${status}`,
       description: errorDescription,
+      source: config?.url || ''
     });
     return Promise.reject(error);
   },
 );
+/**
+ * 创建统一封装的 HTTP 请求方法，支持 Axios 全功能，并自动补全自定义 meta 类型提示
+ *
+ * @template T 返回数据类型（未包装）
+ * @template R Axios 返回 Promise 类型（默认 AxiosResponse<T>）
+ * @template D 请求体/参数类型
+ */
+const createRequest = () => {
+  return {
+    /**
+     * 发送 GET 请求（使用 `params` 传参）
+     */
+    get: <T = any, R = AxiosResponse<T>, D = any>(
+      url: string,
+      params?: D,
+      config?: AxiosRequestConfig<D>
+    ): Promise<R> => {
+      return http.get(url, { ...config, params });
+    },
 
-export const request = axios;
+    /**
+     * 发送 DELETE 请求（使用 `params` 传参）
+     */
+    delete: <T = any, R = AxiosResponse<T>, D = any>(
+      url: string,
+      params?: D,
+      config?: AxiosRequestConfig<D>
+    ): Promise<R> => {
+      return http.delete(url, { ...config, params });
+    },
+
+    /**
+     * 发送 HEAD 请求（使用 `params` 传参）
+     */
+    head: <T = any, R = AxiosResponse<T>, D = any>(
+      url: string,
+      params?: D,
+      config?: AxiosRequestConfig<D>
+    ): Promise<R> => {
+      return http.head(url, { ...config, params });
+    },
+
+    /**
+     * 发送 OPTIONS 请求（使用 `params` 传参）
+     */
+    options: <T = any, R = AxiosResponse<T>, D = any>(
+      url: string,
+      params?: D,
+      config?: AxiosRequestConfig<D>
+    ): Promise<R> => {
+      return http.options(url, { ...config, params });
+    },
+
+    /**
+     * 发送 POST 请求（使用 `data` 传参）
+     */
+    post: <T = any, R = AxiosResponse<T>, D = any>(
+      url: string,
+      data?: D,
+      config?: AxiosRequestConfig<D>
+    ): Promise<R> => {
+      return http.post(url, data, config);
+    },
+
+    /**
+     * 发送 PUT 请求（使用 `data` 传参）
+     */
+    put: <T = any, R = AxiosResponse<T>, D = any>(
+      url: string,
+      data?: D,
+      config?: AxiosRequestConfig<D>
+    ): Promise<R> => {
+      return http.put(url, data, config);
+    },
+
+    /**
+     * 发送 PATCH 请求（使用 `data` 传参）
+     */
+    patch: <T = any, R = AxiosResponse<T>, D = any>(
+      url: string,
+      data?: D,
+      config?: AxiosRequestConfig<D>
+    ): Promise<R> => {
+      return http.patch(url, data, config);
+    },
+
+    /**
+     * 发送 `application/x-www-form-urlencoded` POST 请求
+     */
+    postForm: <T = any, R = AxiosResponse<T>, D = any>(
+      url: string,
+      data?: D,
+      config?: AxiosRequestConfig<D>
+    ): Promise<R> => {
+      return http.postForm(url, data, config);
+    },
+
+    /**
+     * 发送 `application/x-www-form-urlencoded` PUT 请求
+     */
+    putForm: <T = any, R = AxiosResponse<T>, D = any>(
+      url: string,
+      data?: D,
+      config?: AxiosRequestConfig<D>
+    ): Promise<R> => {
+      return http.putForm(url, data, config);
+    },
+
+    /**
+     * 发送 `application/x-www-form-urlencoded` PATCH 请求
+     */
+    patchForm: <T = any, R = AxiosResponse<T>, D = any>(
+      url: string,
+      data?: D,
+      config?: AxiosRequestConfig<D>
+    ): Promise<R> => {
+      return http.patchForm(url, data, config);
+    }
+  };
+};
+export const request = createRequest();
 
 export default http;

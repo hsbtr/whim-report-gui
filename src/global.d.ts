@@ -42,6 +42,10 @@ declare module 'axios' {
        */
       skipErrorHandler?: boolean;
       /**
+       * 接口错误提示的方式；默认使用notification
+       */
+      notifyType?: 'message' | 'notification';
+      /**
        * 接口行为名称
        */
       actionName?: string;
@@ -49,6 +53,11 @@ declare module 'axios' {
        * 认证过期后的行为
        * */
       authErrorHandler?: 'redirect' | 'notify' | 'redirectAndStore' | 'redirectAndFull' | 'no';
+      /**
+       * 下载接口使用此属性；
+       * 声明文件类型与文件名称; 文件类型为必须
+       */
+      downFileConfig?: ({ mimeType: string } | { fileType: 'zip' | 'docx' | 'xlsx' | 'pdf' | 'png' | 'jpg' | 'jpeg'; }) & { customFileType?: string };
     };
   }
 }
