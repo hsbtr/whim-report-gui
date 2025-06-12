@@ -3,6 +3,7 @@ import type { LoadingBarApiInjection } from 'naive-ui/es/loading-bar/src/Loading
 import type { MessageApiInjection } from 'naive-ui/es/message/src/MessageProvider';
 import type { NotificationApiInjection } from 'naive-ui/es/notification/src/NotificationProvider';
 import type { Component } from 'vue';
+import 'axios';
 
 declare global {
   interface Window {
@@ -30,5 +31,24 @@ declare module 'vue-router' {
     hideInMenu?: boolean;
     hideInBread?: boolean;
     access?: string;
+  }
+}
+
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    meta?: {
+      /**
+       * 跳过默认错误处理
+       */
+      skipErrorHandler?: boolean;
+      /**
+       * 接口行为名称
+       */
+      actionName?: string;
+      /**
+       * 认证过期后的行为
+       * */
+      authErrorHandler?: 'redirect' | 'notify' | 'redirectAndStore' | 'redirectAndFull' | 'no';
+    };
   }
 }

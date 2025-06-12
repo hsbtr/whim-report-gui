@@ -45,127 +45,122 @@ export function removePendingRequest(config: InternalAxiosRequestConfig) {
   }
 }
 type ResultType = { result?: any; resultCode: string | number; resultMsg: string };
+
 /**
- * 下载类
- * setName 根据请求体自动设置文件名 如 需要自定义 请直接使用 实列filename赋值
- * zip 压缩包 传入blob文件流 完成后自动执行下载方法
- * xlsx exel表格文件 传入blob文件流 完成后自动执行下载方法
- * down 下载方法
- *
+ * 支持下载多种类型文件（ZIP、XLSX、DOCX、PDF、图片等）的工具方法。
+ * 可自动识别后端返回是否为错误 JSON 流，支持自定义文件名与 MIME 类型。
  */
-export class Download {
-  private readonly response: AxiosResponse;
-  private filename: string;
-  private blob: Blob | null;
 
-  constructor(response: AxiosResponse) {
-    this.blob = null;
-    this.filename = "";
-    this.response = response;
-  }
+type DownloadWithinFileType = 'zip' | 'docx' | 'xlsx' | 'pdf' | 'png' | 'jpg' | 'jpeg';
 
-  /**
-   * 检测是否为 文件流
-   * @param {Object|Blob} [responseData]
-   */
-  inspect(responseData?: NonNullable<unknown> | Blob): Promise<ResultType> {
-    return new Promise((resolve) => {
-      let { data } = this.response || {};
-      if (!data && responseData) {
-        data = responseData;
-      } else if (!data && !responseData) {
-        resolve({
-          resultCode: 600,
-          resultMsg: "检测到必要变量不存在",
-        });
-      }
-      const file = new FileReader();
-      file.onload = function (event: ProgressEvent<FileReader>) {
-        const { result } = event.target || {};
-        const success = {
-          resultCode: 200,
-          resultMsg: "下载成功",
-        };
-        if (!result) return resolve(success);
-        try {
-          const value: ResultType = JSON.parse(result as string);
-          resolve(value);
-        } catch (e) {
-          // 此处表示 当前为数据流
-          resolve(success);
-        }
-      };
-      file.readAsText(data);
-    });
-  }
+type DownloadWithinFileMaps = {
+  [K in DownloadWithinFileType]: string;
+};
 
-  /**
-   * 默认自动设置文件名 需要传一个备选文件名；
-   * @param {Object} [request] 请求体
-   * @param {string} [customName] 备选文件名 默认值新文件
-   */
-  autoFileName(request?: InternalAxiosRequestConfig, customName = "新文件") {
-    let disposition = null;
-    if (this.response && !request) {
-      disposition = this.response.headers ? this.response.headers["content-disposition"] : null;
-    } else if (request && !this.response) {
-      disposition = request.headers ? request.headers["content-disposition"] : null;
+const fileTypeMaps: DownloadWithinFileMaps = {
+  zip: 'application/zip;charset=utf-8',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  xlsx: 'application/vnd.ms-excel',
+  pdf: 'application/pdf',
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+};
+
+// fileType 和 mimeType 二选一
+type TypeOption =
+  | { fileType: DownloadWithinFileType; mimeType?: never }
+  | { mimeType: string; fileType?: never }
+
+interface BaseOptions {
+  /** 自定义下载文件名（不含扩展名） */
+  customFileName?: string;
+}
+
+// response 与 stream 二选一，配合 TypeOption
+type DownloadOptions =
+  | ({ response: AxiosResponse; stream?: never } & BaseOptions & TypeOption)
+  | ({ stream: Blob; response?: never } & BaseOptions & TypeOption);
+
+interface DownloadResult {
+  code: number;
+  message: string;
+}
+
+/**
+ * 通用下载工具函数，自动识别文件流、提取文件名，并触发浏览器下载。
+ * @param options 下载选项
+ * @returns 下载结果 Promise
+ */
+export function download(options: DownloadOptions): Promise<DownloadResult> {
+  const getFileName = (): string => {
+    if (options.customFileName) {
+      return `${options.customFileName}${Date.now()}`;
     }
 
+    const disposition = options?.response?.headers?.['content-disposition'];
     if (disposition) {
-      const name = disposition.split("=")[1];
-      if (name) {
-        if (name.includes(";")) return (this.filename = decodeURI(name.split(";")[0]));
-        return (this.filename = decodeURIComponent(escape(name)));
+      const filenameRegex = /filename\*?=(?:UTF-8'')?"?([^";\n]*)/i;
+      const match = disposition.match(filenameRegex);
+      if (match?.[1]) {
+        return decodeURIComponent(match[1]);
       }
-      this.filename = customName + new Date().getTime();
     }
-  }
 
-  /**
-   * 压缩包
-   * @param {Blob} [blobData] 文件流
-   */
-  zip(blobData?: Blob) {
-    let { data } = this.response || {};
-    if (!data && blobData) {
-      data = blobData;
-    }
-    this.blob = new Blob([data], { type: "zip;charset=utf-8" });
-    this.autoFileName();
-    this.down();
-  }
+    return `新文件${Date.now()}`;
+  };
 
-  /**
-   * xlsx 文件格式
-   * @param {Blob} [blobData] 文件流
-   */
-  xlsx(blobData?: Blob) {
-    let { data } = this.response || {};
-    if (!data && blobData) {
-      data = blobData;
-    }
-    this.blob = new Blob([data], { type: "application/vnd.ms-excel" });
-    this.autoFileName();
-    this.down();
-  }
-
-  /**
-   * 下载 最终调用
-   */
-  down() {
-    if (!this.blob) return;
-    const url = window.URL.createObjectURL(this.blob as Blob);
-    const link = document.createElement("a");
-    link.style.display = "none";
+  const down = (blob: Blob, fileName: string) => {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.style.display = 'none';
     link.href = url;
-    link.download = `${this.filename}`;
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
-    window.URL.revokeObjectURL(link.href);
     document.body.removeChild(link);
-  }
+    window.URL.revokeObjectURL(url);
+  };
+
+  return new Promise((resolve, reject) => {
+    const run = async () => {
+      try {
+        const blobData = 'response' in options ? options.response?.data : options.stream;
+
+        if (!(blobData instanceof Blob)) {
+          return reject({ code: 0, message: '流不存在或格式非法，无法下载' });
+        }
+
+        // 检测是否为错误 JSON（如错误响应包装成 Blob 返回）
+        const text = await blobData.text();
+        try {
+          const value: ResultType = JSON.parse(text);
+          if (typeof value?.resultCode === 'number' && value?.resultCode !== 200) {
+            return reject({ code: value.resultCode, message: value.resultMsg || '接口返回错误信息' });
+          }
+        } catch (_) {
+          // 不是 JSON，说明是合法流
+        }
+
+        const fileName = getFileName();
+        const mimeType = options.mimeType || (options.fileType && fileTypeMaps[options.fileType]) || blobData.type;
+
+        if (!mimeType) {
+          return reject({ code: 0, message: '未能识别文件 MIME 类型，请指定 fileType 或 mimeType' });
+        }
+
+        const blob = new Blob([blobData], { type: mimeType });
+        down(blob, fileName);
+
+        resolve({ code: 1, message: '下载成功' });
+      } catch (error: any) {
+        reject({ code: -1, message: error?.message || '下载失败，发生未知异常' });
+      }
+    };
+    run();
+  });
 }
+
 
 export const getCookie = (key: string): string | undefined => {
   //获取所有的cookie "psw=1234we; rememberme=true; user=Annie"

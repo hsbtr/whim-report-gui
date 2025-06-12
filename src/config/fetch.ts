@@ -1,8 +1,3 @@
-import type { AxiosError } from "axios";
-// 该属性直接确定从 本地缓存中以什么key娶token
-// export const cookieKey = "Authorization";
-export const cookieKey = "Token";
-
 // 改变 此三个常量值及直接操作请求响应返回值
 export enum DataConfig {
   CODE = "code",
@@ -19,13 +14,6 @@ export enum DataTypeEnum {
   HTTP = 1,
   POND
 }
-
-type FailureCodeGroupType = string | number;
-/**
- * 在请求代码成功时  该参数拦截response.data[CODE] 指定代号
- * 为空拦截即是不生效
- */
-export const failureCodeGroup: FailureCodeGroupType[] = [500, 400];
 
 type BasePrivateDomain = string | number;
 
@@ -75,4 +63,16 @@ export type BaseFunctionQuery = {
    * 4 无任何动作
    */
   responseAction: 1 | 2 | 3 | 4;
+};
+
+
+export const httpConfig = {
+  /**
+   * 该属性直接确定从 本地缓存中以什么key娶token
+   */
+  authKey: "Token",
+  /**
+   * 响应成功后，逻辑成功的代码；用于全局处理响应操作错误提示
+   */
+  actionSuccessCode: 200,
 };
