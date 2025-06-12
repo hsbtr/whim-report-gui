@@ -50,3 +50,19 @@ export const getEnvCfg = (): ImportMetaEnv => {
     return import.meta.env;
   }
 };
+
+/**
+ * 获取当前地址栏中的查询参数并解析为对象
+ * @returns 一个包含所有查询参数的对象
+ */
+export const getQueryParams = (): Record<string, string> => {
+  const queryString = window.location.search; // "?a=1&b=2"
+  const params = new URLSearchParams(queryString);
+  const result: Record<string, string> = {};
+
+  for (const [key, value] of params.entries()) {
+    result[key] = value;
+  }
+
+  return result;
+};
