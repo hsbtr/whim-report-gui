@@ -3,6 +3,7 @@ import type { PagingQuery, PagingType, ApiDataType } from '@/config';
 
 export interface ProjectPageQuery extends PagingQuery {}
 type ResourceStatus = 'unpublished' | 'published';
+export interface ProjectSchemas {}
 export type ProjectInfo = {
   id: string | number;
   title: string;
@@ -13,4 +14,7 @@ export type ProjectInfo = {
 };
 export function getProjectPage(params: ProjectPageQuery): PagingType<ProjectInfo> {
   return http.get('project/page', { data: params });
+}
+export function addProject(data: ProjectSchemas): ApiDataType {
+  return http.post('project/add', data);
 }
