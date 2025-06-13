@@ -211,7 +211,7 @@ interface ErrorItem {
 /**
  * 合并展示多个相似接口错误的通知队列
  */
-export class GroupedNotificationQueue {
+export class SmartErrorNotifier {
   private buffer: ErrorItem[] = [];
   private timer: ReturnType<typeof setTimeout> | null = null;
   private isNotifying = false;

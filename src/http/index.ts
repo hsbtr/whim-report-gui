@@ -1,7 +1,7 @@
 import axios from "axios";
 import Qs from "qs";
 import { errorMessages } from '@/http/tool.constant';
-import { download, getCookie, GroupedNotificationQueue } from "./tool.method";
+import { download, getCookie, SmartErrorNotifier } from "./tool.method";
 import { DataConfig, httpConfig, noAccessRedirectPath } from "@/config";
 import { getEnvCfg, getQueryParams } from '@/utils';
 import { useAccountStore } from '@/stores';
@@ -26,7 +26,7 @@ interface CustomConfigMeta {
 }
 
 const { VITE_APP_HTTP_PREFIX } = getEnvCfg();
-const errorQueue = new GroupedNotificationQueue();
+const errorNotifier = new SmartErrorNotifier();
 
 const http: AxiosInstance = axios.create({
   baseURL: VITE_APP_HTTP_PREFIX || "/api/",
@@ -104,7 +104,7 @@ http.interceptors.response.use(
         if (downloadResult.code === 1) {
           return dataAdapters(downloadResult);
         }
-        errorQueue.notify({
+        errorNotifier.notify({
           notifyType,
           title: '下载失败',
           description: downloadResult.message,
@@ -116,7 +116,7 @@ http.interceptors.response.use(
     const { skipErrorHandler = false, actionName } = response.config?.meta || {};
     const responseData = dataAdapters(response.data);
     if (httpConfig.actionSuccessCode !== responseData[DataConfig.CODE] && !skipErrorHandler) {
-      errorQueue.notify({
+      errorNotifier.notify({
         title: `${actionName || '操作'}失败`,
         description: responseData[DataConfig.MESSAGE],
         notifyType,
@@ -136,7 +136,7 @@ http.interceptors.response.use(
       if (pathname === noAccessRedirectPath) return Promise.reject();
       // 只有符合其中一个才会通知
       if (authErrorHandler === 'notify' || authErrorHandler === 'redirectAndFull') {
-        errorQueue.notify({
+        errorNotifier.notify({
           notifyType,
           title: '认证过期',
           description: '即将跳转登录页',
@@ -164,7 +164,7 @@ http.interceptors.response.use(
     const realErrorMessage = data && typeof data === 'object' ? (data as Record<string, any>)[DataConfig.MESSAGE] : undefined;
     const errorDescription = realErrorMessage ?? error.message ?? errorMessages[status as number];
     // 优先使用接口返回的错误报告
-    errorQueue.notify({
+    errorNotifier.notify({
       notifyType,
       title: `接口错误代码：${status}`,
       description: errorDescription,
