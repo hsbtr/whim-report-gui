@@ -113,7 +113,7 @@ http.interceptors.response.use(
         return dataAdapters(downloadResult);
       }
     }
-    const { skipErrorHandler = false, actionName } = response.config?.meta || {};
+    const { skipErrorHandler, actionName } = response.config?.meta || {};
     const responseData = dataAdapters(response.data);
     if (httpConfig.actionSuccessCode !== responseData[DataConfig.CODE] && !skipErrorHandler) {
       errorNotifier.notify({
@@ -126,7 +126,8 @@ http.interceptors.response.use(
     return responseData;
   },
   (error: any): any => {
-    const { status, data, config } = (error.response as AxiosResponse) ?? {};
+    const { status, config } = (error.response as AxiosResponse) ?? {};
+    const data = dataAdapters(error.response.data);
     const { skipErrorHandler, authErrorHandler = 'redirectAndStore', notifyType = 'notification' } = config?.meta || {};
     const UNAUTHORIZED = 401;
     if (skipErrorHandler) return Promise.reject(error);
@@ -157,11 +158,10 @@ http.interceptors.response.use(
             redirect: pathname,
           }
         });
-        // `${noAccessRedirectPath}?redirect=${pathname}${search.replace("?", "&")}`
       }
       return Promise.reject();
     }
-    const realErrorMessage = data && typeof data === 'object' ? (data as Record<string, any>)[DataConfig.MESSAGE] : undefined;
+    const realErrorMessage = data && typeof data === 'object' ? data[DataConfig.MESSAGE] : undefined;
     const errorDescription = realErrorMessage ?? error.message ?? errorMessages[status as number];
     // 优先使用接口返回的错误报告
     errorNotifier.notify({

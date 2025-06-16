@@ -1,7 +1,7 @@
 // 改变 此三个常量值及直接操作请求响应返回值
 export enum DataConfig {
   CODE = "code",
-  MESSAGE = "msg",
+  MESSAGE = "message",
   DATA = "data",
 }
 export enum CodeStatus {
