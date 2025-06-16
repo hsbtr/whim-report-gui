@@ -67,23 +67,63 @@ const fileTypeMaps: DownloadWithinFileMaps = {
   jpeg: 'image/jpeg',
 };
 
-// fileType 和 mimeType 二选一
-type TypeOption =
-  | { fileType: DownloadWithinFileType; mimeType?: never }
-  | { mimeType: string; fileType?: never }
+type MustFileType = {
+  /**
+   * 内置的文件类型
+   */
+  fileType: DownloadWithinFileType;
+  /**
+   * MIME类型
+   */
+  mimeType?: never
+}
+type MustMimeType = {
+  /**
+   * MIME类型
+   */
+  mimeType: string;
+  /**
+   * 文件类型
+   */
+  fileType?: never
+}
+// 优先使用fileType; 当内置类型不满足需要使用mimeType
+type TypeOption = MustFileType  | MustMimeType;
 
 interface BaseOptions {
   /** 自定义下载文件名（不含扩展名） */
   customFileName?: string;
 }
 
-// response 与 stream 二选一，配合 TypeOption
-type DownloadOptions =
-  | ({ response: AxiosResponse; stream?: never } & BaseOptions & TypeOption)
-  | ({ stream: Blob; response?: never } & BaseOptions & TypeOption);
+// 这是一个响应体；可以自动获取文件名；除非响应体中未携带文件名
+type MustResponse = {
+  /**
+   * 响应体
+   */
+  response: AxiosResponse;
+  stream?: never
+};
+// 这是一个文件流；它需要你提供准确的文件名；否则使用默认的
+type MustStream = {
+  /**
+   * 文件流
+   */
+  stream: Blob;
+  response?: never
+};
 
+// 优先使用response; 当拿不到response时使用stream，合并 TypeOption 内部属性
+type DownloadOptions = (MustResponse & BaseOptions & TypeOption) | (MustStream & BaseOptions & TypeOption);
+
+// 返回最终结果
 interface DownloadResult {
-  code: number;
+  /**
+   * 0 失败 1 成功
+   */
+  code: 0 | 1;
+  /**
+   * 错误信息
+   */
   message: string;
 }
 
@@ -154,7 +194,7 @@ export function download(options: DownloadOptions): Promise<DownloadResult> {
 
         resolve({ code: 1, message: '下载成功' });
       } catch (error: any) {
-        reject({ code: -1, message: error?.message || '下载失败，发生未知异常' });
+        reject({ code: 0, message: error?.message || '下载失败，发生未知异常' });
       }
     };
     run();
