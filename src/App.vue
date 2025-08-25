@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { RouterView } from 'vue-router';
-import { NConfigProvider, zhCN, enUS, dateEnUS, dateZhCN, darkTheme } from 'naive-ui';
-import AppProvider from '@/components/popups/AppProvider.vue';
+import { zhCN, enUS, dateEnUS, dateZhCN, darkTheme } from 'naive-ui';
+import AppConfigProvider from '@/components/popups/AppConfigProvider.vue';
 import { useUiStore } from '@/stores';
 import { LanguageEnum } from '@/config';
 import { useHLJSInit } from '@/hooks';
@@ -24,16 +24,14 @@ const dateLocale = computed(() => {
 </script>
 
 <template>
-  <n-config-provider
+  <app-config-provider
     :theme="dark"
     :locale="locale"
     :date-locale="dateLocale"
     :hljs="hlJS"
   >
-    <app-provider>
-      <router-view />
-    </app-provider>
-  </n-config-provider>
+    <router-view />
+  </app-config-provider>
 </template>
 
 <style scoped>
