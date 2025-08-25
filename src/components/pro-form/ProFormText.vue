@@ -6,7 +6,7 @@ import type { FormState } from './BaseForm.vue';
 
 type ProFormTextProps = FormItemProps & { filedProps: InputProps };
 
-const formState = inject<FormState>('formState') || {};
+const formState = inject<FormState>('formState');
 const update = inject('update');
 const props = defineProps<ProFormTextProps>();
 
