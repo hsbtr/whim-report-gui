@@ -24,16 +24,16 @@ const dateLocale = computed(() => {
 </script>
 
 <template>
-  <NConfigProvider
+  <n-config-provider
     :theme="dark"
     :locale="locale"
     :date-locale="dateLocale"
     :hljs="hlJS"
   >
-    <AppProvider>
+    <app-provider>
       <router-view />
-    </AppProvider>
-  </NConfigProvider>
+    </app-provider>
+  </n-config-provider>
 </template>
 
 <style scoped>

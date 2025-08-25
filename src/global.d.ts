@@ -48,7 +48,7 @@ declare module 'axios' {
       /**
        * 接口行为名称
        */
-      actionName?: string;
+      apiBehaviorName?: string;
       /**
        * 认证过期后的行为
        * */

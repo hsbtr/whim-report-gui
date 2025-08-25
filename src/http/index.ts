@@ -9,7 +9,7 @@ import router from '@/router';
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosRequestConfig } from "axios";
 import type { ResponseDataType } from "@/config";
 
-interface CustomConfigMeta {
+interface CustomAxiosRequestConfigMeta {
   /**
    * 跳过默认错误处理
    */
@@ -17,7 +17,7 @@ interface CustomConfigMeta {
   /**
    * 接口行为名称
    */
-  actionName?: string;
+  apiBehaviorName?: string;
   /**
    * 认证过期后的行为
    * */
@@ -113,11 +113,11 @@ http.interceptors.response.use(
         return dataAdapters(downloadResult);
       }
     }
-    const { skipErrorHandler, actionName } = response.config?.meta || {};
+    const { skipErrorHandler, apiBehaviorName } = response.config?.meta || {};
     const responseData = dataAdapters(response.data);
     if (httpConfig.actionSuccessCode !== responseData[DataConfig.CODE] && !skipErrorHandler) {
       errorNotifier.notify({
-        title: `${actionName || '操作'}失败`,
+        title: `${apiBehaviorName || '操作'}失败`,
         description: responseData[DataConfig.MESSAGE],
         notifyType,
         source: response.config?.url || '',

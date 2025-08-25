@@ -1,23 +1,20 @@
 <script setup lang="ts">
-import { NLoadingBarProvider, NDialogProvider, NMessageProvider, NNotificationProvider } from 'naive-ui';
-import LoadingInit from './LoadingInit.vue';
-import DialogInit from './DialogInit.vue';
-import MessageInit from './MessageInit.vue';
-import NotificationInit from './NotificationInit.vue';
+import { NLoadingBarProvider, NDialogProvider, NModalProvider, NMessageProvider, NNotificationProvider } from 'naive-ui';
+import PopupsInit from './PopupsInit.vue';
 </script>
 
 <template>
 <n-loading-bar-provider>
   <n-dialog-provider>
-    <LoadingInit />
-    <DialogInit />
-    <n-notification-provider>
-      <n-message-provider>
-        <MessageInit />
-        <NotificationInit />
-        <slot />
-      </n-message-provider>
-    </n-notification-provider>
+    <n-modal-provider>
+      <n-notification-provider>
+        <n-message-provider>
+          <popups-init>
+            <slot />
+          </popups-init>
+        </n-message-provider>
+      </n-notification-provider>
+    </n-modal-provider>
   </n-dialog-provider>
 </n-loading-bar-provider>
 </template>
