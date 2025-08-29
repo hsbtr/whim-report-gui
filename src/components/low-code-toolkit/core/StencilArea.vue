@@ -1,60 +1,56 @@
 <script setup lang="ts">
-import { ref, computed, inject } from 'vue';
-import { NSelect, NInput, NIcon, NScrollbar, useThemeVars } from 'naive-ui';
+import { inject, ref, reactive, computed } from 'vue';
+import { NIcon, NInput, NScrollbar, NSelect, useThemeVars } from 'naive-ui';
 import { SearchOutline } from '@vicons/ionicons5';
 import { useDebounceFn } from '@vueuse/core';
-import { materialSchemas } from '../packages';
-import { jsonStringify } from '../tools';
-import { LowCodeEvent } from '../types/core';
-import type { ComponentCfg } from '../packages';
+import { pkgMetas } from '../packages';
+import { jsonStringify, pkgsToGroup } from '../tools';
+import { LowCodeEvent, LowCodeShare } from '../common/constant';
+import type { PkgComponentMeta, CustomComponentProps } from '../types';
+import type { SelectMixedOption } from 'naive-ui/es/select/src/interface';
 
-
-const [defaultSelected] = materialSchemas;
+const pkgs = pkgsToGroup<PkgComponentMeta, SelectMixedOption>(pkgMetas);
+const [defaultSelectedPkg] = pkgs;
 
 const addNode = inject(LowCodeEvent.addNode);
 const globalTheme = useThemeVars();
-const currentType = ref({ ...defaultSelected });
-const currentSeries = ref({ templates: [], type: 'all' });
-const searchValue = ref('');
+const selectedPkgType = reactive({ ...defaultSelectedPkg });
+const selectedComponentType = reactive({ fieldProps: [], value: 'all' });
+const searchComponentName = ref('');
 
-const supplementTypeOpt = { title: '全部', type: 'all' };
-
+const supplementTypeOpt = { label: '全部', value: 'all' };
 const primaryColor = computed(() => {
   return globalTheme.value.primaryColor;
 });
-const seriesOptions = computed(() => {
-  const { components } = currentType.value;
-  return [supplementTypeOpt, ...components];
+const componentTypeOptions = computed(() => {
+  const { opts = [] } = selectedPkgType;
+  return [supplementTypeOpt, ...opts];
 });
-
+// 组件
 const componentGroup = computed(() => {
-  const { templates, type } = currentSeries.value;
-  if (type === 'all') {
-    const array: ComponentCfg[] = [];
-    currentType.value.components.forEach((v) => {
-      if (Array.isArray(v.templates)) {
-        array.push(...v.templates);
-      }
+  const { value, fieldProps = [] } = selectedComponentType;
+  if (value !== 'all') {
+    return fieldProps.map((prop) => {
+      return { ...prop, type: value };
     });
-    return array;
   }
-  if (type !== 'all') return templates;
-  return [];
+  return componentTypeOptions.value.flatMap((item) => item.fieldProps ?? []);
 });
 
-const onTypeChange = (value, option) => {
-  currentType.value = option;
+const onPkgTypeChange = (_value: string, option: SelectMixedOption) => {
+  Object.assign(selectedPkgType, option);
+  Object.assign(selectedComponentType, { label: '全部', value: 'all' });
 };
-const onSeriesChange = (value, option) => {
-  currentSeries.value = option;
+const onComponentTypeChange = (value, option) => {
+  Object.assign(selectedComponentType, option);
 };
 const onSearchChange = useDebounceFn((value) => {
-  searchValue.value = value;
+  searchComponentName.value = value;
 }, 1000);
-const onDragStart = (event: DragEvent, item: ComponentCfg) => {
-  event.dataTransfer?.setData('low-code', jsonStringify(item));
+const onDragStart = (event: DragEvent, item: CustomComponentProps) => {
+  event.dataTransfer?.setData(LowCodeShare.dragKey, jsonStringify(item));
 };
-const onDragEnd = (event: DragEvent, item: ComponentCfg) => {
+const onDragEnd = (event: DragEvent, item: CustomComponentProps) => {
   addNode(item);
 };
 
@@ -67,19 +63,15 @@ const onDragEnd = (event: DragEvent, item: ComponentCfg) => {
         <div class="filter-space">
           <n-select
             class="custom-select-size"
-            :options="materialSchemas"
-            label-field="title"
-            value-field="key"
-            :value="currentType.key"
-            @update:value="onTypeChange"
+            :options="pkgs"
+            :value="selectedPkgType.value"
+            @update:value="onPkgTypeChange"
           />
           <n-select
             class="custom-select-size"
-            :options="seriesOptions"
-            label-field="title"
-            value-field="type"
-            :value="currentSeries.type"
-            @update:value="onSeriesChange"
+            :options="componentTypeOptions"
+            :value="selectedComponentType.value"
+            @update:value="onComponentTypeChange"
           />
         </div>
         <n-input class="search-input" type="text" placeholder="输入组件名" @update:value="onSearchChange">
@@ -92,7 +84,7 @@ const onDragEnd = (event: DragEvent, item: ComponentCfg) => {
         <template v-for="item in componentGroup" :key="item.key">
           <div
             class="component-item"
-            v-if="item.title.includes(searchValue)"
+            v-if="item.title.includes(searchComponentName)"
             :key="item.key"
             @dragstart="onDragStart($event, item)"
             @dragend="onDragEnd($event, item)"

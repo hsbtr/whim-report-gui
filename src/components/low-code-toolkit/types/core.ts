@@ -1,10 +1,7 @@
+import type { CustomComponentProps } from './packages';
 
-export const editorOptions = 'editorOptions';
-
-export enum LowCodeEvent {
-  selected = 'onSelect',
-  addNode = 'addNode',
-}
-export enum LowCodeShare {
-  LowCodeStore = 'lowCodeStore',
-}
+export type LowCodeStateType = {
+  nodes: CustomComponentProps[];
+  selected: Object;
+  mode: 'edit' | 'view';
+};

@@ -2,9 +2,9 @@
 import { NScrollbar } from 'naive-ui';
 import Draggable from 'vuedraggable';
 import SchemaParser from './NodeParsing.vue';
-import { useLowCodeStore } from '../hooks';
+import { useLowCodeState } from '../hooks';
 
-const lowCodeStore = useLowCodeStore();
+const lowCodeStore = useLowCodeState();
 console.log(lowCodeStore);
 
 </script>

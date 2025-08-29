@@ -1,6 +1,6 @@
 import { inject } from 'vue';
-import { LowCodeShare } from '../types';
-
-export function useLowCodeStore() {
-  return inject(LowCodeShare.LowCodeStore);
+import { LowCodeShare } from '../common/constant';
+import type { LowCodeStateType } from '../types';
+export function useLowCodeState() {
+  return inject<LowCodeStateType>(LowCodeShare.globalState, { mode: 'view', nodes: [], selected: {} });
 }

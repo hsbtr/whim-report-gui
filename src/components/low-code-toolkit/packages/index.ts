@@ -1,41 +1,7 @@
-import { generatedSchemas } from '../tools';
-import type { DefineComponent } from 'vue';
-import type { MetaCfg, MaterialPackage } from './types';
-import type { ChartPkgType, ChartType, ChartProp } from './chart';
-import type { ControlPkgType, ControlType, ControlProp } from './control';
-import type { InfoPkgType, InfoType, InfoProp } from './info';
+import { moduleToArray } from '../tools';
+import type { PkgComponentMeta, PkgModule } from '../types';
 
-type PkgModules<T = any> = Record<string, { default: T }>;
-type SchemaOpt = ChartPkgType | ControlPkgType | InfoPkgType;
-export type ComponentType = ChartType | ControlType | InfoType;
-export type ComponentCfg = ChartProp | ControlProp | InfoProp;
-export type SchemaMetaCfg = MetaCfg & {
-  label?: string;
-  key: ComponentType;
-  components: SchemaOpt[];
-}
-type PackageKey = keyof MaterialPackage;
+const metaModules = import.meta.glob('./*/meta.ts', { eager: true });
 
-const materialNotes: PkgModules<MetaCfg> = import.meta.glob('./*/index.ts', { eager: true });
+export const pkgMetas = moduleToArray<PkgModule, PkgComponentMeta>(metaModules);
 
-
-const pkgGlob: PkgModules<DefineComponent<{}, any>> = import.meta.glob('./*/*/*.vue', { eager: true });
-
-const packages: Partial<MaterialPackage> = {};
-Object.keys(pkgGlob).forEach((key) => {
-  const component: DefineComponent<{}, any> = pkgGlob[key].default;
-  const { __name } = component;
-  if (__name) {
-    packages[__name as PackageKey] = component;
-  } else {
-    const name = key.split('/').pop()?.replace('.vue', '');
-    if (name) {
-      packages[name as PackageKey] = component;
-    }
-  }
-});
-
-
-export const materialSchemas = generatedSchemas<PkgModules, SchemaMetaCfg, Omit<SchemaMetaCfg, 'label'>>(materialNotes, (item) => {
-  return item;
-});

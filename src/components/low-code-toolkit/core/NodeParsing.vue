@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from 'vue';
-import type { ComponentCfg } from '../packages';
+// import type { ComponentCfg } from '../packages';
 
-type SchemaParserProps = Omit<ComponentCfg, 'key'> & { name: string };
-const props = defineProps<SchemaParserProps>();
-console.log(props);
+// type SchemaParserProps = Omit<ComponentCfg, 'key'> & { name: string };
+// const props = defineProps<SchemaParserProps>();
+// console.log(props);
 
 const AsyncComponent = defineAsyncComponent(() => import((`../packages/${props.type}/${props.series}/${props.name}.vue`)));
 
