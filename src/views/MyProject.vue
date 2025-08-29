@@ -108,7 +108,7 @@ onMounted(() => {
             <n-button size="small">
               <template #icon>
                 <n-icon size="small">
-                  <EllipsisHorizontal />
+                  <ellipsis-horizontal />
                 </n-icon>
               </template>
             </n-button>
