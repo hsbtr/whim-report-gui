@@ -1,18 +1,23 @@
 <script setup lang="ts">
-import { inject, ref, reactive, computed } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { NIcon, NInput, NScrollbar, NSelect, useThemeVars } from 'naive-ui';
 import { SearchOutline } from '@vicons/ionicons5';
 import { useDebounceFn } from '@vueuse/core';
+import { useLowCodeState } from './../hooks';
 import { pkgMetas } from '../packages';
-import { jsonStringify, pkgsToGroup } from '../tools';
-import { LowCodeEvent, LowCodeShare } from '../common/constant';
-import type { PkgComponentMeta, CustomComponentProps } from '../types';
+import { jsonStringify, formatPkgOptions } from '../tools';
+import { LowCodeShare } from '../common/constant';
+import { componentCfg } from '../common/component.config';
+import type { ComponentPropRaw, ComponentProp } from '../types';
 import type { SelectMixedOption } from 'naive-ui/es/select/src/interface';
 
-const pkgs = pkgsToGroup<PkgComponentMeta, SelectMixedOption>(pkgMetas);
+const pkgs = formatPkgOptions<ComponentProp>(pkgMetas, ({ type, fieldProps }) => {
+  return fieldProps.map((v) => ({ ...componentCfg, ...v, type: type, }));
+});
 const [defaultSelectedPkg] = pkgs;
 
-const addNode = inject(LowCodeEvent.addNode);
+// const addNode = inject(LowCodeEvent.addNode);
+const lowCodeState = useLowCodeState();
 const globalTheme = useThemeVars();
 const selectedPkgType = reactive({ ...defaultSelectedPkg });
 const selectedComponentType = reactive({ fieldProps: [], value: 'all' });
@@ -27,13 +32,9 @@ const componentTypeOptions = computed(() => {
   return [supplementTypeOpt, ...opts];
 });
 // 组件
-const componentGroup = computed(() => {
+const componentGroup = computed<ComponentProp[]>(() => {
   const { value, fieldProps = [] } = selectedComponentType;
-  if (value !== 'all') {
-    return fieldProps.map((prop) => {
-      return { ...prop, type: value };
-    });
-  }
+  if (value !== 'all') return fieldProps;
   return componentTypeOptions.value.flatMap((item) => item.fieldProps ?? []);
 });
 
@@ -47,11 +48,12 @@ const onComponentTypeChange = (value, option) => {
 const onSearchChange = useDebounceFn((value) => {
   searchComponentName.value = value;
 }, 1000);
-const onDragStart = (event: DragEvent, item: CustomComponentProps) => {
+const onDragStart = (event: DragEvent, item: ComponentPropRaw) => {
   event.dataTransfer?.setData(LowCodeShare.dragKey, jsonStringify(item));
+  lowCodeState.isAdd = true;
 };
-const onDragEnd = (event: DragEvent, item: CustomComponentProps) => {
-  addNode(item);
+const onDragEnd = () => {
+  lowCodeState.isAdd = false;
 };
 
 </script>

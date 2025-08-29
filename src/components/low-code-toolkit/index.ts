@@ -1,8 +1,8 @@
 import LowCode from './core/LowCode.vue';
 import StencilArea from './core/StencilArea.vue';
-import PaintingArea from './core/PaintingArea.vue';
+import SketchpadEngine from './core/SketchpadEngine.vue';
 
 export * from './packages';
 export * from './types/core';
 
-export { LowCode, StencilArea, PaintingArea };
+export { LowCode, StencilArea, SketchpadEngine };

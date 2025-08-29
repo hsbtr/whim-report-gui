@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, provide } from 'vue';
 import { LowCodeEvent, LowCodeShare } from '../common/constant';
-import PaintingArea from './PaintingArea.vue';
+import SketchpadEngine from './SketchpadEngine.vue';
 import type { LowCodeStateType } from '../types';
 
 type ChartCfg = {
@@ -35,7 +35,7 @@ provide(LowCodeEvent.addNode, onAddNode);
 <template>
   <div class="low-code-wrapper">
     <slot>
-      <painting-area />
+      <sketchpad-engine />
     </slot>
   </div>
 </template>

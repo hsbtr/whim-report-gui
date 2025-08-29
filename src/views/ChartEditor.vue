@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useThemeVars, NLayout, NLayoutHeader, NLayoutContent } from 'naive-ui';
-import { LowCode, StencilArea, PaintingArea } from '@/components/low-code-toolkit';
+import { LowCode, StencilArea, SketchpadEngine } from '@/components/low-code-toolkit';
 
 const themes = useThemeVars();
 
-console.log(themes);
 onMounted(() => {
   // console.log(1);
 });
@@ -18,7 +17,7 @@ onMounted(() => {
       <n-layout-header class="editor-header" bordered inverted></n-layout-header>
       <n-layout-content class="editor-content">
         <stencil-area class="sten-cli-panel" />
-        <painting-area class="draw-inner" />
+        <sketchpad-engine class="draw-inner" />
       </n-layout-content>
     </n-layout>
   </low-code>
