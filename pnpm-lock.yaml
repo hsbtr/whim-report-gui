@@ -47,6 +47,9 @@ importers:
       highlight.js:
         specifier: ^11.9.0
         version: 11.11.0
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
       naive-ui:
         specifier: ^2.38.2
         version: 2.40.4(vue@3.5.13(typescript@5.4.5))
@@ -68,6 +71,9 @@ importers:
       vue-router:
         specifier: ^4.3.0
         version: 4.5.0(vue@3.5.13(typescript@5.4.5))
+      vue3-sketch-ruler:
+        specifier: ^2.2.11
+        version: 2.2.11
       vuedraggable:
         specifier: ^4.1.0
         version: 4.1.0(vue@3.5.13(typescript@5.4.5))
@@ -81,6 +87,9 @@ importers:
       '@types/jsdom':
         specifier: ^21.1.6
         version: 21.1.7
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
       '@types/node':
         specifier: ^20.12.12
         version: 20.17.10
@@ -3058,6 +3067,9 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: '>=5.0.0'
+
+  vue3-sketch-ruler@2.2.11:
+    resolution: {integrity: sha512-kr72xHiY8dy8+Z20oyYOKs2mxyODLOLK7jHPaRkCS95nSVH/nHGvp++TeiJ9YnCrLYHxnPGn17hL72kbYGwEAg==}
 
   vue@3.5.13:
     resolution: {integrity: sha512-wmeiSMxkZCSc+PM2w2VRsOYAZC8GdipNFRTsLSfodVqI9mbejKeXEGr8SckuLnrQPGe3oJN5c3K0vpoU9q/wCQ==}
@@ -6153,6 +6165,8 @@ snapshots:
       '@vue/language-core': 2.1.10(typescript@5.4.5)
       semver: 7.6.3
       typescript: 5.4.5
+
+  vue3-sketch-ruler@2.2.11: {}
 
   vue@3.5.13(typescript@5.4.5):
     dependencies:
