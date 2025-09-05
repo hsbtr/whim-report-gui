@@ -3,26 +3,26 @@ import { inject } from 'vue';
 import { NScrollbar } from 'naive-ui';
 import Draggable from 'vuedraggable';
 import SchemaParser from './NodeParsing.vue';
+import CustomSketchRuler from './CustomSketchRuler.vue';
 import { LowCodeShare } from './../common/constant';
 import { useLowCodeState, useLowCodeContext } from '../hooks';
 import { JSONParse } from '../tools';
-import type { ComponentProp } from '../types';
+import type { NodeProps } from '../types';
 
 const lowCodeState = useLowCodeState();
 const context = useLowCodeContext();
 
 const onDrop = async (e: DragEvent) => {
-  console.log(e);
   e.preventDefault();
   try {
     const dataJson = e.dataTransfer?.getData(LowCodeShare.dragKey);
     if (!dataJson) return;
-    const componentProps = JSONParse<ComponentProp>(dataJson);
+    const componentProps = JSONParse<NodeProps>(dataJson);
     if (!componentProps) return;
     console.log(componentProps);
     componentProps.attr.x = e.offsetX - componentProps.attr.width / 2;
     componentProps.attr.y = e.offsetY - componentProps.attr.height / 2;
-    context.addNode(componentProps);
+    context.addNode?.(componentProps);
   } catch (e) {
     console.error(e);
   }
@@ -36,16 +36,11 @@ const onMousedown = () => {};
 
 <template>
   <div class="sketchpad-wrapper" @mousedown="onMousedown" @drop="onDrop" @dragover="onDragover">
-    <draggable class="painting" v-model="lowCodeState.nodes" item-key="key" ghost-class="ghost">
-      <template #item="{ element }">
-        <schema-parser
-          class="node-item"
-          :key="element.key"
-          :options="element"
-          v-bind="element"
-        />
-      </template>
-    </draggable>
+    <custom-sketch-ruler>
+      <div class="sketchpad-content">
+
+      </div>
+    </custom-sketch-ruler>
   </div>
 </template>
 
@@ -54,7 +49,10 @@ const onMousedown = () => {};
   padding: 16px;
   overflow: auto;
   box-sizing: border-box;
-
+  .sketchpad-content {
+    overflow: hidden;
+    transition: all 0.4s;
+  }
 }
 .painting {
   width: 100%;

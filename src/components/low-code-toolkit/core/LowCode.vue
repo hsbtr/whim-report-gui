@@ -2,33 +2,33 @@
 import { reactive, provide } from 'vue';
 import { LowCodeEvent, LowCodeShare } from '../common/constant';
 import SketchpadEngine from './SketchpadEngine.vue';
-import type { LowCodeStateType } from '../types';
+import type { LowCodeStateType, LowCodeProps, NodeProps } from '../types';
 
-type ChartCfg = {
-  title: string;
-  chartType: string;
-  id: string;
-};
-type ChartCfgKey = keyof ChartCfg;
+const { mode = 'view', dark = false } = defineProps<LowCodeProps>();
 
-const lowCodeStore = reactive<LowCodeStateType>({
+const lowCodeState = reactive<LowCodeStateType>({
   nodes: [],
-  selected: {},
-  mode: 'view',
+  selected: [],
+  mode: mode,
+  dark: dark,
+  canvas: {
+    offset: 0,
+    scale: 1
+  },
+  isAdd: false,
+  isMove: false,
+  isSelect: false
 });
 
-const onSelected = () => {
-
+const onSelect = (node: NodeProps) => {
+  lowCodeState.selected.push(node);
 };
-const onUpdateNode = (chartCfg: ChartCfg) => {
-  (Object.keys(chartCfg) as ChartCfgKey[]).forEach((key) => {});
-};
-const onAddNode = (node) => {
-  lowCodeStore.nodes.push(node);
+const onAddNode = (node: NodeProps) => {
+  lowCodeState.nodes.push(node);
 };
 
-provide(LowCodeShare.globalState, lowCodeStore);
-provide(LowCodeEvent.selected, onSelected);
+provide(LowCodeShare.globalState, lowCodeState);
+provide(LowCodeEvent.select, onSelect);
 provide(LowCodeEvent.addNode, onAddNode);
 </script>
 

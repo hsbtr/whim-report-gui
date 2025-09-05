@@ -10,14 +10,14 @@ export type ExhibitType = keyof typeof ExhibitOpts;
 export type PkgType = keyof typeof Pkg;
 export type PkgComponentType = ChartType | ControlType | ExhibitType;
 export type ComponentAttr = {
-  width: number;
-  height: number;
+  w: number;
+  h: number;
   x: number;
   y: number;
   offsetX: number;
   offsetY: number;
 };
-export type ComponentPropRaw = {
+export type ComponentPropsRaw = {
   title: string;
   key: string;
   icon?: string;
@@ -27,14 +27,18 @@ export type ComponentPropRaw = {
   attr?: ComponentAttr;
 };
 // 渲染到画板中 节点的属性
-export type ComponentProp = Omit<ComponentPropRaw, 'attr'> & {
+export type NodeProps = Omit<ComponentPropsRaw, 'attr'> & {
   attr: ComponentAttr;
+  hide: boolean;
+  lock: boolean;
+  uuid: string;
+  id: string;
 };
 export type PkgComponentMeta = {
   title: string;
   type: PkgComponentType;
   pkgType: PkgType;
   key: string;
-  fieldProps: ComponentPropRaw[];
+  fieldProps: ComponentPropsRaw[];
 };
 export type PkgModule = Record<string, { default: PkgComponentMeta }>;

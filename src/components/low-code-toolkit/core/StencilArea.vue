@@ -8,10 +8,10 @@ import { pkgMetas } from '../packages';
 import { jsonStringify, formatPkgOptions } from '../tools';
 import { LowCodeShare } from '../common/constant';
 import { componentCfg } from '../common/component.config';
-import type { ComponentPropRaw, ComponentProp } from '../types';
+import type { ComponentPropsRaw, NodeProps } from '../types';
 import type { SelectMixedOption } from 'naive-ui/es/select/src/interface';
 
-const pkgs = formatPkgOptions<ComponentProp>(pkgMetas, ({ type, fieldProps }) => {
+const pkgs = formatPkgOptions<NodeProps>(pkgMetas, ({ type, fieldProps }) => {
   return fieldProps.map((v) => ({ ...componentCfg, ...v, type: type, }));
 });
 const [defaultSelectedPkg] = pkgs;
@@ -32,7 +32,7 @@ const componentTypeOptions = computed(() => {
   return [supplementTypeOpt, ...opts];
 });
 // 组件
-const componentGroup = computed<ComponentProp[]>(() => {
+const componentGroup = computed<NodeProps[]>(() => {
   const { value, fieldProps = [] } = selectedComponentType;
   if (value !== 'all') return fieldProps;
   return componentTypeOptions.value.flatMap((item) => item.fieldProps ?? []);
@@ -48,7 +48,7 @@ const onComponentTypeChange = (value, option) => {
 const onSearchChange = useDebounceFn((value) => {
   searchComponentName.value = value;
 }, 1000);
-const onDragStart = (event: DragEvent, item: ComponentPropRaw) => {
+const onDragStart = (event: DragEvent, item: ComponentPropsRaw) => {
   event.dataTransfer?.setData(LowCodeShare.dragKey, jsonStringify(item));
   lowCodeState.isAdd = true;
 };

@@ -59,6 +59,6 @@ export const LowCodeShare = {
   dragKey: 'DragKey',
 } as const;
 export const LowCodeEvent = {
-  selected: 'onSelect',
+  select: 'onSelect',
   addNode: 'addNode',
 } as const;
