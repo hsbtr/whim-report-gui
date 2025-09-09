@@ -35,6 +35,5 @@ module.exports = {
         caughtErrorsIgnorePattern: '^_',
       }
     ],
-    'vue/component-name-in-template-casing': ['error', 'kebab-case'],
   }
 };
