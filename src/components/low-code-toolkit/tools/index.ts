@@ -5,7 +5,7 @@ import type { SelectMixedOption } from 'naive-ui/es/select/src/interface';
 /**
  * 将模块配置转化为Schema
  */
-export const moduleToArray = <M extends PkgModule, S>(modules: M, processFn: (item: M[keyof M]['default']) => S): S[] => {
+export const moduleToArray = <M extends PkgModule, S extends Record<string, any>>(modules: M, processFn?: (item: M[keyof M]['default']) => S): (S | {})[] => {
   return Object.keys(modules).map((key) => {
     const cfg = modules[key]?.default || {};
     if (typeof processFn === 'function') return processFn(cfg);
@@ -18,7 +18,7 @@ export const moduleToArray = <M extends PkgModule, S>(modules: M, processFn: (it
  * @param array
  * @param propsHandle
  */
-export const formatPkgOptions = <P>(array: PkgComponentMeta, propsHandle?: (item: PkgComponentMeta) => P): SelectMixedOption[] => {
+export const formatPkgOptions = <P>(array: PkgComponentMeta[], propsHandle?: (item: PkgComponentMeta) => P): SelectMixedOption[] => {
   const options = [];
   for (const item of array) {
     const exist = options.findIndex((it) => it.value === item.pkgType);
@@ -71,7 +71,7 @@ export const jsonStringify = <T>(data: T): string => {
  * @param data
  * @param opts
  */
-export const JSONParse = <T>(data: string, opts: { exclude: Array } = []): T => {
+export const JSONParse = <T>(data: string, opts: { exclude: string[] } = { exclude: [] }): T => {
   const { exclude = [] } = opts;
   return JSON.parse(data, (k, v) => {
     // 过滤函数字符串

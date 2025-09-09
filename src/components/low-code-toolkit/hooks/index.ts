@@ -1,9 +1,9 @@
-import { inject, ref, onBeforeUnmount } from 'vue';
+import { inject, ref, reactive, onBeforeUnmount } from 'vue';
 import { throttle } from 'lodash-es';
 import { LowCodeShare, LowCodeEvent } from '../common/constant';
 import type { LowCodeStateType, NodeProps } from '../types';
 export function useLowCodeState() {
-  return inject<LowCodeStateType>(LowCodeShare.globalState, {
+  const defaultState = reactive<LowCodeStateType>({
     mode: 'view',
     nodes: [],
     selected: [],
@@ -11,8 +11,23 @@ export function useLowCodeState() {
     canvas: { offset: 0, scale: 1 },
     isAdd: false,
     isMove: false,
-    isSelect: false
+    isSelect: false,
+    selectionBox: {
+      left: 0,
+      top: 0,
+      width: 0,
+      height: 0,
+      visible: false,
+      source: null,
+    },
+    mousePosition: {
+      startX: 0,
+      startY: 0,
+      x: 0,
+      y: 0,
+    },
   });
+  return inject<LowCodeStateType>(LowCodeShare.globalState, defaultState);
 }
 
 type LowCodeContext = {
@@ -110,7 +125,7 @@ export function useBoxSelect() {
 
   // 鼠标按下入口（供外部绑定）
   const mousedown = (e: MouseEvent) => {
-    if (e.which === 2) return;
+    if (e.button === 2) return;
     if (window.$KeyboardActive?.space) return;
     if (isSelecting.value) return;
 
@@ -121,8 +136,8 @@ export function useBoxSelect() {
     startScreenX = e.screenX;
     startScreenY = e.screenY;
     scale = state.canvas.scale;
-
-    // chartEditStore.setMousePosition(undefined, undefined, startOffsetX, startOffsetY);
+    state.mousePosition.startX = startOffsetX;
+    state.mousePosition.startY = startOffsetY;
 
     document.addEventListener('mousemove', mousemove);
     document.addEventListener('mouseup', mouseup);

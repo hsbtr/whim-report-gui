@@ -3,9 +3,10 @@ import { computed } from 'vue';
 import SketchRuler from 'vue3-sketch-ruler';
 import { useLowCodeState } from '../hooks';
 import type { SketchRulerProps } from 'vue3-sketch-ruler';
+import 'vue3-sketch-ruler/lib/style.css';
 
 const lowCodeState = useLowCodeState();
-const thick = 20;
+const thick = 16;
 
 const scale = computed(() => {
   return lowCodeState.canvas.scale;
@@ -18,7 +19,8 @@ const palette = computed<SketchRulerProps['palette']>(() => {
       bgColor: '#18181c',
       longfgColor: '#4d4d4d',
       shortfgColor: '#4d4d4d',
-      fontColor: '#4d4d4d',
+      fontColor: '#eff1f4',
+      lineColor: '#f6f5f5',
       shadowColor: '#18181c',
       borderColor: '#18181c',
       cornerActiveColor: '#18181c'
@@ -30,23 +32,25 @@ const palette = computed<SketchRulerProps['palette']>(() => {
 </script>
 
 <template>
-  <div class="custom-sketch-ruler">
+  <div class="sketchpad-ruler">
     <sketch-ruler
       :thick="thick"
       :scale="scale"
+      :auto-center="false"
       :palette="palette"
-    />
-    <slot />
+    >
+      <slot />
+    </sketch-ruler>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.custom-sketch-ruler {
+.sketchpad-ruler {
   width: 100%;
   height: 100%;
   overflow: hidden;
 }
-.custom-sketch-ruler-inner {
+.sketchpad-ruler-inner {
   width: 100%;
   height: 100%;
   position: absolute;

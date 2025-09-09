@@ -3,7 +3,7 @@ import { inject } from 'vue';
 import { NScrollbar } from 'naive-ui';
 import Draggable from 'vuedraggable';
 import SchemaParser from './NodeParsing.vue';
-import CustomSketchRuler from './CustomSketchRuler.vue';
+import SketchpadRuler from './SketchpadRuler.vue';
 import { LowCodeShare } from './../common/constant';
 import { useLowCodeState, useLowCodeContext } from '../hooks';
 import { JSONParse } from '../tools';
@@ -36,11 +36,11 @@ const onMousedown = () => {};
 
 <template>
   <div class="sketchpad-wrapper" @mousedown="onMousedown" @drop="onDrop" @dragover="onDragover">
-    <custom-sketch-ruler>
+    <sketchpad-ruler>
       <div class="sketchpad-content">
 
       </div>
-    </custom-sketch-ruler>
+    </sketchpad-ruler>
   </div>
 </template>
 

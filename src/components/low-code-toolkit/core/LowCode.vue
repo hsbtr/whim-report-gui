@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, provide } from 'vue';
 import { LowCodeEvent, LowCodeShare } from '../common/constant';
-import SketchpadEngine from './SketchpadEngine.vue';
+import SketchpadArea from './SketchpadArea.vue';
 import type { LowCodeStateType, LowCodeProps, NodeProps } from '../types';
 
 const { mode = 'view', dark = false } = defineProps<LowCodeProps>();
@@ -17,7 +17,21 @@ const lowCodeState = reactive<LowCodeStateType>({
   },
   isAdd: false,
   isMove: false,
-  isSelect: false
+  isSelect: false,
+  selectionBox: {
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+    visible: false,
+    source: null
+  },
+  mousePosition: {
+    startX: 0,
+    startY: 0,
+    x: 0,
+    y: 0
+  }
 });
 
 const onSelect = (node: NodeProps) => {
@@ -35,7 +49,7 @@ provide(LowCodeEvent.addNode, onAddNode);
 <template>
   <div class="low-code-wrapper">
     <slot>
-      <sketchpad-engine />
+      <sketchpad-area />
     </slot>
   </div>
 </template>
