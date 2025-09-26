@@ -5,13 +5,13 @@ import type { SelectMixedOption } from 'naive-ui/es/select/src/interface';
 /**
  * 将模块配置转化为Schema
  */
-export const moduleToArray = <M extends PkgModule, S extends Record<string, any>>(modules: M, processFn?: (item: M[keyof M]['default']) => S): (S | {})[] => {
+export const moduleToArray = <M extends PkgModule, S extends Record<string, any>>(modules: M, processFn?: (item: M[keyof M]['default']) => S): S[] => {
   return Object.keys(modules).map((key) => {
-    const [_, path] = key.split('/');
-    const cfg = modules[key]?.default || {};
-    const fieldPath = `../packages/${path}/${cfg.type}.vue`;
-    if (typeof processFn === 'function') return processFn({ ...cfg, fieldPath });
-    return { ...cfg, fieldPath };
+    const [_, _path] = key.split('/');
+    const cfg = modules[key]?.default as S;
+    // const fieldPath = `../packages/${path}/${cfg.type}.vue`;
+    if (typeof processFn === 'function') return processFn({ ...cfg });
+    return { ...cfg };
   });
 };
 

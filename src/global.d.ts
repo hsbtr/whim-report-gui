@@ -2,6 +2,7 @@ import type { DialogApiInjection } from 'naive-ui/es/dialog/src/DialogProvider';
 import type { LoadingBarApiInjection } from 'naive-ui/es/loading-bar/src/LoadingBarProvider';
 import type { MessageApiInjection } from 'naive-ui/es/message/src/MessageProvider';
 import type { NotificationApiInjection } from 'naive-ui/es/notification/src/NotificationProvider';
+import type { ModalApiInjection } from 'naive-ui/es/modal/src/ModalProvider';
 import type { Component } from 'vue';
 import 'axios';
 
@@ -10,6 +11,7 @@ declare global {
     $loading: LoadingBarApiInjection;
     $message: MessageApiInjection;
     $dialog: DialogApiInjection;
+    $modal: ModalApiInjection,
     $notification: NotificationApiInjection;
     // 语言
     $t: any;

@@ -12,7 +12,7 @@ import type { ComponentPropsRaw, NodeProps } from '../types';
 import type { SelectMixedOption } from 'naive-ui/es/select/src/interface';
 
 const pkgs = formatPkgOptions<NodeProps>(pkgMetas, ({ type, fieldProps }) => {
-  return fieldProps.map((v) => ({ ...componentCfg, ...v, type: type, }));
+  return fieldProps.map((v: ComponentPropsRaw) => ({ ...componentCfg, ...v, type: type, }));
 });
 const [defaultSelectedPkg] = pkgs;
 
