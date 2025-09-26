@@ -2,8 +2,10 @@
 import { inject } from 'vue';
 import { NScrollbar } from 'naive-ui';
 import Draggable from 'vuedraggable';
-import SchemaParser from './NodeParsing.vue';
+import LazyLoadNode from './LazyLoadNode.vue';
+import SketchpadBoxSelect from './SketchpadBoxSelect.vue';
 import SketchpadRuler from './SketchpadRuler.vue';
+import ShapeBox from './ShapeBox.vue';
 import { LowCodeShare } from './../common/constant';
 import { useLowCodeState, useLowCodeContext } from '../hooks';
 import { JSONParse } from '../tools';
@@ -20,8 +22,8 @@ const onDrop = async (e: DragEvent) => {
     const componentProps = JSONParse<NodeProps>(dataJson);
     if (!componentProps) return;
     console.log(componentProps);
-    componentProps.attr.x = e.offsetX - componentProps.attr.width / 2;
-    componentProps.attr.y = e.offsetY - componentProps.attr.height / 2;
+    componentProps.attr.x = e.offsetX - componentProps.attr.w / 2;
+    componentProps.attr.y = e.offsetY - componentProps.attr.h / 2;
     context.addNode?.(componentProps);
   } catch (e) {
     console.error(e);
@@ -36,11 +38,20 @@ const onMousedown = () => {};
 
 <template>
   <div class="sketchpad-wrapper" @mousedown="onMousedown" @drop="onDrop" @dragover="onDragover">
-    <sketchpad-ruler>
+    <SketchpadRuler>
       <div class="sketchpad-content">
-
+        <SketchpadBoxSelect>
+          <div v-for="(node) in lowCodeState.nodes" :key="node.id || node.uuid">
+            <ShapeBox :is-point="false" :node-props="node">
+              <LazyLoadNode
+                :key="node.uuid"
+                path="../packages/bar/EBar.vue"
+              />
+            </ShapeBox>
+          </div>
+        </SketchpadBoxSelect>
       </div>
-    </sketchpad-ruler>
+    </SketchpadRuler>
   </div>
 </template>
 
@@ -50,6 +61,8 @@ const onMousedown = () => {};
   overflow: auto;
   box-sizing: border-box;
   .sketchpad-content {
+    width: 100%;
+    height: 100%;
     overflow: hidden;
     transition: all 0.4s;
   }

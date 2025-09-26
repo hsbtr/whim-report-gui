@@ -12,15 +12,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <low-code mode="edit" dark>
-    <n-layout>
-      <n-layout-header class="editor-header" bordered inverted></n-layout-header>
-      <n-layout-content class="editor-content">
-        <stencil-area class="sten-cli-panel" />
-        <sketchpad-area class="draw-inner" />
-      </n-layout-content>
-    </n-layout>
-  </low-code>
+  <LowCode mode="edit" dark>
+    <NLayout>
+      <NLayoutHeader class="editor-header" bordered inverted></NLayoutHeader>
+      <NLayoutContent class="editor-content">
+        <StencilArea class="sten-cli-panel" />
+        <SketchpadArea class="draw-inner" />
+      </NLayoutContent>
+    </NLayout>
+  </LowCode>
 </template>
 
 <style lang="scss" scoped>

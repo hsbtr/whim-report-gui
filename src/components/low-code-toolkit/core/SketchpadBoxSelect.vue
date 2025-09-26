@@ -35,9 +35,9 @@ const bkgColor = '#51d6a9';
   .box-select {
     position: absolute;
     .box-select-background, .box-select-border {
-      position: absolute;
       width: 100%;
       height: 100%;
+      position: absolute;
       overflow: hidden;
     }
     .box-select-background {

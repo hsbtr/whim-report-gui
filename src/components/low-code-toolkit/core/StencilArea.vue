@@ -49,6 +49,7 @@ const onSearchChange = useDebounceFn((value) => {
   searchComponentName.value = value;
 }, 1000);
 const onDragStart = (event: DragEvent, item: ComponentPropsRaw) => {
+  console.log(item);
   event.dataTransfer?.setData(LowCodeShare.dragKey, jsonStringify(item));
   lowCodeState.isAdd = true;
 };

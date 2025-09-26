@@ -49,7 +49,7 @@ provide(LowCodeEvent.addNode, onAddNode);
 <template>
   <div class="low-code-wrapper">
     <slot>
-      <sketchpad-area />
+      <SketchpadArea />
     </slot>
   </div>
 </template>

@@ -36,10 +36,16 @@ const palette = computed<SketchRulerProps['palette']>(() => {
     <sketch-ruler
       :thick="thick"
       :scale="scale"
-      :auto-center="false"
+      :auto-center="true"
+      :width="1080"
+      :height="900"
+      :canvas-width="800"
+      :canvas-height="800"
       :palette="palette"
     >
-      <slot />
+      <template #default>
+        <slot />
+      </template>
     </sketch-ruler>
   </div>
 </template>
