@@ -12,8 +12,8 @@ export const Pkg = {
  */
 export const ChartOpts = {
   // 基础图表
-  line: { label: '折线图', value: 'ELine' },
-  bar: { label: '柱状图', value: 'EBar' },
+  line: { label: '折线图', value: 'line' },
+  bar: { label: '柱状图', value: 'bar' },
   pie: { label: '饼图', value: 'pie' },
   scatter: { label: '散点图', value: 'scatter' },
   effectScatter: { label: '涟漪散点图', value: 'effectScatter' },

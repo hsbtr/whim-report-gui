@@ -46,6 +46,7 @@ const onMousedown = () => {};
               <LazyLoadNode
                 :key="node.uuid"
                 path="../packages/bar/EBar.vue"
+                :field-props="node"
               />
             </ShapeBox>
           </div>

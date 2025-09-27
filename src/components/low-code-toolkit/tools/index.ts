@@ -1,11 +1,10 @@
 import { Pkg } from '../common/constant';
-import type { PkgModule, PkgComponentMeta } from '../types';
-import type { SelectMixedOption } from 'naive-ui/es/select/src/interface';
+import type { PkgModule, PkgComponentMeta, PkgType } from '../types';
 
 /**
  * 将模块配置转化为Schema
  */
-export const moduleToArray = <M extends PkgModule, S extends Record<string, any>>(modules: M, processFn?: (item: M[keyof M]['default']) => S): S[] => {
+export const moduleToArray = <M extends PkgModule, S extends PkgComponentMeta>(modules: M, processFn?: (item: M[keyof M]['default']) => S): S[] => {
   return Object.keys(modules).map((key) => {
     const [_, _path] = key.split('/');
     const cfg = modules[key]?.default as S;
@@ -15,27 +14,18 @@ export const moduleToArray = <M extends PkgModule, S extends Record<string, any>
   });
 };
 
+
+type PkgSelectOption = { label: string; value: PkgType };
 /**
  * 将一组配置转化为下拉选择框options
- * @param array
- * @param propsHandle
  */
-export const formatPkgOptions = <P>(array: PkgComponentMeta[], propsHandle?: (item: PkgComponentMeta) => P): SelectMixedOption[] => {
-  const options = [];
-  for (const item of array) {
-    const exist = options.findIndex((it) => it.value === item.pkgType);
-    const fieldProps = propsHandle ? propsHandle(item) : item.fieldProps;
-    if (exist !== -1) {
-      options[exist].opts.push({ ...item, fieldProps, label: item.title, value: item.type });
-      continue;
-    }
-    options.push({
-      label: Pkg[item.pkgType].label,
-      value: item.pkgType,
-      opts: [{ ...item, fieldProps, label: item.title, value: item.type }],
-    });
-  }
-  return options;
+export const transformPkgOptions = (): PkgSelectOption[] => {
+  return Object.keys(Pkg).map((key) => {
+    return {
+      label: Pkg[key as PkgType].label,
+      value: key as PkgType,
+    };
+  });
 };
 
 /**

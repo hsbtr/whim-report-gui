@@ -24,6 +24,7 @@ export type ComponentPropsRaw = {
   params?: Record<string, any>;
   request?: (params: Record<string, any>) => Promise<any>;
   dataSource?: any;
+  disabled?: boolean;
   attr?: ComponentAttr;
 };
 // 渲染到画板中 节点的属性

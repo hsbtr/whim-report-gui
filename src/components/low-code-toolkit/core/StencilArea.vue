@@ -5,22 +5,23 @@ import { SearchOutline } from '@vicons/ionicons5';
 import { useDebounceFn } from '@vueuse/core';
 import { useLowCodeState } from './../hooks';
 import { pkgMetas } from '../packages';
-import { jsonStringify, formatPkgOptions } from '../tools';
+import { jsonStringify, transformPkgOptions } from '../tools';
 import { LowCodeShare } from '../common/constant';
 import { componentCfg } from '../common/component.config';
-import type { ComponentPropsRaw, NodeProps } from '../types';
+import type { ComponentPropsRaw, NodeProps, PkgType, PkgComponentType } from '../types';
 import type { SelectMixedOption } from 'naive-ui/es/select/src/interface';
 
-const pkgs = formatPkgOptions<NodeProps>(pkgMetas, ({ type, fieldProps }) => {
-  return fieldProps.map((v: ComponentPropsRaw) => ({ ...componentCfg, ...v, type: type, }));
-});
+type SelectedComponentType = PkgComponentType | 'all';
+
+const pkgs = transformPkgOptions();
+console.log(pkgMetas);
 const [defaultSelectedPkg] = pkgs;
 
 // const addNode = inject(LowCodeEvent.addNode);
 const lowCodeState = useLowCodeState();
 const globalTheme = useThemeVars();
-const selectedPkgType = reactive({ ...defaultSelectedPkg });
-const selectedComponentType = reactive({ fieldProps: [], value: 'all' });
+const selectedPkg = ref(defaultSelectedPkg.value);
+const selectedComponentType = ref<SelectedComponentType>('all' );
 const searchComponentName = ref('');
 
 const supplementTypeOpt = { label: '全部', value: 'all' };
@@ -28,28 +29,29 @@ const primaryColor = computed(() => {
   return globalTheme.value.primaryColor;
 });
 const componentTypeOptions = computed(() => {
-  const { opts = [] } = selectedPkgType;
-  return [supplementTypeOpt, ...opts];
+  const newOpts = pkgMetas.filter((pkg) => pkg.pkgType === selectedPkg.value).map((pkg) => ({ label: pkg.title, value: pkg.type }));
+  return [supplementTypeOpt, ...newOpts];
 });
 // 组件
-const componentGroup = computed<NodeProps[]>(() => {
-  const { value, fieldProps = [] } = selectedComponentType;
-  if (value !== 'all') return fieldProps;
-  return componentTypeOptions.value.flatMap((item) => item.fieldProps ?? []);
+const componentGroup = computed(() => {
+  if (selectedComponentType.value === 'all') {
+    return pkgMetas.filter((pkg) => pkg.pkgType === selectedPkg.value).flatMap((pkg) => pkg.fieldProps);
+  }
+  const findPkg = pkgMetas.find((pkg) => pkg.type === selectedComponentType.value);
+  return findPkg ? findPkg.fieldProps : [];
 });
 
-const onPkgTypeChange = (_value: string, option: SelectMixedOption) => {
-  Object.assign(selectedPkgType, option);
-  Object.assign(selectedComponentType, { label: '全部', value: 'all' });
+const onPkgChange = (value: PkgType) => {
+  selectedPkg.value = value;
+  selectedComponentType.value = 'all';
 };
-const onComponentTypeChange = (value, option) => {
-  Object.assign(selectedComponentType, option);
+const onComponentTypeChange = (value: SelectedComponentType) => {
+  selectedComponentType.value = value;
 };
 const onSearchChange = useDebounceFn((value) => {
   searchComponentName.value = value;
 }, 1000);
 const onDragStart = (event: DragEvent, item: ComponentPropsRaw) => {
-  console.log(item);
   event.dataTransfer?.setData(LowCodeShare.dragKey, jsonStringify(item));
   lowCodeState.isAdd = true;
 };
@@ -67,13 +69,13 @@ const onDragEnd = () => {
           <n-select
             class="custom-select-size"
             :options="pkgs"
-            :value="selectedPkgType.value"
-            @update:value="onPkgTypeChange"
+            :value="selectedPkg"
+            @update:value="onPkgChange"
           />
           <n-select
             class="custom-select-size"
             :options="componentTypeOptions"
-            :value="selectedComponentType.value"
+            :value="selectedComponentType"
             @update:value="onComponentTypeChange"
           />
         </div>
@@ -90,11 +92,11 @@ const onDragEnd = () => {
             v-if="item.title.includes(searchComponentName)"
             :key="item.key"
             @dragstart="onDragStart($event, item)"
-            @dragend="onDragEnd($event, item)"
-            :draggable="item.disabled || true"
+            @dragend="onDragEnd"
+            :draggable="item?.disabled || true"
           >
             <div class="thumbnail">
-              <img :src="item.icon" alt="" >
+              <img :src="item.icon" alt="" />
             </div>
             <div class="title">
               <span>{{item.title}}</span>

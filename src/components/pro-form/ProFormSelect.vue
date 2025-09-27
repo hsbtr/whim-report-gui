@@ -6,7 +6,7 @@ import type { FormState } from './BaseForm.vue';
 
 type ProFormSelectProps = FormItemProps & { filedProps: SelectProps };
 
-const formState = inject<FormState>('formState');
+const formState = inject<FormState>('formState', {});
 const update = inject('update');
 const props = defineProps<ProFormSelectProps>();
 

@@ -1,38 +1,34 @@
 # whim-report-gui
 
-This template should help get you started developing with Vue 3 in Vite.
+此模板应该可以帮助您开始在 Vite 中使用 Vue 3 进行开发。
 
-## Recommended IDE Setup
+## TS 中对 '.vue' 导入的类型支持
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+TypeScript 默认无法处理 '.vue' 导入的类型信息，因此我们将 'tsc' CLI 替换为 'vue-tsc' 进行类型检查。在编辑器中，我们需要 [Volar]（https://marketplace.visualstudio.com/items?itemName=Vue.volar） 来使 TypeScript 语言服务能够识别 '.vue' 类型。
 
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
+## 自定义配置
 
 See [Vite Configuration Reference](https://vitejs.dev/config/).
 
-## Project Setup
+## 项目设置
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### 用于开发的 Compile 和 Hot-Reload
 
 ```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+### 用于生产的类型检查、编译和缩小
 
 ```sh
 npm run build
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+### 运行单元测试 [Vitest](https://vitest.dev/)
 
 ```sh
 npm run test:unit
@@ -43,18 +39,17 @@ npm run test:unit
 ```sh
 npm run test:e2e:dev
 ```
+这将针对 Vite 开发服务器运行端到端测试。
+它比生产构建快得多.
 
-This runs the end-to-end tests against the Vite development server.
-It is much faster than the production build.
-
-But it's still recommended to test the production build with `test:e2e` before deploying (e.g. in CI environments):
+但仍然建议在部署之前使用 'test：e2e' 测试生产版本（例如在 CI 环境中）：
 
 ```sh
 npm run build
 npm run test:e2e
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+### Lint 与[ESLint](https://eslint.org/)
 
 ```sh
 npm run lint
