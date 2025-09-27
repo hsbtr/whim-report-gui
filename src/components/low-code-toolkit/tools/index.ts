@@ -1,5 +1,6 @@
 import { Pkg } from '../common/constant';
-import type { PkgModule, PkgComponentMeta, PkgType } from '../types';
+import { commonNodeProps } from '../common/node.props';
+import type { PkgModule, PkgComponentMeta, PkgType, ComponentPropsRaw, NodeProps, ComponentPropsExtra } from '../types';
 
 /**
  * 将模块配置转化为Schema
@@ -85,4 +86,12 @@ export const JSONParse = <T>(data: string, opts: { exclude: string[] } = { exclu
     }
     return v;
   });
+};
+
+/**
+ * 合并NodeProps
+ * 将物料中定义的FieldProps 与 公共的NodeProps 合并
+ */
+export const mergeNodeProps = (props: ComponentPropsExtra, { uuid }: { uuid: string }): NodeProps => {
+  return { ...commonNodeProps, ...props, uuid };
 };

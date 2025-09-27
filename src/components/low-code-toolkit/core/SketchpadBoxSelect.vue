@@ -21,6 +21,8 @@ const bkgColor = '#51d6a9';
 
 <style lang="scss" scoped>
 .sketchpad-box-select {
+  width: 100%;
+  height: 100%;
   position: relative;
   transform-origin: left top;
   background-size: cover;

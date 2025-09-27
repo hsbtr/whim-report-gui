@@ -44,7 +44,9 @@ const palette = computed<SketchRulerProps['palette']>(() => {
       :palette="palette"
     >
       <template #default>
-        <slot />
+        <div data-type="page" style="width: 800px; height: 800px;">
+          <slot />
+        </div>
       </template>
     </sketch-ruler>
   </div>

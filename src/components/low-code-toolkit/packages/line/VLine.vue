@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import VLine from '@/components/ve-chart/VLine.vue';
+import EChartLine from '@/components/ve-chart/EChartLine.vue';
 import http from '@/http';
 
 const props = defineProps({
@@ -12,7 +12,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <v-line title="" :data-source="[]" />
+  <EChartLine title="" :data-source="[]" />
 </template>
 
 <style scoped>

@@ -15,7 +15,9 @@ const props = defineProps<BarProps>();
 
 const option = computed(() => {
   return {
-    title: props.title,
+    title: {
+      text: props.title,
+    },
     series: [],
   };
 });
@@ -25,7 +27,7 @@ provide(THEME_KEY, 'dark');
 </script>
 
 <template>
-  <v-chart class="chart-box" />
+  <VChart class="chart-box" :option="option" />
 </template>
 
 <style lang="scss" scoped>

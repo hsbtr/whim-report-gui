@@ -26,14 +26,18 @@ export type ComponentPropsRaw = {
   dataSource?: any;
   disabled?: boolean;
   attr?: ComponentAttr;
+  [k: string]: any;
 };
+export type ComponentPropsExtra = {
+  loadPath: string;
+}
 // 渲染到画板中 节点的属性
-export type NodeProps = Omit<ComponentPropsRaw, 'attr'> & {
+export type NodeProps = Omit<ComponentPropsRaw, 'attr'> & ComponentPropsExtra & {
   attr: ComponentAttr;
   hide: boolean;
   lock: boolean;
-  uuid: string;
-  id: string;
+  uuid?: string;
+  id?: string;
 };
 export type PkgComponentMeta = {
   title: string;

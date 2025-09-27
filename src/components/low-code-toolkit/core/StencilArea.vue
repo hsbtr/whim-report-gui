@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { ref, computed } from 'vue';
 import { NIcon, NInput, NScrollbar, NSelect, useThemeVars } from 'naive-ui';
 import { SearchOutline } from '@vicons/ionicons5';
 import { useDebounceFn } from '@vueuse/core';
@@ -7,14 +7,11 @@ import { useLowCodeState } from './../hooks';
 import { pkgMetas } from '../packages';
 import { jsonStringify, transformPkgOptions } from '../tools';
 import { LowCodeShare } from '../common/constant';
-import { componentCfg } from '../common/component.config';
-import type { ComponentPropsRaw, NodeProps, PkgType, PkgComponentType } from '../types';
-import type { SelectMixedOption } from 'naive-ui/es/select/src/interface';
+import type { ComponentPropsRaw, PkgType, PkgComponentType } from '../types';
 
 type SelectedComponentType = PkgComponentType | 'all';
 
 const pkgs = transformPkgOptions();
-console.log(pkgMetas);
 const [defaultSelectedPkg] = pkgs;
 
 // const addNode = inject(LowCodeEvent.addNode);
@@ -40,7 +37,6 @@ const componentGroup = computed(() => {
   const findPkg = pkgMetas.find((pkg) => pkg.type === selectedComponentType.value);
   return findPkg ? findPkg.fieldProps : [];
 });
-
 const onPkgChange = (value: PkgType) => {
   selectedPkg.value = value;
   selectedComponentType.value = 'all';
@@ -52,8 +48,16 @@ const onSearchChange = useDebounceFn((value) => {
   searchComponentName.value = value;
 }, 1000);
 const onDragStart = (event: DragEvent, item: ComponentPropsRaw) => {
-  event.dataTransfer?.setData(LowCodeShare.dragKey, jsonStringify(item));
-  lowCodeState.isAdd = true;
+  const parentPkg = pkgMetas.find((pkg) =>
+    pkg.fieldProps.some(field => field.key === item.key) // 通过 item.key 找到对应的 pkg
+  );
+  if (parentPkg) {
+    const newName = parentPkg.type.charAt(0).toUpperCase() + parentPkg.type.slice(1);
+    const loadPath = `/${parentPkg.type}/V${newName}`;
+    event.dataTransfer?.setData(LowCodeShare.dragKey, jsonStringify({ ...item, loadPath }));
+    lowCodeState.isAdd = true;
+  }
+
 };
 const onDragEnd = () => {
   lowCodeState.isAdd = false;
@@ -66,26 +70,26 @@ const onDragEnd = () => {
     <div class="component-area">
       <div class="head-search-filter">
         <div class="filter-space">
-          <n-select
+          <NSelect
             class="custom-select-size"
             :options="pkgs"
             :value="selectedPkg"
             @update:value="onPkgChange"
           />
-          <n-select
+          <NSelect
             class="custom-select-size"
             :options="componentTypeOptions"
             :value="selectedComponentType"
             @update:value="onComponentTypeChange"
           />
         </div>
-        <n-input class="search-input" type="text" placeholder="输入组件名" @update:value="onSearchChange">
+        <NInput class="search-input" type="text" placeholder="输入组件名" @update:value="onSearchChange">
           <template #suffix>
-            <n-icon :component="SearchOutline" />
+            <NIcon :component="SearchOutline" />
           </template>
-        </n-input>
+        </NInput>
       </div>
-      <n-scrollbar class="sten-cli-main">
+      <NScrollbar class="sten-cli-main">
         <template v-for="item in componentGroup" :key="item.key">
           <div
             class="component-item"
@@ -103,7 +107,7 @@ const onDragEnd = () => {
             </div>
           </div>
         </template>
-      </n-scrollbar>
+      </NScrollbar>
     </div>
   </div>
 </template>

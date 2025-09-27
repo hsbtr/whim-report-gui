@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import { inject } from 'vue';
-import { NScrollbar } from 'naive-ui';
-import Draggable from 'vuedraggable';
 import LazyLoadNode from './LazyLoadNode.vue';
 import SketchpadBoxSelect from './SketchpadBoxSelect.vue';
 import SketchpadRuler from './SketchpadRuler.vue';
 import ShapeBox from './ShapeBox.vue';
 import { LowCodeShare } from './../common/constant';
 import { useLowCodeState, useLowCodeContext } from '../hooks';
-import { JSONParse } from '../tools';
-import type { NodeProps } from '../types';
+import { JSONParse, mergeNodeProps } from '../tools';
+import type { ComponentPropsExtra } from '../types';
 
 const lowCodeState = useLowCodeState();
 const context = useLowCodeContext();
@@ -19,12 +16,14 @@ const onDrop = async (e: DragEvent) => {
   try {
     const dataJson = e.dataTransfer?.getData(LowCodeShare.dragKey);
     if (!dataJson) return;
-    const componentProps = JSONParse<NodeProps>(dataJson);
+    const componentProps = JSONParse<ComponentPropsExtra>(dataJson);
     if (!componentProps) return;
-    console.log(componentProps);
-    componentProps.attr.x = e.offsetX - componentProps.attr.w / 2;
-    componentProps.attr.y = e.offsetY - componentProps.attr.h / 2;
-    context.addNode?.(componentProps);
+    const uuid = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const newNodeProps = mergeNodeProps(componentProps, { uuid });
+    console.log(newNodeProps);
+    newNodeProps.attr.x = e.offsetX - newNodeProps.attr.w / 2;
+    newNodeProps.attr.y = e.offsetY - newNodeProps.attr.h / 2;
+    context.addNode?.(newNodeProps);
   } catch (e) {
     console.error(e);
   }
@@ -44,8 +43,8 @@ const onMousedown = () => {};
           <div v-for="(node) in lowCodeState.nodes" :key="node.id || node.uuid">
             <ShapeBox :is-point="false" :node-props="node">
               <LazyLoadNode
-                :key="node.uuid"
-                path="../packages/bar/EBar.vue"
+                :key="node.id || node.uuid"
+                :path="`../packages${node.loadPath}.vue`"
                 :field-props="node"
               />
             </ShapeBox>

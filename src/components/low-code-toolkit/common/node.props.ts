@@ -1,5 +1,5 @@
 
-export const componentCfg = {
+export const commonNodeProps = {
   attr: {
     x: 50,
     y: 50,
@@ -8,5 +8,7 @@ export const componentCfg = {
     // 不建议动 offset
     offsetX: 0,
     offsetY: 0,
-  }
+  },
+  hide: false,
+  lock: false,
 };
