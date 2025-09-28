@@ -9,7 +9,7 @@ const meta: PkgComponentMeta = {
   fieldProps: [
     {
       title: '普通列表',
-      key: 'list-1',
+      uuid: 'VList-1',
     }
   ]
 };

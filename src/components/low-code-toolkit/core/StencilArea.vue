@@ -48,16 +48,14 @@ const onSearchChange = useDebounceFn((value) => {
   searchComponentName.value = value;
 }, 1000);
 const onDragStart = (event: DragEvent, item: ComponentPropsRaw) => {
-  const parentPkg = pkgMetas.find((pkg) =>
-    pkg.fieldProps.some(field => field.key === item.key) // 通过 item.key 找到对应的 pkg
-  );
+  // 通过 item.uuid 找到对应的 pkg
+  const parentPkg = pkgMetas.find((pkg) => pkg.fieldProps.some((field) => field.uuid === item.uuid));
   if (parentPkg) {
-    const newName = parentPkg.type.charAt(0).toUpperCase() + parentPkg.type.slice(1);
-    const loadPath = `/${parentPkg.type}/V${newName}`;
+    const [componentName] = item.uuid.split('-');
+    const loadPath = `../packages/${parentPkg.type}/${componentName}`;
     event.dataTransfer?.setData(LowCodeShare.dragKey, jsonStringify({ ...item, loadPath }));
     lowCodeState.isAdd = true;
   }
-
 };
 const onDragEnd = () => {
   lowCodeState.isAdd = false;

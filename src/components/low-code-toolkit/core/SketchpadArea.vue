@@ -5,27 +5,13 @@ import SketchpadRuler from './SketchpadRuler.vue';
 import ShapeBox from './ShapeBox.vue';
 import { LowCodeShare } from './../common/constant';
 import { useLowCodeState, useLowCodeContext } from '../hooks';
-import { JSONParse, mergeNodeProps } from '../tools';
-import type { ComponentPropsExtra, ComponentAttr } from '../types';
+import { JSONParse, mergeNodeProps, getNodeSizeStyle, getPositionStyle, createUuid } from '../tools';
+import type { ComponentPropsExtra } from '../types';
 
 const lowCodeState = useLowCodeState();
 const context = useLowCodeContext();
 
-const getPositionStyle = (attr: ComponentAttr, index: number) => {
-  if (!attr) return {};
-  return {
-    zIndex: index + 1,
-    left: `${attr.x}px`,
-    top: `${attr.y}px`,
-  };
-};
-const getNodeSizeStyle = (attr: ComponentAttr) => {
-  if (!attr) return {};
-  return {
-    width: `${attr.w}px`,
-    height: `${attr.h}px`,
-  };
-};
+
 const onDrop = async (e: DragEvent) => {
   e.preventDefault();
   try {
@@ -33,7 +19,7 @@ const onDrop = async (e: DragEvent) => {
     if (!dataJson) return;
     const componentProps = JSONParse<ComponentPropsExtra>(dataJson);
     if (!componentProps) return;
-    const uuid = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const uuid = createUuid(componentProps.uuid);
     const newNodeProps = mergeNodeProps(componentProps, { uuid });
     console.log(newNodeProps);
     newNodeProps.attr.x = e.offsetX - newNodeProps.attr.w / 2;
@@ -59,7 +45,7 @@ const onMousedown = () => {};
             <ShapeBox :is-point="false" :node-props="node" :style="getPositionStyle(node.attr, index)">
               <LazyLoadNode
                 :key="node.id || node.uuid"
-                :path="`../packages${node.loadPath}.vue`"
+                :path="`${node.loadPath}.vue`"
                 :field-props="node"
                 :style="getNodeSizeStyle(node.attr)"
               />

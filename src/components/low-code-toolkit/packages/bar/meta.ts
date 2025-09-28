@@ -9,11 +9,12 @@ const meta: PkgComponentMeta = {
   fieldProps: [
     {
       title: '普通柱状图1',
-      key: 'bar-1',
+      uuid: 'VBar-1',
+      dataSource: [220, 182, 191, 234, 290]
     },
     {
       title: '普通柱状图2',
-      key: 'bar-2',
+      uuid: 'VBar-2',
     },
   ]
 };

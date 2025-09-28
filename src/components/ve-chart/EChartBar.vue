@@ -3,7 +3,7 @@ import { provide, computed } from 'vue';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart } from 'echarts/charts';
-import { TitleComponent, TooltipComponent, LegendComponent } from 'echarts/components';
+import { TitleComponent, TooltipComponent, LegendComponent, GridComponent } from 'echarts/components';
 import VChart, { THEME_KEY } from 'vue-echarts';
 import type { BarSeriesOption } from 'echarts/charts';
 
@@ -18,10 +18,22 @@ const option = computed(() => {
     title: {
       text: props.title,
     },
-    series: [],
+    xAxis: {
+      type: 'category',
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        type: 'bar',
+        data: props.dataSource,
+      }
+    ],
   };
 });
-use([CanvasRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent]);
+use([CanvasRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 provide(THEME_KEY, 'dark');
 
 </script>

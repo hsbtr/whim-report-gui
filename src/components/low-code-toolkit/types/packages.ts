@@ -19,7 +19,10 @@ export type ComponentAttr = {
 };
 export type ComponentPropsRaw = {
   title: string;
-  key: string;
+  /**
+   * 以组件名开头；结尾为数字号码；中间以 - 线隔开；如： VBar-1
+   */
+  uuid: string;
   icon?: string;
   params?: Record<string, any>;
   request?: (params: Record<string, any>) => Promise<any>;
@@ -32,11 +35,10 @@ export type ComponentPropsExtra = ComponentPropsRaw & {
   loadPath: string;
 }
 // 渲染到画板中 节点的属性
-export type NodeProps = Omit<ComponentPropsRaw, 'attr'> & ComponentPropsExtra & {
+export type NodeProps = Omit<ComponentPropsRaw, 'attr'> & Pick<ComponentPropsExtra, 'loadPath'> & {
   attr: ComponentAttr;
   hide: boolean;
   lock: boolean;
-  uuid?: string;
   id?: string;
 };
 export type PkgComponentMeta = {

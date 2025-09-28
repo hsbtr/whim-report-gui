@@ -8,7 +8,10 @@ interface LazyLoadNodeProps {
 }
 const props = defineProps<LazyLoadNodeProps>();
 
-const AsyncComponent = defineAsyncComponent(() => import(props.path));
+// TODO 还需要配置加载中组件 错误组件
+const AsyncComponent = defineAsyncComponent({
+  loader: () => import(props.path),
+});
 
 </script>
 

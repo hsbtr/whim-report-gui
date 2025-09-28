@@ -1,6 +1,6 @@
 import { Pkg } from '../common/constant';
 import { commonNodeProps } from '../common/node.props';
-import type { PkgModule, PkgComponentMeta, PkgType, ComponentPropsRaw, NodeProps, ComponentPropsExtra } from '../types';
+import type { PkgModule, PkgComponentMeta, PkgType, ComponentAttr, NodeProps, ComponentPropsExtra } from '../types';
 
 /**
  * 将模块配置转化为Schema
@@ -14,7 +14,6 @@ export const moduleToArray = <M extends PkgModule, S extends PkgComponentMeta>(m
     return { ...cfg };
   });
 };
-
 
 type PkgSelectOption = { label: string; value: PkgType };
 /**
@@ -94,4 +93,38 @@ export const JSONParse = <T>(data: string, opts: { exclude: string[] } = { exclu
  */
 export const mergeNodeProps = (props: ComponentPropsExtra, { uuid }: { uuid: string }): NodeProps => {
   return { ...commonNodeProps, ...props, uuid };
+};
+
+/**
+ * 获取节点定位样式
+ * @param attr
+ * @param index
+ */
+export const getPositionStyle = (attr: ComponentAttr, index: number) => {
+  if (!attr) return {};
+  return {
+    zIndex: index + 1,
+    left: `${attr.x}px`,
+    top: `${attr.y}px`,
+  };
+};
+/**
+ * 获取节点大小样式
+ * @param attr
+ */
+export const getNodeSizeStyle = (attr: ComponentAttr) => {
+  if (!attr) return {};
+  return {
+    width: `${attr.w}px`,
+    height: `${attr.h}px`,
+  };
+};
+/**
+ * 生成 uuid
+ */
+export const createUuid = (prefix?: string) => {
+  const id = (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random() * 1000}`;
+  return prefix ? `${prefix}-${id}` : id;
 };
