@@ -28,7 +28,7 @@ export type ComponentPropsRaw = {
   attr?: ComponentAttr;
   [k: string]: any;
 };
-export type ComponentPropsExtra = {
+export type ComponentPropsExtra = ComponentPropsRaw & {
   loadPath: string;
 }
 // 渲染到画板中 节点的属性

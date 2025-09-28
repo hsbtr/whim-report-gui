@@ -13,7 +13,7 @@ const AsyncComponent = defineAsyncComponent(() => import(props.path));
 </script>
 
 <template>
-  <async-component v-bind="props.fieldProps" />
+  <AsyncComponent v-bind="props.fieldProps" />
 </template>
 
 <style lang="scss" scoped>
