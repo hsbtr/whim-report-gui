@@ -9,19 +9,42 @@ import router from '@/router';
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosRequestConfig } from "axios";
 import type { ResponseDataType } from "@/config";
 
+/**
+ * 请求 元 ，用于配置全局响应处理
+ * 如： http.get('/user/info', { meta: { skipErrorHandler: true } })
+ *     http.post('/user/edit', {}, { meta: { skipErrorHandler: true }})
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface CustomAxiosRequestConfigMeta {
   /**
    * 跳过默认错误处理
    */
   skipErrorHandler?: boolean;
   /**
+   * 接口错误提示的方式；默认使用notification
+   */
+  notifyType?: 'message' | 'notification';
+  /**
    * 接口行为名称
    */
   apiBehaviorName?: string;
   /**
    * 认证过期后的行为
-   * */
-  authErrorHandler?: 'redirect' | 'notify' | 'redirectAndStore' | 'redirectAndFull' | 'no';
+   *
+   * 可选值：
+   * - 'redirect'          重定向到登录页
+   * - 'notify'            弹出通知提示
+   * - 'clearStore'        清空本地 store 中的用户信息
+   * - 'redirectAndStore'  重定向并清空 store 的用户信息，登录后返回之前的页面
+   * - 'redirectAndFull'   重定向并 弹窗通知 清除store用户信息
+   * - 'no'                不做任何处理
+   */
+  authErrorHandler?: 'redirect' | 'notify' | 'clearStore' | 'redirectAndStore' | 'redirectAndFull' | 'no';
+  /**
+   * 下载接口使用此属性；
+   * 声明文件类型与文件名称; 文件类型为必须
+   */
+  downFileConfig?: ({ mimeType: string } | { fileType: 'zip' | 'docx' | 'xlsx' | 'pdf' | 'png' | 'jpg' | 'jpeg'; }) & { customFileType?: string };
   [key: string]: any;
 }
 
@@ -96,6 +119,9 @@ http.interceptors.request.use(
 // 响应拦截
 http.interceptors.response.use(
   async (response: AxiosResponse): Promise<any> => {
+    // 接口 200 进入接口畅通业务（通过/不通过）的处理，
+    // 其余接口状态将请求体抛入 rejected 避免其中逻辑失效
+    if (response.status !== 200) return response;
     const notifyType = response.config?.meta?.notifyType ?? 'notification';
     if (response && response.data) {
       if (response.data instanceof Blob) {
@@ -130,11 +156,11 @@ http.interceptors.response.use(
     const data = dataAdapters(error.response.data);
     const { skipErrorHandler, authErrorHandler = 'redirectAndStore', notifyType = 'notification' } = config?.meta || {};
     const UNAUTHORIZED = 401;
-    if (skipErrorHandler) return Promise.reject(error);
+    // 认证不可跳过，
     if (status === UNAUTHORIZED) {
       const { pathname } = window.location;
       // 当前页面在登录页的时候不再通知
-      if (pathname === noAccessRedirectPath) return Promise.reject();
+      if (pathname === noAccessRedirectPath) return Promise.reject(error);
       // 只有符合其中一个才会通知
       if (authErrorHandler === 'notify' || authErrorHandler === 'redirectAndFull') {
         errorNotifier.notify({
@@ -145,7 +171,7 @@ http.interceptors.response.use(
         });
       }
       // 只有符合其中一个才会清除全局store
-      if (authErrorHandler === 'redirectAndStore' || authErrorHandler === 'redirectAndFull') {
+      if (authErrorHandler === 'redirectAndStore' || authErrorHandler === 'redirectAndFull' || authErrorHandler === 'clearStore') {
         const accountStore = useAccountStore();
         accountStore.clearAccountState();
       }
@@ -159,8 +185,10 @@ http.interceptors.response.use(
           }
         });
       }
-      return Promise.reject();
+      return Promise.reject(error);
     }
+    // config.meta.skipErrorHandler 为 true 跳过错误处理 ， 该属性可以单独接口中设置
+    if (skipErrorHandler) return Promise.reject(error);
     const realErrorMessage = data && typeof data === 'object' ? data[DataConfig.MESSAGE] : undefined;
     const errorDescription = realErrorMessage ?? error.message ?? errorMessages[status as number];
     // 优先使用接口返回的错误报告
