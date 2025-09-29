@@ -65,15 +65,17 @@ const http: AxiosInstance = axios.create({
   withCredentials: true,
 });
 /**
- * 统一响应结果
+ * 数据适配器
  * 针对一个项目对应多个服务并且接口的响应数据结构不一致，将由这个来抹平差异
  * @param {Object} data
+ * @param {import('axios').Axios.AxiosResponse} [response] 响应体
  */
-const dataAdapters = (data: Record<string, any>): ResponseDataType => {
+const dataAdapters = (data: Record<string, any>, { status }: AxiosResponse = {}): ResponseDataType => {
+  if ([201, 202, 204].includes(status)) return { [DataConfig.CODE]: 200, [DataConfig.DATA]: undefined, [DataConfig.MESSAGE]: errorMessages[status] };
   if (typeof data !== "object") {
     return {
-      [DataConfig.CODE]: 209,
-      [DataConfig.DATA]: undefined,
+      [DataConfig.CODE]: 203,
+      [DataConfig.DATA]: data || undefined,
       [DataConfig.MESSAGE]: '响应结构与约定不符'
     };
   }
@@ -121,7 +123,7 @@ http.interceptors.response.use(
   async (response: AxiosResponse): Promise<any> => {
     // 接口 200 进入接口畅通业务（通过/不通过）的处理，
     // 其余接口状态将请求体抛入 rejected 避免其中逻辑失效
-    if (response.status !== 200) return response;
+    if (![200, 201, 202, 204].includes(response.status)) return response;
     const notifyType = response.config?.meta?.notifyType ?? 'notification';
     if (response && response.data) {
       if (response.data instanceof Blob) {
@@ -140,7 +142,9 @@ http.interceptors.response.use(
       }
     }
     const { skipErrorHandler, apiBehaviorName } = response.config?.meta || {};
-    const responseData = dataAdapters(response.data);
+    // 此处 适配器 内部应该对 http status 201 202 204等做特殊处理；
+    // 因为他们的返回 data 可能是空或者是字符串，但他们是已经通过业务逻辑的
+    const responseData = dataAdapters(response.data, response);
     if (httpConfig.actionSuccessCode !== responseData[DataConfig.CODE] && !skipErrorHandler) {
       errorNotifier.notify({
         title: `${apiBehaviorName || '操作'}失败`,
@@ -153,7 +157,6 @@ http.interceptors.response.use(
   },
   (error: any): any => {
     const { status, config } = (error.response as AxiosResponse) ?? {};
-    const data = dataAdapters(error.response.data);
     const { skipErrorHandler, authErrorHandler = 'redirectAndStore', notifyType = 'notification' } = config?.meta || {};
     const UNAUTHORIZED = 401;
     // 认证不可跳过，
@@ -174,6 +177,7 @@ http.interceptors.response.use(
       if (authErrorHandler === 'redirectAndStore' || authErrorHandler === 'redirectAndFull' || authErrorHandler === 'clearStore') {
         const accountStore = useAccountStore();
         accountStore.clearAccountState();
+        if (authErrorHandler === 'clearStore') return Promise.reject(error);
       }
       if (authErrorHandler === 'redirect' || authErrorHandler === 'redirectAndStore' || authErrorHandler === 'redirectAndFull') {
         const query = getQueryParams();
@@ -189,8 +193,8 @@ http.interceptors.response.use(
     }
     // config.meta.skipErrorHandler 为 true 跳过错误处理 ， 该属性可以单独接口中设置
     if (skipErrorHandler) return Promise.reject(error);
-    const realErrorMessage = data && typeof data === 'object' ? data[DataConfig.MESSAGE] : undefined;
-    const errorDescription = realErrorMessage ?? error.message ?? errorMessages[status as number];
+    // http status 非2xx情况下，响应体的错误信息不应该暴露给用户
+    const errorDescription = errorMessages[status as number] ?? error.message;
     // 优先使用接口返回的错误报告
     errorNotifier.notify({
       notifyType,
