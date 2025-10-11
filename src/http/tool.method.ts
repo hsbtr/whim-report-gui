@@ -4,24 +4,8 @@ import axios from "axios";
 
 /**
  * 请求记录map
- * @type {Map<any, any>}
  */
-const pendingRequest = new Map();
-
-/**
- * 用于把当前请求信息添加到pendingRequest对象中
- * @param config {object} 请求对象
- */
-export function addPendingRequest(config: InternalAxiosRequestConfig) {
-  const requestKey = generateReqKey(config);
-  config.cancelToken =
-    config.cancelToken ||
-    new axios.CancelToken((cancel) => {
-      if (!pendingRequest.has(requestKey)) {
-        pendingRequest.set(requestKey, cancel);
-      }
-    });
-}
+const pendingRequest = new Map<any, AbortController>();
 
 /**
  * 用于根据当前请求的信息，生成请求 Key
@@ -33,26 +17,38 @@ export function generateReqKey(config: InternalAxiosRequestConfig) {
 }
 
 /**
+ * 用于把当前请求信息添加到pendingRequest对象中
+ * @param config {object} 请求对象
+ */
+export function addPendingRequest(config: InternalAxiosRequestConfig) {
+  const requestKey = generateReqKey(config);
+  const abortController = new AbortController();
+  config.signal = abortController.signal;
+  if (!pendingRequest.has(requestKey)) {
+    pendingRequest.set(requestKey, abortController);
+  }
+}
+
+/**
  * 删除请求
  * @param config {object} 请求对象
  */
 export function removePendingRequest(config: InternalAxiosRequestConfig) {
   const requestKey = generateReqKey(config);
   if (pendingRequest.has(requestKey)) {
-    const cancelToken = pendingRequest.get(requestKey);
-    cancelToken(requestKey);
+    const abortController = pendingRequest.get(requestKey);
+    abortController?.abort();
     pendingRequest.delete(requestKey);
   }
 }
-type ResultType = { result?: any; resultCode: string | number; resultMsg: string };
 
+
+type ResultType = { result?: any; resultCode: string | number; resultMsg: string };
 /**
  * 支持下载多种类型文件（ZIP、XLSX、DOCX、PDF、图片等）的工具方法。
  * 可自动识别后端返回是否为错误 JSON 流，支持自定义文件名与 MIME 类型。
  */
-
 type DownloadWithinFileType = 'zip' | 'docx' | 'xlsx' | 'pdf' | 'png' | 'jpg' | 'jpeg';
-
 type DownloadWithinFileMaps = {
   [K in DownloadWithinFileType]: string;
 };
