@@ -70,7 +70,8 @@ const http: AxiosInstance = axios.create({
  * @param {Object} data
  * @param {import('axios').Axios.AxiosResponse} [response] 响应体
  */
-const dataAdapters = (data: Record<string, any>, { status }: AxiosResponse = {}): ResponseDataType => {
+const dataAdapters = (data: Record<string, any>, response?: AxiosResponse): ResponseDataType => {
+  const { status } = response || { status: 200 };
   if ([201, 202, 204].includes(status)) return { [DataConfig.CODE]: 200, [DataConfig.DATA]: undefined, [DataConfig.MESSAGE]: errorMessages[status] };
   if (typeof data !== "object") {
     return {
@@ -156,6 +157,7 @@ http.interceptors.response.use(
     return responseData;
   },
   (error: any): any => {
+    // TODO 取消请求错误通知会出现异常，后续加
     const { status, config } = (error.response as AxiosResponse) ?? {};
     const { skipErrorHandler, authErrorHandler = 'redirectAndStore', notifyType = 'notification' } = config?.meta || {};
     const UNAUTHORIZED = 401;
