@@ -18,6 +18,7 @@ Dockerfile*
 .eslintrc.cjs
 .prettierignore
 .eslintcache
+.commitlint.config.cjs
 
 LICENSE
 

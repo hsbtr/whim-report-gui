@@ -1,0 +1,10 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🧹 正在运行 Lint 检查..."
+npx lint-staged || exit 1
+
+echo "🔍 正在进行类型检查..."
+npx vue-tsc --noEmit --skipLibCheck || exit 1
+
+echo "✅ 所有检查通过，允许提交。"

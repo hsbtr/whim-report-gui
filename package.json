@@ -13,8 +13,11 @@
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "lint:tsc": "vue-tsc --noEmit --skipLibCheck",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --report-unused-disable-directives",
+    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --cache --fix",
+    "format": "prettier --write src/",
+    "prepare": "husky"
   },
   "dependencies": {
     "@vicons/antd": "^0.12.0",
@@ -42,6 +45,8 @@
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/jsdom": "^21.1.6",
@@ -59,7 +64,9 @@
     "eslint": "^8.57.0",
     "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-vue": "^9.23.0",
+    "husky": "^9.1.7",
     "jsdom": "^24.0.0",
+    "lint-staged": "^16.2.4",
     "mockjs": "^1.1.0",
     "npm-run-all2": "^6.1.2",
     "prettier": "^3.2.5",
@@ -71,6 +78,15 @@
     "vite-plugin-vue-devtools": "^7.0.25",
     "vitest": "^1.4.0",
     "vue-tsc": "^2.0.11"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx,vue,cjs,mjs,cts,mts}": [
+      "eslint --cache --fix --report-unused-disable-directives",
+      "prettier --write"
+    ],
+    "*.{css,scss,less,html,json,md}": [
+      "prettier --write"
+    ]
   },
   "engines": {
     "node": ">=20.8.1"
