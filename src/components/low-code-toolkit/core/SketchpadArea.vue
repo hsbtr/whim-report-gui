@@ -11,7 +11,6 @@ import type { ComponentPropsExtra } from '../types';
 const lowCodeState = useLowCodeState();
 const context = useLowCodeContext();
 
-
 const onDrop = async (e: DragEvent) => {
   e.preventDefault();
   try {
@@ -21,7 +20,6 @@ const onDrop = async (e: DragEvent) => {
     if (!componentProps) return;
     const uuid = createUuid(componentProps.uuid);
     const newNodeProps = mergeNodeProps(componentProps, { uuid });
-    console.log(newNodeProps);
     newNodeProps.attr.x = e.offsetX - newNodeProps.attr.w / 2;
     newNodeProps.attr.y = e.offsetY - newNodeProps.attr.h / 2;
     context.addNode?.(newNodeProps);
@@ -41,7 +39,7 @@ const onMousedown = () => {};
     <SketchpadRuler>
       <div class="sketchpad-content">
         <SketchpadBoxSelect>
-          <div v-for="(node, index) in lowCodeState.nodes" :key="node.id || node.uuid">
+          <template v-for="(node, index) in lowCodeState.nodes" :key="node.id || node.uuid">
             <ShapeBox :is-point="false" :node-props="node" :style="getPositionStyle(node.attr, index)">
               <LazyLoadNode
                 :key="node.id || node.uuid"
@@ -50,7 +48,7 @@ const onMousedown = () => {};
                 :style="getNodeSizeStyle(node.attr)"
               />
             </ShapeBox>
-          </div>
+          </template>
         </SketchpadBoxSelect>
       </div>
     </SketchpadRuler>
@@ -86,5 +84,4 @@ const onMousedown = () => {};
     background: #c8ebfb;
   }
 }
-
 </style>

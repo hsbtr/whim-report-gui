@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash-es';
 import { Pkg } from '../common/constant';
 import { commonNodeProps } from '../common/node.props';
 import type { PkgModule, PkgComponentMeta, PkgType, ComponentAttr, NodeProps, ComponentPropsExtra } from '../types';
@@ -5,7 +6,10 @@ import type { PkgModule, PkgComponentMeta, PkgType, ComponentAttr, NodeProps, Co
 /**
  * 将模块配置转化为Schema
  */
-export const moduleToArray = <M extends PkgModule, S extends PkgComponentMeta>(modules: M, processFn?: (item: M[keyof M]['default']) => S): S[] => {
+export const moduleToArray = <M extends PkgModule, S extends PkgComponentMeta>(
+  modules: M,
+  processFn?: (item: M[keyof M]['default']) => S
+): S[] => {
   return Object.keys(modules).map((key) => {
     const [_, _path] = key.split('/');
     const cfg = modules[key]?.default as S;
@@ -23,7 +27,7 @@ export const transformPkgOptions = (): PkgSelectOption[] => {
   return Object.keys(Pkg).map((key) => {
     return {
       label: Pkg[key as PkgType].label,
-      value: key as PkgType,
+      value: key as PkgType
     };
   });
 };
@@ -70,7 +74,7 @@ export const JSONParse = <T>(data: string, opts: { exclude: string[] } = { exclu
     if (exclude.includes(k)) return v;
     // 过滤函数值表达式
     if (typeof v === 'string') {
-      const someValue = exclude.some(excludeValue => v.indexOf(excludeValue) > -1);
+      const someValue = exclude.some((excludeValue) => v.indexOf(excludeValue) > -1);
       if (someValue) return v;
     }
     // 还原函数值
@@ -92,7 +96,7 @@ export const JSONParse = <T>(data: string, opts: { exclude: string[] } = { exclu
  * 将物料中定义的FieldProps 与 公共的NodeProps 合并
  */
 export const mergeNodeProps = (props: ComponentPropsExtra, { uuid }: { uuid: string }): NodeProps => {
-  return { ...commonNodeProps, ...props, uuid };
+  return { ...cloneDeep(commonNodeProps), ...cloneDeep(props), uuid };
 };
 
 /**
@@ -105,7 +109,7 @@ export const getPositionStyle = (attr: ComponentAttr, index: number) => {
   return {
     zIndex: index + 1,
     left: `${attr.x}px`,
-    top: `${attr.y}px`,
+    top: `${attr.y}px`
   };
 };
 /**
@@ -116,15 +120,16 @@ export const getNodeSizeStyle = (attr: ComponentAttr) => {
   if (!attr) return {};
   return {
     width: `${attr.w}px`,
-    height: `${attr.h}px`,
+    height: `${attr.h}px`
   };
 };
 /**
  * 生成 uuid
  */
 export const createUuid = (prefix?: string) => {
-  const id = (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
-    ? crypto.randomUUID()
-    : `${Date.now()}-${Math.random() * 1000}`;
+  const id =
+    typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random() * 1000}`;
   return prefix ? `${prefix}-${id}` : id;
 };

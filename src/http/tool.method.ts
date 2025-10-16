@@ -1,6 +1,5 @@
-import Qs from "qs";
-import type { AxiosResponse, InternalAxiosRequestConfig } from "axios";
-import axios from "axios";
+import Qs from 'qs';
+import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
 /**
  * 请求记录map
@@ -13,7 +12,7 @@ const pendingRequest = new Map<any, AbortController>();
  */
 export function generateReqKey(config: InternalAxiosRequestConfig) {
   const { method, url, params, data } = config;
-  return [method, url, Qs.stringify(params), Qs.stringify(data)].join("&");
+  return [method, url, Qs.stringify(params), Qs.stringify(data)].join('&');
 }
 
 /**
@@ -42,7 +41,6 @@ export function removePendingRequest(config: InternalAxiosRequestConfig) {
   }
 }
 
-
 type ResultType = { result?: any; resultCode: string | number; resultMsg: string };
 /**
  * 支持下载多种类型文件（ZIP、XLSX、DOCX、PDF、图片等）的工具方法。
@@ -60,7 +58,7 @@ const fileTypeMaps: DownloadWithinFileMaps = {
   pdf: 'application/pdf',
   png: 'image/png',
   jpg: 'image/jpeg',
-  jpeg: 'image/jpeg',
+  jpeg: 'image/jpeg'
 };
 
 type MustFileType = {
@@ -71,8 +69,8 @@ type MustFileType = {
   /**
    * MIME类型
    */
-  mimeType?: never
-}
+  mimeType?: never;
+};
 type MustMimeType = {
   /**
    * MIME类型
@@ -81,10 +79,10 @@ type MustMimeType = {
   /**
    * 文件类型
    */
-  fileType?: never
-}
+  fileType?: never;
+};
 // 优先使用fileType; 当内置类型不满足需要使用mimeType
-type TypeOption = MustFileType  | MustMimeType;
+type TypeOption = MustFileType | MustMimeType;
 
 interface BaseOptions {
   /** 自定义下载文件名（不含扩展名） */
@@ -97,7 +95,7 @@ type MustResponse = {
    * 响应体
    */
   response: AxiosResponse;
-  stream?: never
+  stream?: never;
 };
 // 这是一个文件流；它需要你提供准确的文件名；否则使用默认的
 type MustStream = {
@@ -105,7 +103,7 @@ type MustStream = {
    * 文件流
    */
   stream: Blob;
-  response?: never
+  response?: never;
 };
 
 // 优先使用response; 当拿不到response时使用stream，合并 TypeOption 内部属性
@@ -197,20 +195,19 @@ export function download(options: DownloadOptions): Promise<DownloadResult> {
   });
 }
 
-
 export function getCookie(key: string): string | undefined {
   //获取所有的cookie "psw=1234we; rememberme=true; user=Annie"
   const totalCookie = document.cookie;
   //获取参数所在的位置
-  const cookieStartAt = totalCookie.indexOf(key + "=");
+  const cookieStartAt = totalCookie.indexOf(key + '=');
   //判断参数是否存在 不存在直接返回
   if (cookieStartAt === -1) {
     return;
   }
   //获取参数值的开始位置
-  const valueStartAt = totalCookie.indexOf("=", cookieStartAt) + 1;
+  const valueStartAt = totalCookie.indexOf('=', cookieStartAt) + 1;
   //以;来获取参数值的结束位置
-  let valueEndAt = totalCookie.indexOf(";", cookieStartAt);
+  let valueEndAt = totalCookie.indexOf(';', cookieStartAt);
   //如果没有;则是最后一位
   if (valueEndAt === -1) {
     valueEndAt = totalCookie.length;
@@ -218,7 +215,6 @@ export function getCookie(key: string): string | undefined {
   //截取参数值的字符串
   return unescape(totalCookie.substring(valueStartAt, valueEndAt));
 }
-
 
 type NotifyType = 'message' | 'notification';
 
@@ -280,7 +276,7 @@ export class SmartErrorNotifier {
     const grouped = this.groupByDescription(this.buffer);
 
     for (const [desc, errors] of grouped.entries()) {
-      const sources = errors.map(err => `• ${err.source || err.title}`).join('\n');
+      const sources = errors.map((err) => `• ${err.source || err.title}`).join('\n');
       const title = `${errors[0].title}（共 ${errors.length} 条）`;
       const content = sources ? `${desc}\n\n来源：\n${sources}` : desc;
 
@@ -314,4 +310,3 @@ export class SmartErrorNotifier {
     return map;
   }
 }
-
