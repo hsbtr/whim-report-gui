@@ -56,12 +56,12 @@ const pointConfig: PointCfg[] = [
 
 // 锚点位置
 const getPointStyle = (config: PointCfg, attr: NodeProps['attr']) => {
-  const { w: width, h: height } = attr;
-  const [newLeft, newTop] = config.position(width, height);
+  // const { w: width, h: height } = attr;
+  // const [newLeft, newTop] = config.position(width, height);
 
   return {
-    left: `${newLeft}px`,
-    top: `${newTop}px`,
+    // left: `${newLeft}px`,
+    // top: `${newTop}px`,
     cursor: config.cursor
   };
 };
@@ -85,7 +85,7 @@ const onMousePoint = (e: MouseEvent, point: string, attr: NodeProps['attr']) => 
     <template v-if="!props.isPoint">
       <div
         v-for="cfg in pointConfig"
-        :class="['shape-point', cfg.point]"
+        :class="['shape-point', `shape-point-${cfg.point}`]"
         :key="cfg.point"
         :style="getPointStyle(cfg, props.nodeProps.attr)"
         @mousedown="onMousePoint($event, cfg.point, props.nodeProps.attr)"
@@ -96,8 +96,10 @@ const onMousePoint = (e: MouseEvent, point: string, attr: NodeProps['attr']) => 
 
 <style lang="scss" scoped>
 .shape-box {
+  padding: 16px;
   position: absolute;
   cursor: move;
+  box-sizing: border-box;
   .lock {
     cursor: default !important;
   }
@@ -105,41 +107,90 @@ const onMousePoint = (e: MouseEvent, point: string, attr: NodeProps['attr']) => 
     display: none;
   }
   .shape-point {
-    width: 7px;
-    height: 7px;
+    width: 4px;
+    height: 4px;
+    position: absolute;
     z-index: 1;
-    background: #ffffff;
+    background: v-bind(primaryColor);
     border-radius: 5px;
-    border: 3px solid v-bind(primaryColor);
-    transform: translate(-40%, -30%);
-    //.left-top {}
-    .top, .button {
-      width: 30px;
-    }
-    .top {
-      transform: translate(-50%, -50%);
-    }
-    .button {
-      transform: translate(-50%, -30%);
-    }
-    .left, .right {
-      height: 30px;
-    }
-    .left {
-      transform: translate(-45%, -50%);
-    }
-    .right {
-      transform: translate(-20%, -50%);
-    }
-    .right-top, .right-bottom {
-      transform: translate(-30%, -30%);
-    }
   }
+  .shape-point-top,
+  .shape-point-bottom {
+    width: 30px;
+  }
+  .shape-point-top {
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+  }
+  .shape-point-bottom {
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+  }
+  .shape-point-left,
+  .shape-point-right {
+    height: 30px;
+  }
+  .shape-point-left {
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%);
+  }
+  .shape-point-right {
+    top: 50%;
+    right: 0;
+    transform: translate(0, -50%);
+  }
+  .shape-point-left-top,
+  .shape-point-right-top,
+  .shape-point-left-bottom,
+  .shape-point-right-bottom {
+    background: transparent;
+    border-width: 3px;
+    border-style: solid;
+    border-color: v-bind(primaryColor);
+    border-radius: 0;
+  }
+  .shape-point-left-top,
+  .shape-point-right-top {
+    width: 15px;
+    height: 15px;
+    top: 0;
+  }
+  .shape-point-left-top {
+    left: 0;
+    border-right: none;
+    border-bottom: none;
+  }
+  .shape-point-right-top {
+    right: 0;
+    border-left: none;
+    border-bottom: none;
+  }
+  .shape-point-left-bottom,
+  .shape-point-right-bottom {
+    width: 15px;
+    height: 15px;
+    bottom: 0;
+  }
+  .shape-point-left-bottom {
+    left: 0;
+    border-right: none;
+    border-top: none;
+  }
+  .shape-point-right-bottom {
+    right: 0;
+    border-left: none;
+    border-top: none;
+  }
+
   .shape-modal {
     position: absolute;
     top: 0;
     left: 0;
-    .shape-modal-select, .shape-modal-change {
+    .shape-modal-select,
+    .shape-modal-change {
       width: 100%;
       height: 100%;
       position: absolute;
@@ -155,7 +206,8 @@ const onMousePoint = (e: MouseEvent, point: string, attr: NodeProps['attr']) => 
     }
     .shape-modal-change {
       border: 2px solid rgba(0, 0, 0, 0);
-      .select-active, .hover-active {
+      .select-active,
+      .hover-active {
         border-color: v-bind(primaryColor);
         border-width: 2px;
       }
