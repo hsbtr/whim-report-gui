@@ -1,19 +1,26 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useThemeVars, NLayout, NLayoutHeader, NLayoutContent } from 'naive-ui';
 import { LowCode, StencilArea, SketchpadArea } from '@/components/low-code-toolkit';
+import type { LowCodeProps } from '@/components/low-code-toolkit';
 
 const themes = useThemeVars();
-
+const sketchpadRulerProps = computed<LowCodeProps['sketchpadRuler']>(() => {
+  return {
+    palette: {
+      baseBackgroundColor: themes.value.cardColor,
+      backgroundColor: themes.value.bodyColor
+    }
+  };
+});
 onMounted(() => {
   // console.log(1);
 });
-
 </script>
 
 <template>
-  <LowCode mode="edit" dark>
-    <NLayout>
+  <LowCode class="low-code-box" mode="edit" :sketchpad-ruler="sketchpadRulerProps" dark>
+    <NLayout class="low-code-layout">
       <NLayoutHeader class="editor-header" bordered inverted></NLayoutHeader>
       <NLayoutContent class="editor-content">
         <StencilArea class="sten-cli-panel" />
@@ -24,13 +31,22 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
+.low-code-box {
+  height: 100vh;
+  .low-code-layout {
+    height: 100%;
+  }
+}
 .editor-header {
   height: 64px;
 }
-.editor-content :deep(.n-layout-scroll-container) {
+.editor-content {
+  height: calc(100% - 64px);
+  :deep(.n-layout-scroll-container) {
     width: 100%;
     display: flex;
     flex-wrap: nowrap;
+  }
 }
 .sten-cli-panel {
   flex: 0 0 300px;

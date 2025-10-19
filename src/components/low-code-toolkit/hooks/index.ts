@@ -1,7 +1,8 @@
-import { inject, ref, reactive, onBeforeUnmount } from 'vue';
+import { inject, onBeforeUnmount, reactive, ref } from 'vue';
 import { throttle } from 'lodash-es';
-import { LowCodeShare, LowCodeEvent } from '../common/constant';
-import type { LowCodeStateType, NodeProps } from '../types';
+import { LowCodeEvent, LowCodeShare } from '../common/constant';
+import type { LowCodeStateType, NodeProps, LowCodeProps } from '../types';
+
 export function useLowCodeState() {
   const defaultState = reactive<LowCodeStateType>({
     mode: 'view',
@@ -18,31 +19,33 @@ export function useLowCodeState() {
       width: 0,
       height: 0,
       visible: false,
-      source: null,
+      source: null
     },
     mousePosition: {
       startX: 0,
       startY: 0,
       x: 0,
-      y: 0,
-    },
+      y: 0
+    }
   });
   return inject<LowCodeStateType>(LowCodeShare.globalState, defaultState);
 }
 
 type LowCodeContext = {
+  config?: LowCodeProps;
   addNode?: (node: NodeProps) => void;
   select?: (node: NodeProps) => void;
 };
 export function useLowCodeContext(): LowCodeContext {
+  const config = inject<LowCodeProps>(LowCodeShare.config);
   const addNode = inject<LowCodeContext['addNode']>(LowCodeEvent.addNode);
   const select = inject<LowCodeContext['select']>(LowCodeEvent.select);
   return {
+    config,
     addNode,
-    select,
+    select
   };
 }
-
 
 // 框选 Hook
 export function useBoxSelect() {
@@ -150,6 +153,6 @@ export function useBoxSelect() {
 
   return {
     isSelecting,
-    mousedown,
+    mousedown
   };
 }

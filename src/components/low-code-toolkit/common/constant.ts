@@ -4,7 +4,7 @@
 export const Pkg = {
   chart: { label: '图表', value: 'chart' },
   control: { label: '控件', value: 'control' },
-  exhibit: { label: '展示', value: 'exhibit' },
+  exhibit: { label: '展示', value: 'exhibit' }
 } as const;
 /**
  * ECharts 图表类型全集
@@ -39,26 +39,27 @@ export const ChartOpts = {
   themeRiver: { label: '主题河流图', value: 'themeRiver' },
 
   // 自定义
-  custom: { label: '自定义图表', value: 'custom' }              // 自定义系列，可绘制任意图形
+  custom: { label: '自定义图表', value: 'custom' } // 自定义系列，可绘制任意图形
 } as const;
 
 export const ControlOpts = {
-  frame: { label: '边框', value: 'frame' },
+  frame: { label: '边框', value: 'frame' }
 } as const;
 export const ExhibitOpts = {
-  list: { label: '表格', value: 'list' },
+  list: { label: '表格', value: 'list' }
 } as const;
 export const PkgComponent = {
   ...ChartOpts,
   ...ControlOpts,
-  ...ExhibitOpts,
+  ...ExhibitOpts
 } as const;
 
 export const LowCodeShare = {
+  config: 'LowCodeConfig',
   globalState: 'LowCodeState',
-  dragKey: 'DragKey',
+  dragKey: 'DragKey'
 } as const;
 export const LowCodeEvent = {
   select: 'onSelect',
-  addNode: 'addNode',
+  addNode: 'addNode'
 } as const;

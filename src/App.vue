@@ -20,19 +20,12 @@ const locale = computed(() => {
 const dateLocale = computed(() => {
   return uiStore.getLang === LanguageEnum.ZH ? dateZhCN : dateEnUS;
 });
-
 </script>
 
 <template>
-  <app-config-provider
-    :theme="dark"
-    :locale="locale"
-    :date-locale="dateLocale"
-    :hljs="hlJS"
-  >
+  <app-config-provider :theme="dark" :locale="locale" :date-locale="dateLocale" :hljs="hlJS" :abstract="true">
     <router-view />
   </app-config-provider>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

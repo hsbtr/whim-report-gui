@@ -38,4 +38,16 @@ export interface LowCodeStateType {
   selectionBox: SelectionBox;
   mousePosition: MousePosition;
 }
-export interface LowCodeProps extends Pick<LowCodeStateType, 'mode' | 'dark'> {}
+
+export type LowCodeProps = {
+  // 模式
+  mode: 'edit' | 'view';
+  // 黑暗模式
+  dark: boolean;
+  sketchpadRuler?: {
+    palette?: {
+      baseBackgroundColor?: string;
+      backgroundColor?: string;
+    };
+  };
+};

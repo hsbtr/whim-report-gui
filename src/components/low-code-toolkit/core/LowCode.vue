@@ -1,16 +1,23 @@
 <script setup lang="ts">
-import { reactive, provide } from 'vue';
+import { reactive, provide, useAttrs } from 'vue';
 import { LowCodeEvent, LowCodeShare } from '../common/constant';
 import SketchpadArea from './SketchpadArea.vue';
 import type { LowCodeStateType, LowCodeProps, NodeProps } from '../types';
 
-const { mode = 'view', dark = false } = defineProps<LowCodeProps>();
+// type LowCodeProps = {
+//   mode: 'edit' | 'view';
+//   dark: boolean;
+//   sketchpadBgColor?: string;
+//   bg?: string;
+// }
+// const props = withDefaults(defineProps<LowCodeProps>(), { mode: 'view', dark: false });
+const props = defineProps<LowCodeProps>();
 
 const lowCodeState = reactive<LowCodeStateType>({
   nodes: [],
   selected: [],
-  mode: mode,
-  dark: dark,
+  mode: props.mode,
+  dark: props.dark,
   canvas: {
     offset: 0,
     scale: 1
@@ -33,14 +40,14 @@ const lowCodeState = reactive<LowCodeStateType>({
     y: 0
   }
 });
-
 const onSelect = (node: NodeProps) => {
   lowCodeState.selected.push(node);
 };
 const onAddNode = (node: NodeProps) => {
   lowCodeState.nodes.push(node);
 };
-
+console.log(props);
+provide(LowCodeShare.config, props);
 provide(LowCodeShare.globalState, lowCodeState);
 provide(LowCodeEvent.select, onSelect);
 provide(LowCodeEvent.addNode, onAddNode);
