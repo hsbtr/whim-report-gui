@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useLowCodeState } from '../hooks';
+import { useLowCodeContext } from '../hooks';
 
-const lowCodeState = useLowCodeState();
+const { state } = useLowCodeContext();
 const borderColor = '#51d6a9';
 const lines = computed(() => {
-  const box = lowCodeState.selectionBox;
+  const box = state.selectionBox;
   if (!box.visible) return [];
   return [];
 });

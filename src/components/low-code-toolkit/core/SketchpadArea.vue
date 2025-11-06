@@ -1,16 +1,32 @@
 <script setup lang="ts">
+import { useTemplateRef } from 'vue';
+import { useDebounceFn } from '@vueuse/core';
 import LazyLoadNode from './LazyLoadNode.vue';
 import SketchpadBoxSelect from './SketchpadBoxSelect.vue';
 import SketchpadRuler from './SketchpadRuler.vue';
 import ShapeBox from './ShapeBox.vue';
 import { LowCodeShare } from './../common/constant';
-import { useLowCodeState, useLowCodeContext } from '../hooks';
+import { useLowCodeContext, useWindowResizeObserver } from '../hooks';
 import { JSONParse, mergeNodeProps, getNodeSizeStyle, getPositionStyle, createUuid } from '../tools';
 import type { ComponentPropsExtra } from '../types';
 
-const lowCodeState = useLowCodeState();
 const context = useLowCodeContext();
+const sketchpadRef = useTemplateRef('sketchpad');
 
+const adjustScale = useDebounceFn(() => {
+  if (sketchpadRef.value === null) return;
+  const boxWidth = sketchpadRef.value.clientWidth - context.state.canvas.offset * 2 - 5;
+  const boxHeight = sketchpadRef.value.clientHeight - context.state.canvas.offset * 4;
+  const canvasScale = parseFloat((context.state.width / context.state.height).toFixed(5));
+  const boxScale = parseFloat((boxWidth / boxHeight).toFixed(5));
+  if (boxScale > canvasScale) {
+    const scale = parseFloat(((boxHeight * canvasScale) / context.state.width).toFixed(5));
+    context.state.canvas.scale = scale > 1 ? 1 : scale;
+  } else {
+    const scale = parseFloat((boxWidth / canvasScale / context.state.height).toFixed(5));
+    context.state.canvas.scale = scale > 1 ? 1 : scale;
+  }
+}, 200);
 const onDrop = async (e: DragEvent) => {
   e.preventDefault();
   try {
@@ -32,14 +48,18 @@ const onDragover = (e: DragEvent) => {
   e.stopPropagation();
 };
 const onMousedown = () => {};
+
+useWindowResizeObserver(() => {
+  adjustScale();
+});
 </script>
 
 <template>
-  <div class="sketchpad-wrapper" @mousedown="onMousedown" @drop="onDrop" @dragover="onDragover">
+  <div class="sketchpad-wrapper" ref="sketchpad" @mousedown="onMousedown" @drop="onDrop" @dragover="onDragover">
     <SketchpadRuler>
       <div class="sketchpad-content">
         <SketchpadBoxSelect>
-          <template v-for="(node, index) in lowCodeState.nodes" :key="node.id || node.uuid">
+          <template v-for="(node, index) in context.state.nodes" :key="node.id || node.uuid">
             <ShapeBox :is-point="false" :node-props="node" :style="getPositionStyle(node.attr, index)">
               <LazyLoadNode
                 :key="node.id || node.uuid"

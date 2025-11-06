@@ -1,34 +1,31 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import SketchRuler from 'vue3-sketch-ruler';
-import { useLowCodeState } from '../hooks';
+import { useLowCodeContext } from '../hooks';
 import type { SketchRulerProps } from 'vue3-sketch-ruler';
 import 'vue3-sketch-ruler/lib/style.css';
 
-const lowCodeState = useLowCodeState();
+const context = useLowCodeContext();
 const thick = 16;
 
 const scale = computed(() => {
-  return lowCodeState.canvas.scale;
+  return context.state.canvas.scale;
 });
 
 const palette = computed<SketchRulerProps['palette']>(() => {
-  return lowCodeState.dark
-    ?
-    {
-      bgColor: '#18181c',
-      longfgColor: '#4d4d4d',
-      shortfgColor: '#4d4d4d',
-      fontColor: '#eff1f4',
-      lineColor: '#f6f5f5',
-      shadowColor: '#18181c',
-      borderColor: '#18181c',
-      cornerActiveColor: '#18181c'
-    }
-    :
-    {};
+  return context.state.dark
+    ? {
+        bgColor: '#18181c',
+        longfgColor: '#4d4d4d',
+        shortfgColor: '#4d4d4d',
+        fontColor: '#eff1f4',
+        lineColor: '#f6f5f5',
+        shadowColor: '#18181c',
+        borderColor: '#18181c',
+        cornerActiveColor: '#18181c'
+      }
+    : {};
 });
-
 </script>
 
 <template>
@@ -44,7 +41,7 @@ const palette = computed<SketchRulerProps['palette']>(() => {
       :palette="palette"
     >
       <template #default>
-        <div data-type="page" style="width: 800px; height: 800px;">
+        <div data-type="page" style="width: 800px; height: 800px">
           <slot />
         </div>
       </template>
@@ -65,6 +62,5 @@ const palette = computed<SketchRulerProps['palette']>(() => {
   overflow: auto;
   user-select: none;
   padding-bottom: 0;
-
 }
 </style>

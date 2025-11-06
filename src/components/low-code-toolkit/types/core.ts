@@ -30,6 +30,8 @@ export interface LowCodeStateType {
   dark: boolean;
   // 画布属性
   canvas: CanvasOpts;
+  width: number;
+  height: number;
   // 物料区到画板时的状态
   isAdd: boolean;
   // 画板中移动

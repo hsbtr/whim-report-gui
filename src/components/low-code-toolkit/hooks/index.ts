@@ -1,52 +1,56 @@
-import { inject, ref, reactive, onBeforeUnmount } from 'vue';
-import { throttle } from 'lodash-es';
+import { inject, ref, reactive, onMounted, onBeforeUnmount } from 'vue';
+import { throttle, cloneDeep } from 'lodash-es';
 import { LowCodeShare, LowCodeEvent } from '../common/constant';
 import type { LowCodeStateType, NodeProps } from '../types';
-export function useLowCodeState() {
-  const defaultState = reactive<LowCodeStateType>({
-    mode: 'view',
-    nodes: [],
-    selected: [],
-    dark: false,
-    canvas: { offset: 0, scale: 1 },
-    isAdd: false,
-    isMove: false,
-    isSelect: false,
-    selectionBox: {
-      left: 0,
-      top: 0,
-      width: 0,
-      height: 0,
-      visible: false,
-      source: null,
-    },
-    mousePosition: {
-      startX: 0,
-      startY: 0,
-      x: 0,
-      y: 0,
-    },
-  });
-  return inject<LowCodeStateType>(LowCodeShare.globalState, defaultState);
-}
+
+export const defaultLowCodeState: LowCodeStateType = {
+  mode: 'view',
+  dark: false,
+  nodes: [],
+  selected: [],
+  canvas: { offset: 20, scale: 1 },
+  width: 1920,
+  height: 1080,
+  isAdd: false,
+  isMove: false,
+  isSelect: false,
+  selectionBox: {
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+    visible: false,
+    source: null
+  },
+  mousePosition: {
+    startX: 0,
+    startY: 0,
+    x: 0,
+    y: 0
+  }
+};
 
 type LowCodeContext = {
+  state: LowCodeStateType;
   addNode?: (node: NodeProps) => void;
   select?: (node: NodeProps) => void;
 };
 export function useLowCodeContext(): LowCodeContext {
+  const state = inject<LowCodeContext['state']>(
+    LowCodeShare.globalState,
+    reactive({ ...cloneDeep(defaultLowCodeState) })
+  );
   const addNode = inject<LowCodeContext['addNode']>(LowCodeEvent.addNode);
   const select = inject<LowCodeContext['select']>(LowCodeEvent.select);
   return {
+    state,
     addNode,
-    select,
+    select
   };
 }
 
-
 // 框选 Hook
 export function useBoxSelect() {
-  const state = useLowCodeState();
   const context = useLowCodeContext();
   const isSelecting = ref(false);
 
@@ -93,7 +97,7 @@ export function useBoxSelect() {
     }
 
     // 遍历组件，判断是否完全包含
-    state.nodes.forEach((item) => {
+    context.state.nodes.forEach((item) => {
       const { x, y, w, h } = item.attr;
       const targetAttr = { x1: x, y1: y, x2: x + w, y2: y + h };
 
@@ -135,9 +139,9 @@ export function useBoxSelect() {
     startOffsetY = e.offsetY;
     startScreenX = e.screenX;
     startScreenY = e.screenY;
-    scale = state.canvas.scale;
-    state.mousePosition.startX = startOffsetX;
-    state.mousePosition.startY = startOffsetY;
+    scale = context.state.canvas.scale;
+    context.state.mousePosition.startX = startOffsetX;
+    context.state.mousePosition.startY = startOffsetY;
 
     document.addEventListener('mousemove', mousemove);
     document.addEventListener('mouseup', mouseup);
@@ -150,6 +154,15 @@ export function useBoxSelect() {
 
   return {
     isSelecting,
-    mousedown,
+    mousedown
   };
+}
+
+export function useWindowResizeObserver(callback: () => void) {
+  onMounted(() => {
+    if (callback) window.addEventListener('resize', callback);
+  });
+  onBeforeUnmount(() => {
+    if (callback) window.removeEventListener('resize', callback);
+  });
 }

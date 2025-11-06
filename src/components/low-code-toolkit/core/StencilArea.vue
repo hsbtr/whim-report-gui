@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import { NIcon, NInput, NScrollbar, NSelect, useThemeVars } from 'naive-ui';
 import { SearchOutline } from '@vicons/ionicons5';
 import { useDebounceFn } from '@vueuse/core';
-import { useLowCodeState } from './../hooks';
+import { useLowCodeContext } from './../hooks';
 import { pkgMetas } from '../packages';
 import { jsonStringify, transformPkgOptions } from '../tools';
 import { LowCodeShare } from '../common/constant';
@@ -15,10 +15,10 @@ const pkgs = transformPkgOptions();
 const [defaultSelectedPkg] = pkgs;
 
 // const addNode = inject(LowCodeEvent.addNode);
-const lowCodeState = useLowCodeState();
+const context = useLowCodeContext();
 const globalTheme = useThemeVars();
 const selectedPkg = ref(defaultSelectedPkg.value);
-const selectedComponentType = ref<SelectedComponentType>('all' );
+const selectedComponentType = ref<SelectedComponentType>('all');
 const searchComponentName = ref('');
 
 const supplementTypeOpt = { label: '全部', value: 'all' };
@@ -26,7 +26,9 @@ const primaryColor = computed(() => {
   return globalTheme.value.primaryColor;
 });
 const componentTypeOptions = computed(() => {
-  const newOpts = pkgMetas.filter((pkg) => pkg.pkgType === selectedPkg.value).map((pkg) => ({ label: pkg.title, value: pkg.type }));
+  const newOpts = pkgMetas
+    .filter((pkg) => pkg.pkgType === selectedPkg.value)
+    .map((pkg) => ({ label: pkg.title, value: pkg.type }));
   return [supplementTypeOpt, ...newOpts];
 });
 // 组件
@@ -54,13 +56,12 @@ const onDragStart = (event: DragEvent, item: ComponentPropsRaw) => {
     const [componentName] = item.uuid.split('-');
     const loadPath = `../packages/${parentPkg.type}/${componentName}`;
     event.dataTransfer?.setData(LowCodeShare.dragKey, jsonStringify({ ...item, loadPath }));
-    lowCodeState.isAdd = true;
+    context.state.isAdd = true;
   }
 };
 const onDragEnd = () => {
-  lowCodeState.isAdd = false;
+  context.state.isAdd = false;
 };
-
 </script>
 
 <template>
@@ -68,12 +69,7 @@ const onDragEnd = () => {
     <div class="component-area">
       <div class="head-search-filter">
         <div class="filter-space">
-          <NSelect
-            class="custom-select-size"
-            :options="pkgs"
-            :value="selectedPkg"
-            @update:value="onPkgChange"
-          />
+          <NSelect class="custom-select-size" :options="pkgs" :value="selectedPkg" @update:value="onPkgChange" />
           <NSelect
             class="custom-select-size"
             :options="componentTypeOptions"
@@ -101,7 +97,7 @@ const onDragEnd = () => {
               <img :src="item.icon" alt="" />
             </div>
             <div class="title">
-              <span>{{item.title}}</span>
+              <span>{{ item.title }}</span>
             </div>
           </div>
         </template>
@@ -148,7 +144,7 @@ const onDragEnd = () => {
         border: 1px solid v-bind(primaryColor);
         img {
           width: 100%;
-          height:  100%;
+          height: 100%;
         }
       }
       .title {
@@ -169,5 +165,4 @@ const onDragEnd = () => {
     }
   }
 }
-
 </style>
