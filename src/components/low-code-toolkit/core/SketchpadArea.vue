@@ -8,8 +8,9 @@ import ShapeBox from './ShapeBox.vue';
 import { LowCodeShare } from './../common/constant';
 import { useLowCodeContext, useWindowResizeObserver } from '../hooks';
 import { JSONParse, mergeNodeProps, getNodeSizeStyle, getPositionStyle, createUuid } from '../tools';
-import type { ComponentPropsExtra } from '../types';
+import type { ComponentPropsExtra, SketchpadAreaProps } from '../types';
 
+const props = defineProps<SketchpadAreaProps>();
 const context = useLowCodeContext();
 const sketchpadRef = useTemplateRef('sketchpad');
 
@@ -56,7 +57,7 @@ useWindowResizeObserver(() => {
 
 <template>
   <div class="sketchpad-wrapper" ref="sketchpad" @mousedown="onMousedown" @drop="onDrop" @dragover="onDragover">
-    <SketchpadRuler>
+    <SketchpadRuler v-bind="props.ruler">
       <div class="sketchpad-content">
         <SketchpadBoxSelect>
           <template v-for="(node, index) in context.state.nodes" :key="node.id || node.uuid">
