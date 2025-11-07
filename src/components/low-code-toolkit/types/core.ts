@@ -46,12 +46,6 @@ export type LowCodeProps = {
   mode: 'edit' | 'view';
   // 黑暗模式
   dark: boolean;
-  sketchpadRuler?: {
-    palette?: {
-      baseBackgroundColor?: string;
-      backgroundColor?: string;
-    };
-  };
 };
 export type SketchpadRulerProps = {
   palette?: {
