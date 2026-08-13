@@ -291,8 +291,8 @@ pnpm format   # Prettier --write src/
 只检查本次修改时应使用：
 
 ```sh
-pnpm exec eslint <modified files>
-pnpm exec prettier --check <modified files>
+pnpm run lint:check -- <modified files>
+pnpm run format:check -- <modified files>
 ```
 
 ### 9.3 当前测试覆盖

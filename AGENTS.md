@@ -28,7 +28,7 @@
 ## NEVER
 
 - 不要在需求不明确时默默假设。存在多种理解时，说明判断依据并选择最小安全方案。
-- 不要修改与当前任务无关的文件，如果它阻塞验证，应该明确报告阻塞。
+- 不要修改与当前任务无关的文件；如果无关问题阻塞验证，应明确报告。
 - 不要覆盖、删除或回滚无法确定来源的本地修改。
 - 不要新增当前任务没有要求的功能、配置项或扩展点。
 - 不要未经说明就新增生产依赖、更换包管理器或重新生成无关锁文件。
@@ -38,7 +38,6 @@
 - 不要顺手重构、格式化或优化无关内容。
 - 不要绕过已有状态管理、路由、Axios 实例、国际化或主题方案。
 - 不要为了测试方便修改生产模块边界、增加无业务价值的导出或改变运行时代码，测试必须适配现有生产结构。
-
 
 ## SHOULD
 
@@ -66,16 +65,16 @@
 本项目使用 **pnpm**。验证命令以 `package.json` 中实际存在的脚本和本地依赖为准，不要改用 npm 或 yarn，也不要为执行验证临时安装未声明的工具。
 
 - 修改 `src` 下 `.js`、`.jsx`、`.ts`、`.tsx` 或 `.vue` 文件时，按本次修改文件运行：
-  - `pnpm exec eslint <modified src files>`
+  - `pnpm run lint:check -- <modified src files>`
 - 修改源码、样式或其他可被 Prettier 格式化的文件时，按本次修改文件运行：
-  - `pnpm exec prettier --check <modified files>`
+  - `pnpm run format:check -- <modified files>`
 - 修改 TypeScript、Vue 组件、类型声明或可能影响类型和调用链的内容时，运行：
   - `pnpm type-check`
 - 涉及页面交互、路由跳转、布局样式、弹窗、上传下载或需要浏览器确认时，使用匹配场景的开发服务验证页面：
   - 如果已有可用服务，直接复用现有服务和 URL，不要重复启动。
   - 如果没有可用服务，运行 `pnpm dev`。
 - 如果仓库中存在与本次改动直接相关的测试，运行对应的非 watch 模式测试：
-  - `pnpm exec vitest run <related test files or filters>`
+  - `pnpm run test:unit:run -- <related test files or filters>`
 - 局部源码改动不默认运行构建。涉及公共模块接口、路由、状态管理、构建配置、环境变量、跨模块改动、交付前验证，或用户明确要求时，运行：
   - `pnpm build`
 - 修改 Vite、Vitest、TypeScript、ESLint、Prettier、Cypress 等配置文件时，优先运行该配置直接影响的现有命令。
