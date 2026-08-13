@@ -34,7 +34,7 @@
 - `vite-plugin-vue-devtools`：`8.2.1`
 - `vitest`：`4.1.10`
 
-Vite 8 要求 Node.js `^20.19.0 || >=22.12.0`，因此 `package.json` 的 `engines.node` 同步调整为该范围。当前本地 Node.js 22.21.1 满足要求。
+Vite 8 要求 Node.js `^20.19.0 || >=22.12.0`，`vue-i18n` 11.4.8 要求 Node.js `>=22`，ESLint 10 要求 Node.js `^20.19.0 || ^22.13.0 || >=24`；所选工具链取交集后，`package.json` 的 `engines.node` 调整为 `>=22.13.0`。当前本地 Node.js 22.21.1 满足要求。
 
 `vite.config.ts` 的开发服务默认监听地址从 `0.0.0.0` 改为 `127.0.0.1`。需要局域网访问时，可由开发者通过 Vite CLI 显式传入 `--host 0.0.0.0`，避免默认暴露源码和环境文件。
 
@@ -66,6 +66,8 @@ Axios 和 qs 的公共使用方式保持不变：业务接口继续复用 `src/h
 
 别名继续向 `vite-plugin-mock` 提供名为 `mockjs` 的依赖入口，使插件和现有 Mock 模板无需改写。现有 `mock/myProject.ts` 的接口、分页查询和 Mock.js 数据模板保持不变。
 
+由于 `vite-plugin-mock` 的 peer dependency 仍声明为 `mockjs >=1.1.0`，而兼容实现自身版本号为 0.3.7，`pnpm-workspace.yaml` 通过 `peerDependencyRules.allowedVersions` 明确允许 `mockjs` 使用 0.3.7。该规则只消除已人工确认兼容的版本号误判，不忽略其他 peer dependency 问题。
+
 `vite-plugin-mock` 当前最新版本仍为 3.0.2，并支持 Vite 4 以上版本，因此暂不改动其版本；升级后通过启动开发服务和请求 Mock 接口验证兼容性。
 
 ### 4. 传递依赖与剩余告警
@@ -82,6 +84,7 @@ Axios 和 qs 的公共使用方式保持不变：业务接口继续复用 `src/h
 
 - `package.json`：直接依赖、开发依赖和 Node.js engines。
 - `pnpm-lock.yaml`：由 pnpm 根据新依赖组合重新解析。
+- `pnpm-workspace.yaml`：记录 `mockjs` 兼容实现的 peer dependency 例外。
 - `vite.config.ts`：安全的默认监听地址，以及升级所需的最小兼容修改。
 - `vitest.config.ts`：仅在 Vitest 4 兼容性要求下修改。
 - `src/components/ve-chart/VBar.vue`、`src/components/ve-chart/VLine.vue`：仅在 ECharts 6 类型或 API 确认不兼容时修改。
