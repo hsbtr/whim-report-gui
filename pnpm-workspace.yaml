@@ -1,4 +1,9 @@
 allowBuilds:
+  '@parcel/watcher': true
   cypress: true
   esbuild: true
   vue-demi: true
+
+peerDependencyRules:
+  allowedVersions:
+    mockjs: 0.3.7
