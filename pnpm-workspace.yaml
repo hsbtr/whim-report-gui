@@ -7,3 +7,6 @@ allowBuilds:
 peerDependencyRules:
   allowedVersions:
     mockjs: 0.3.7
+
+overrides:
+  'vite-plugin-mock>path-to-regexp': 6.3.0
