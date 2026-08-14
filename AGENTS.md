@@ -69,7 +69,7 @@
 - 涉及页面交互、路由跳转、布局样式、弹窗、上传下载或需要浏览器确认时，使用开发服务验证页面：
   - 先访问默认地址 `http://127.0.0.1:5173`；确认是当前项目时直接复用，否则运行 `pnpm dev` 并使用其输出地址。
 - 如果仓库中存在与本次改动直接相关的 Vitest 测试，运行对应的非 watch 模式测试：
-  - `pnpm run test:unit:run -- <related test files or filters>`
+  - `pnpm test:unit --run -- <related test files or filters>`
 - 修改 Cypress 用例或涉及其覆盖的完整流程时，先运行 `pnpm build`，再运行：
   - `pnpm test:e2e`
 - 局部源码改动不默认运行构建。涉及公共模块接口、路由、状态管理、构建配置、环境变量、跨模块改动、交付前验证，或用户明确要求时，运行：
