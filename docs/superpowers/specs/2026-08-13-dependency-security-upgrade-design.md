@@ -78,15 +78,19 @@ Axios 和 qs 的公共使用方式保持不变：业务接口继续复用 `src/h
 
 如某个公告在上游最新版中仍无修复版本，记录依赖路径、触发条件和剩余风险，不通过不受支持的 `pnpm.overrides` 强行替换不兼容版本。
 
+实际审计最后只剩 `vite-plugin-mock@3.0.2` 下的 `path-to-regexp@6.2.2` 高危公告。插件声明范围为 `^6.2.1`，已修复的 6.3.0 位于兼容范围内，但 pnpm 的定向更新和去重都不会刷新这个唯一叶子版本，因此 `pnpm-workspace.yaml` 使用包级限定的 `vite-plugin-mock>path-to-regexp: 6.3.0` override。该约束不跨越上游兼容范围，且已通过真实 Mock 请求验证。
+
 ## 修改范围
 
 预计修改：
 
 - `package.json`：直接依赖、开发依赖和 Node.js engines。
 - `pnpm-lock.yaml`：由 pnpm 根据新依赖组合重新解析。
-- `pnpm-workspace.yaml`：记录 `mockjs` 兼容实现的 peer dependency 例外。
+- `pnpm-workspace.yaml`：记录 `mockjs` 兼容实现的 peer dependency 例外、`@parcel/watcher` 构建许可和 Mock 路由依赖的包级安全约束。
 - `vite.config.ts`：安全的默认监听地址，以及升级所需的最小兼容修改。
 - `vitest.config.ts`：仅在 Vitest 4 兼容性要求下修改。
+- `eslint.config.js`、`.eslintrc.cjs`：迁移到 ESLint 10 flat config。
+- `tsconfig.node.json`、`src/shims-vue.d.ts`：适配 TypeScript 5.9 和新版 Vue tsconfig 的模块检测规则。
 - `src/components/ve-chart/VBar.vue`、`src/components/ve-chart/VLine.vue`：仅在 ECharts 6 类型或 API 确认不兼容时修改。
 - `docs/ARCHITECTURE.md`：同步构建、测试、图表和 Mock 依赖说明。
 

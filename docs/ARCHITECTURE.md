@@ -8,23 +8,23 @@
 
 ## 2. 技术栈
 
-| 领域     | 选型                       | 作用                               |
-| -------- | -------------------------- | ---------------------------------- |
-| 应用框架 | Vue 3                      | Composition API 与 Vue SFC         |
-| 语言     | TypeScript                 | 应用、配置、测试和物料类型         |
-| 构建工具 | Vite 5                     | 开发服务、构建、别名和模块自动发现 |
-| UI       | Naive UI                   | 布局、菜单、表单、弹窗和主题       |
-| 路由     | Vue Router 4               | 静态页面路由                       |
-| 状态管理 | Pinia                      | 当前用于 UI 主题和语言状态         |
-| HTTP     | Axios                      | 统一请求、响应和错误拦截           |
-| 图表     | ECharts + vue-echarts      | 图表基础组件                       |
-| 拖拽     | vuedraggable               | 低代码画布方向的拖拽能力           |
-| Mock     | vite-plugin-mock + Mock.js | 本地接口模拟                       |
-| 单元测试 | Vitest + Vue Test Utils    | jsdom 环境下的组件测试             |
-| E2E      | Cypress                    | 浏览器端流程测试                   |
-| 包管理   | pnpm                       | 依赖与脚本执行                     |
+| 领域     | 选型                           | 作用                               |
+| -------- | ------------------------------ | ---------------------------------- |
+| 应用框架 | Vue 3                          | Composition API 与 Vue SFC         |
+| 语言     | TypeScript                     | 应用、配置、测试和物料类型         |
+| 构建工具 | Vite 8                         | 开发服务、构建、别名和模块自动发现 |
+| UI       | Naive UI                       | 布局、菜单、表单、弹窗和主题       |
+| 路由     | Vue Router 4                   | 静态页面路由                       |
+| 状态管理 | Pinia                          | 当前用于 UI 主题和语言状态         |
+| HTTP     | Axios                          | 统一请求、响应和错误拦截           |
+| 图表     | ECharts 6 + vue-echarts 8      | 图表基础组件                       |
+| 拖拽     | vuedraggable                   | 低代码画布方向的拖拽能力           |
+| Mock     | vite-plugin-mock + better-mock | 本地接口模拟                       |
+| 单元测试 | Vitest 4 + Vue Test Utils      | jsdom 环境下的组件测试             |
+| E2E      | Cypress 15                     | 浏览器端流程测试                   |
+| 包管理   | pnpm                           | 依赖与脚本执行                     |
 
-Node.js 版本要求以 `package.json` 为准，当前为 `>=20.8.1`。
+Node.js 版本要求以 `package.json` 为准，当前为 `>=22.13.0`。`pnpm dev` 默认只监听 `127.0.0.1:5173`；确需局域网访问时应显式传入 `--host`，不要默认暴露开发服务。
 
 ## 3. 运行时启动流程
 
@@ -179,7 +179,9 @@ data  业务数据
 
 ### 7.4 Mock
 
-`vite.config.ts` 配置 `vite-plugin-mock` 从 `mock/` 加载接口，当前 `enable: true`。`mock/myProject.ts` 提供 `/api/project/page` 的 GET 分页数据，用于项目列表本地开发。该 Mock 当前返回 `message`，而公共响应协议读取 `msg`；分页数据不受影响，但调用侧取得的消息字段会是空值。
+`vite.config.ts` 配置 `vite-plugin-mock` 从 `mock/` 加载接口，当前 `enable: true`。依赖名仍为 `mockjs`，但通过包别名解析到 API 兼容的 `better-mock@0.3.7`，因此现有 Mock 模板无需改写。`pnpm-workspace.yaml` 只为这一兼容别名放宽 `mockjs` peer 版本，并将插件允许范围内的 `path-to-regexp` 固定到已修复的 6.3.0。
+
+`mock/myProject.ts` 提供 `/api/project/page` 的 GET 分页数据，用于项目列表本地开发。该 Mock 当前返回 `message`，而公共响应协议读取 `msg`；分页数据不受影响，但调用侧取得的消息字段会是空值。
 
 修改真实接口联调方式前，应先确认 Mock 是否仍会拦截相同 URL。
 
@@ -286,7 +288,7 @@ pnpm lint     # ESLint --fix，范围是整个仓库
 pnpm format   # Prettier --write src/
 ```
 
-`.prettierrc.json` 当前使用了 `"arrowParens": true`，但仓库安装的 Prettier 3 要求该值为 `"always"` 或 `"avoid"`。因此，现有 `pnpm format` 和 Prettier check 会在处理文件前报配置错误；这是仓库既有问题，不应把该错误误判为目标文件格式错误。
+`.prettierrc.json` 当前使用 Prettier 3 支持的 `"arrowParens": "always"`，格式化和格式检查脚本可以直接使用。
 
 只检查本次修改时应使用：
 
