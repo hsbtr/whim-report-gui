@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
       VueDevTools(),
       viteMockServe({
         mockPath: 'mock',
-        enable: env.VITE_APP_MOCK === 'enable',
+        enable: env.VITE_MOCK_ENABLE === 'on' || env.VITE_APP_MOCK === 'enable',
         watchFiles: true,
       }),
     ],
@@ -25,8 +25,8 @@ export default defineConfig(({ mode }) => {
       }
     },
     server: {
-      host: '0.0.0.0',
-      port: 5173,
+      host: env.VITE_DEV_SERVER_HOST || '0.0.0.0',
+      port: Number(env.VITE_DEV_SERVER_PORT || 5173)
     }
   };
 });
