@@ -11,9 +11,9 @@ import type { ConfigProviderProps, GlobalTheme } from 'naive-ui';
 const uiStore = useUiStore();
 const hlJS = useHLJSInit();
 
-const dark = computed(() => {
+const dark = computed<GlobalTheme | null>(() => {
   return uiStore.getTheme === 'dark' ? darkTheme : null;
-}) as GlobalTheme;
+});
 const locale = computed(() => {
   return uiStore.getLang === LanguageEnum.ZH ? zhCN : enUS;
 });
