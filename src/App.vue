@@ -6,12 +6,12 @@ import AppConfigProvider from '@/components/popups/AppConfigProvider.vue';
 import { useUiStore } from '@/stores';
 import { LanguageEnum } from '@/config';
 import { useHLJSInit } from '@/hooks';
-import type { ConfigProviderProps } from 'naive-ui';
+import type { GlobalTheme } from 'naive-ui';
 
 const uiStore = useUiStore();
 const hlJS = useHLJSInit();
 
-const dark = computed<ConfigProviderProps['theme']>(() => {
+const dark = computed<GlobalTheme | null>(() => {
   return uiStore.getTheme === 'dark' ? darkTheme : null;
 });
 const locale = computed(() => {
