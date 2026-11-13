@@ -64,15 +64,18 @@ export function download(source: AxiosResponse<Blob> | Blob, opts: DownloadOpts)
   }
 
   const down = (blob: Blob, fileName: string) => {
-    const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.style.display = 'none';
-    link.href = url;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    const url = window.URL.createObjectURL(blob);
+    try {
+      link.style.display = 'none';
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+    } finally {
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    }
   };
 
   return new Promise((resolve) => {
