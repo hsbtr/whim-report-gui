@@ -88,6 +88,24 @@ describe('HTTP 核心配置', () => {
 
 describe('HTTP 统一响应', () => {
   it.each([
+    ['配置对象', (config: AxiosRequestConfig) => request<{ id: number }>({ ...config, url: '/test' })],
+    ['URL 和配置', (config: AxiosRequestConfig) => request<{ id: number }>('/test', config)]
+  ] as const)('直接调用 request 支持%s并返回适配后的响应', async (_name, send) => {
+    const adapter = vi.fn<AxiosAdapter>(async (config) => ({
+      data: { code: 0, data: { id: 1 } },
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config
+    }));
+    const result = await send({ adapter, params: { id: 1 } });
+
+    expect(adapter).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ url: '/test', params: { id: 1 } }));
+    expectTypeOf(result.data).toEqualTypeOf<{ id: number } | undefined>();
+    expect(result).toEqual({ success: true, data: { id: 1 }, message: '' });
+  });
+
+  it.each([
     { body: { code: 500, message: '导出失败' }, success: false, skip: false },
     { body: { code: 500, message: '导出失败' }, success: false, skip: true },
     { body: { code: 0, message: '成功' }, success: true, skip: false },
@@ -202,7 +220,7 @@ describe('HTTP 统一响应', () => {
     vi.stubGlobal('URL', DownloadURL);
     const blob = new Blob(['file'], { type: 'application/octet-stream' });
     Object.defineProperty(blob, 'text', { value: async () => 'file' });
-    const result = await http.get('/download', undefined, responseConfig(blob));
+    const result = await http.get('/download', responseConfig(blob));
     expect(result).toEqual({ success: true, data: undefined, message: '下载成功' });
     expect(click).toHaveBeenCalledOnce();
     expect(notify).not.toHaveBeenCalled();
