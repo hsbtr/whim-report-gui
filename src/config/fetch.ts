@@ -1,13 +1,7 @@
-// 改变 此三个常量值及直接操作请求响应返回值
-export enum DataConfig {
-  CODE = "code",
-  MESSAGE = "message",
-  DATA = "data",
-}
-export enum CodeStatus {
-  SUCCESS = 200,
-  SERVER_ERROR = 500,
-}
+import type { ApiPagingReturn, ApiResponse } from '@/app.config';
+// 该属性直接确定从 本地缓存中以什么key娶token
+// export const cookieKey = "Authorization";
+export const cookieKey = 'Token';
 
 export enum DataTypeEnum {
   STATIC = 0,
@@ -15,21 +9,15 @@ export enum DataTypeEnum {
   POND
 }
 
-type BasePrivateDomain = string | number;
-
 /**
  * 请求的响应的 data 类型
  */
-export interface ResponseDataType<T = any> {
-  [DataConfig.CODE]: BasePrivateDomain;
-  [DataConfig.MESSAGE]: string;
-  [DataConfig.DATA]: T;
-}
+export type ResponseDataType<T = unknown> = ApiResponse<T>;
 
 /**
  * 所有接口返回类型
  */
-export type ApiDataType<T = any> = Promise<ResponseDataType<T>>;
+export type { ApiReturn as ApiDataType } from '@/app.config';
 
 /**
  * 分页参数类型
@@ -39,17 +27,11 @@ export interface PagingQuery {
   current?: number;
   keyword?: string;
 }
-interface PagingData<T> {
-  total: number;
-  current: number;
-  pageSize: number;
-  data: T[];
-}
 
 /**
  * 分页返回类型
  */
-export type PagingType<T> = ApiDataType<PagingData<T>>;
+export type PagingType<T> = ApiPagingReturn<T>;
 
 /**
  * 响应错误功能处理的额外参数项目
@@ -63,16 +45,4 @@ export type BaseFunctionQuery = {
    * 4 无任何动作
    */
   responseAction: 1 | 2 | 3 | 4;
-};
-
-
-export const httpConfig = {
-  /**
-   * 该属性直接确定从 本地缓存中以什么key娶token
-   */
-  authKey: "Token",
-  /**
-   * 响应成功后，逻辑成功的代码；用于全局处理响应操作错误提示
-   */
-  actionSuccessCode: 200,
 };
