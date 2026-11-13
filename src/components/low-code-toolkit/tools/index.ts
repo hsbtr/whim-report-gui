@@ -1,23 +1,7 @@
 import { cloneDeep } from 'lodash-es';
 import { Pkg } from '../common/constant';
 import { commonNodeProps } from '../common/node.props';
-import type { PkgModule, PkgComponentMeta, PkgType, ComponentAttr, NodeProps, ComponentPropsExtra } from '../types';
-
-/**
- * 将模块配置转化为Schema
- */
-export const moduleToArray = <M extends PkgModule, S extends PkgComponentMeta>(
-  modules: M,
-  processFn?: (item: M[keyof M]['default']) => S
-): S[] => {
-  return Object.keys(modules).map((key) => {
-    const [_, _path] = key.split('/');
-    const cfg = modules[key]?.default as S;
-    // const fieldPath = `../packages/${path}/${cfg.type}.vue`;
-    if (typeof processFn === 'function') return processFn({ ...cfg });
-    return { ...cfg };
-  });
-};
+import type { PkgType, ComponentAttr, NodeProps, ComponentPropsExtra } from '../types';
 
 type PkgSelectOption = { label: string; value: PkgType };
 /**

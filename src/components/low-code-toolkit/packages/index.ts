@@ -1,7 +1,6 @@
-import { moduleToArray } from '../tools';
-import type { PkgComponentMeta, PkgModule } from '../types';
+import type { PkgComponentMeta } from '../types';
 
-const metaModules: PkgModule = import.meta.glob('./*/meta.ts', { eager: true });
+const metaModules = import.meta.glob<PkgComponentMeta>('./*/meta.ts', { eager: true, import: 'default' });
 
-export const pkgMetas = moduleToArray<PkgModule, PkgComponentMeta>(metaModules);
+export const pkgMetas = Object.values(metaModules);
 

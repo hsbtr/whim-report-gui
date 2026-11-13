@@ -14,7 +14,6 @@ type SelectedComponentType = PkgComponentType | 'all';
 const pkgs = transformPkgOptions();
 const [defaultSelectedPkg] = pkgs;
 
-// const addNode = inject(LowCodeEvent.addNode);
 const context = useLowCodeContext();
 const globalTheme = useThemeVars();
 const selectedPkg = ref(defaultSelectedPkg.value);
@@ -25,20 +24,17 @@ const supplementTypeOpt = { label: '全部', value: 'all' };
 const primaryColor = computed(() => {
   return globalTheme.value.primaryColor;
 });
-const componentTypeOptions = computed(() => {
-  const newOpts = pkgMetas
-    .filter((pkg) => pkg.pkgType === selectedPkg.value)
-    .map((pkg) => ({ label: pkg.title, value: pkg.type }));
-  return [supplementTypeOpt, ...newOpts];
-});
-// 组件
-const componentGroup = computed(() => {
-  if (selectedComponentType.value === 'all') {
-    return pkgMetas.filter((pkg) => pkg.pkgType === selectedPkg.value).flatMap((pkg) => pkg.fieldProps);
-  }
-  const findPkg = pkgMetas.find((pkg) => pkg.type === selectedComponentType.value);
-  return findPkg ? findPkg.fieldProps : [];
-});
+const categoryMetas = computed(() => pkgMetas.filter(({ pkgType }) => pkgType === selectedPkg.value));
+const componentTypeOptions = computed(() => [
+  supplementTypeOpt,
+  ...categoryMetas.value.map(({ title, type }) => ({ label: title, value: type }))
+]);
+const componentGroup = computed(() =>
+  categoryMetas.value
+    .filter(({ type }) => selectedComponentType.value === 'all' || type === selectedComponentType.value)
+    .flatMap(({ fieldProps }) => fieldProps)
+    .filter(({ title }) => title.includes(searchComponentName.value))
+);
 const onPkgChange = (value: PkgType) => {
   selectedPkg.value = value;
   selectedComponentType.value = 'all';
@@ -46,12 +42,12 @@ const onPkgChange = (value: PkgType) => {
 const onComponentTypeChange = (value: SelectedComponentType) => {
   selectedComponentType.value = value;
 };
-const onSearchChange = useDebounceFn((value) => {
+const onSearchChange = useDebounceFn((value: string) => {
   searchComponentName.value = value;
 }, 1000);
 const onDragStart = (event: DragEvent, item: ComponentPropsRaw) => {
   // 通过 item.uuid 找到对应的 pkg
-  const parentPkg = pkgMetas.find((pkg) => pkg.fieldProps.some((field) => field.uuid === item.uuid));
+  const parentPkg = categoryMetas.value.find((pkg) => pkg.fieldProps.some((field) => field.uuid === item.uuid));
   if (parentPkg) {
     const [componentName] = item.uuid.split('-');
     const loadPath = `../packages/${parentPkg.type}/${componentName}`;
@@ -84,23 +80,21 @@ const onDragEnd = () => {
         </NInput>
       </div>
       <NScrollbar class="sten-cli-main">
-        <template v-for="item in componentGroup" :key="item.key">
-          <div
-            class="component-item"
-            v-if="item.title.includes(searchComponentName)"
-            :key="item.key"
-            @dragstart="onDragStart($event, item)"
-            @dragend="onDragEnd"
-            :draggable="item?.disabled || true"
-          >
-            <div class="thumbnail">
-              <img :src="item.icon" alt="" />
-            </div>
-            <div class="title">
-              <span>{{ item.title }}</span>
-            </div>
+        <div
+          v-for="item in componentGroup"
+          :key="item.uuid"
+          class="component-item"
+          @dragstart="onDragStart($event, item)"
+          @dragend="onDragEnd"
+          :draggable="true"
+        >
+          <div class="thumbnail">
+            <img :src="item.icon" alt="" />
           </div>
-        </template>
+          <div class="title">
+            <span>{{ item.title }}</span>
+          </div>
+        </div>
       </NScrollbar>
     </div>
   </div>

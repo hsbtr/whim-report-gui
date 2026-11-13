@@ -48,4 +48,3 @@ export type PkgComponentMeta = {
   key: string;
   fieldProps: ComponentPropsRaw[];
 };
-export type PkgModule = Record<string, { default: PkgComponentMeta }>;

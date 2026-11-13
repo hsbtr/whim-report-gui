@@ -99,10 +99,8 @@ useWindowResizeObserver(() => {
     margin: 10px;
   }
 }
-:global() {
-  .ghost {
-    opacity: 0.5;
-    background: #c8ebfb;
-  }
+:global(.ghost) {
+  opacity: 0.5;
+  background: #c8ebfb;
 }
 </style>
