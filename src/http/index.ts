@@ -1,23 +1,43 @@
-import axios from "axios";
-import Qs from "qs";
-import { Download, getCookie } from "./tool.method";
-import { codeMessage } from "./tool.constant";
-import { DataConfig, failureCodeGroup, cookieKey, noAccessRedirectPath } from "@/config";
-import type { InternalAxiosRequestConfig, AxiosResponse } from "axios";
-import type { ResponseDataType } from "@/config";
+/* eslint-disable @typescript-eslint/no-explicit-any -- Axios 的动态响应和请求泛型需要保留兼容性 */
 
-let env;
-try {
-  // @ts-ignore
-  env = process.env;
-} catch (e) {
-  env = import.meta.env;
+import axios from 'axios';
+import Qs from 'qs';
+import { download } from './method/download';
+import { SmartErrorNotifier } from './method/error-notifier';
+import { createCoreCfg } from './method/default.config';
+import { HTTP_RUNTIME_CONFIG } from '@/app.config';
+import { getEnvCfg, getQueryParams } from '@/utils';
+import { useAccountStore } from '@/stores';
+import router from '@/router';
+import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosRequestConfig } from 'axios';
+import type { ApiResponse, ApiReturn } from '@/app.config';
+
+export interface RequestMethods {
+  get: <T = unknown, P = any>(url: string, params?: P, config?: AxiosRequestConfig<any, P>) => ApiReturn<T>;
+
+  delete: <T = unknown, P = any>(url: string, params?: P, config?: AxiosRequestConfig<any, P>) => ApiReturn<T>;
+
+  head: <T = unknown, P = any>(url: string, params?: P, config?: AxiosRequestConfig<any, P>) => ApiReturn<T>;
+
+  options: <T = unknown, P = any>(url: string, params?: P, config?: AxiosRequestConfig<any, P>) => ApiReturn<T>;
+
+  post: <T = unknown, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>) => ApiReturn<T>;
+
+  put: <T = unknown, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>) => ApiReturn<T>;
+
+  patch: <T = unknown, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>) => ApiReturn<T>;
+
+  postForm: <T = unknown, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>) => ApiReturn<T>;
+
+  putForm: <T = unknown, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>) => ApiReturn<T>;
 }
-// const mode = env.NODE_ENV || env.MODE;
-const APP_BASE_URL = env.VITE_APP_HTTP_PREFIX;
 
-const http = axios.create({
-  baseURL: APP_BASE_URL || "/api/",
+const { VITE_APP_HTTP_PREFIX } = getEnvCfg();
+const errorNotifier = new SmartErrorNotifier();
+const { fieldNames, dataAdapter, getAuth, getMessage, noAccessRedirectPath } = createCoreCfg(HTTP_RUNTIME_CONFIG);
+
+const http: AxiosInstance = axios.create({
+  baseURL: VITE_APP_HTTP_PREFIX || '/api/',
   timeout: 5000,
   // 对params进行序列化
   paramsSerializer: function (params: any): string {
@@ -25,159 +45,185 @@ const http = axios.create({
     // arrayFormat: 'brackets' 传入 ids: [1, 2, 3] 体现形式：ids[]=1&ids[]=2&ids[]=3
     // arrayFormat: 'repeat' 传入 ids: [1, 2, 3] 体现形式： ids=1&ids=2&ids=3
     // 此项配置 体现形式 ids[0]=1&ids[1]=2
-    return Qs.stringify(params, { arrayFormat: "repeat" });
+    return Qs.stringify(params, { arrayFormat: 'repeat' });
   },
-  withCredentials: true,
+  withCredentials: true
 });
-
-// 此处判断用来更改基础 url前缀
-// if (mode === "production") {
-//   // 生产环境 production
-//   http.defaults.baseURL = APP_BASE_URL || "/api/";
-// } else if (mode === "test") {
-//   // 测试环境 test
-//   http.defaults.baseURL = APP_BASE_URL || "/api/";
-// } else {
-//   // 开发环境 development
-//   http.defaults.baseURL = APP_BASE_URL || "/api/";
-// }
-
 // 请求拦截器
 http.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // 每次发送请求之前判断是否存在token，如果存在，则统一在http请求的header都加上token，不用每次请求都手动添加了
-    // 即使本地存在token，也有可能token是过期的，所以在响应拦截器中要对返回状态进行判断
-    // const token = store.state.token;
-    // token && (config.headers.Authorization = token);
-    const authorization: string | null = getCookie(cookieKey) || sessionStorage.getItem(cookieKey);
-    if (authorization) {
-      config.headers[cookieKey] = authorization;
+    const { token, key } = getAuth();
+    const method = config.method!.toLocaleLowerCase();
+    if (token) {
+      config.headers[key] = token;
     }
-    if (["post", "put"].includes(config.method!.toLocaleLowerCase())) {
-      // 参数统一处理，请求都使用data传参
-      config.data = config.data?.data;
-    } else if (["get"].includes(config.method!.toLocaleLowerCase())) {
+    if (['get'].includes(method)) {
       // 参数统一处理
-      config.params = config.data;
-      config.headers!["Accept"] = "application/json";
-      delete config.data;
-    } else if (["delete"].includes(config.method!.toLocaleLowerCase())) {
-      // 此项判断为兼容后端使用body接收参数
-      if (config.data) {
+      if (!config.params && config.data) {
         config.params = config.data;
+        delete config.data;
       }
-    } else {
-      alert("不允许的请求方法：" + config.method);
+      config.headers!['Accept'] = 'application/json';
     }
-    const headersExtra = { "Content-Type": "application/json; charset=UTF-8" };
-    // 根据请求方式更改请求头
-    config.headers = Object.assign(headersExtra, config.headers);
-    // removePendingRequest(config);
-    // addPendingRequest(config);
+    if (!config.headers['Content-Type'] && ['post', 'put', 'patch'].includes(method)) {
+      const isUpload = config.data instanceof FormData;
+      if (!isUpload) {
+        config.headers['Content-Type'] = 'application/json; charset=UTF-8';
+      }
+    }
     return config;
   },
-  (error) => {
+  (error: any) => {
     return Promise.reject(error);
-  },
+  }
 );
 
 // 响应拦截
 http.interceptors.response.use(
-  async (response: AxiosResponse<ResponseDataType>): Promise<any> => {
-    // removePendingRequest(response.config);
-    if (response && response.data) {
-      if (response.data instanceof Blob) {
-        const down = new Download(response);
-        const { resultCode: code, resultMsg: msg } = await down.inspect();
-        if (code === 200) {
-          down.xlsx();
-          return { [DataConfig.CODE]: code, [DataConfig.MESSAGE]: msg };
-        }
-        window.$notification.error({
-          title: "下载失败",
-          description: code + "：" + msg,
-        });
-        return { [DataConfig.CODE]: code, [DataConfig.MESSAGE]: msg };
-      } else {
-        if (typeof response.data === "string") {
+  async (response: AxiosResponse): Promise<any> => {
+    const {
+      skipErrorHandler,
+      apiBehaviorName,
+      notifyType = 'notification',
+      downFileConfig
+    } = response.config.meta || {};
+    const isDownload = response.data instanceof Blob;
+    let responseData: ReturnType<typeof dataAdapter>;
+    if (isDownload) {
+      const result = await download(response, {
+        ...(downFileConfig || {}),
+        fileType: downFileConfig?.fileType || 'xlsx',
+        validate: async (source) => {
+          const text = await source.text();
+          let res: unknown;
+          try {
+            res = JSON.parse(text);
+          } catch {
+            // 非 JSON 内容按文件处理；适配器异常不在这里吞掉。
+            return { allow: true, message: '' };
+          }
+          const adapted = dataAdapter(res);
           return {
-            [DataConfig.DATA]: response.data,
-            [DataConfig.CODE]: 200,
-            [DataConfig.MESSAGE]: "",
+            allow: adapted[fieldNames.success],
+            message: adapted[fieldNames.message]
           };
         }
-        const responseData = response.data || {};
-        // 此处做一个接口成功响应 但操作失败全局提示
-        if (failureCodeGroup.length > 0 && failureCodeGroup.includes(responseData[DataConfig.CODE])) {
-          window.$notification.error({
-            title: "操作失败",
-            description: responseData[DataConfig.MESSAGE],
-          });
-        }
-      }
-    }
-    // 此行为避免响应为null
-    const responseData = response.data || {};
-    return {
-      // 避免返回值为null 解构 赋默认值失效问题
-      [DataConfig.DATA]: responseData[DataConfig.DATA] || undefined,
-      [DataConfig.CODE]: responseData[DataConfig.CODE],
-      [DataConfig.MESSAGE]: responseData[DataConfig.MESSAGE],
-    };
-  },
-  (error: any): any => {
-    const { status, data } = error.response || {};
-    const { responseAction } = error.config.params || error.config.data || {};
-    if (responseAction === 4) return Promise.reject(error);
-    // removePendingRequest(error.config || {});
-    if (axios.isCancel(error)) {
-      console.log("已取消的重复请求： " + error.message);
+      });
+      responseData = dataAdapter(result);
     } else {
-      if (status === 401) {
-        const { pathname } = window.location;
-        if (typeof responseAction !== "number" || responseAction === 1 || responseAction === 2) {
-          window.$notification.error({
-            title: "授权过期",
-            description: "请重新登录！",
-          });
-        }
-        if (pathname === noAccessRedirectPath) return Promise.reject();
-        // sessionStorage.removeItem("Authorization");
-        // sessionStorage.removeItem("userId");
-        if (typeof responseAction !== "number" || responseAction === 2 || responseAction === 3) {
-          // store.dispatch(upUserInfo(undefined)); // 没有使用 redux-toolkit 就不存在此句
-        }
-        if (
-          typeof responseAction !== "number" ||
-          responseAction === 1 ||
-          responseAction === 2 ||
-          responseAction === 3
-        ) {
-          // router.navigate(`${noAccessRedirectPath}?redirect=${pathname}${search.replace("?", "&")}`, { replace: true });
-        }
-        return Promise.reject();
-      } else {
-        if (!data || typeof data === "string") {
-          const mess = codeMessage[status];
-          window.$notification.error({
-            title: `请求状态：${status}`,
-            description: mess,
-          });
-        } else {
-          // 优先使用接口返回的错误报告
-          window.$notification.error({
-            title: `${data[DataConfig.CODE]} ${data[DataConfig.MESSAGE]}`,
-            description: typeof data[DataConfig.DATA] !== "string" ? "请求有误" : data[DataConfig.DATA],
-          });
-        }
-        // BLOCKED 标记此次error事件已经报告了错误，不需要再次出发提示模块
-        return Promise.reject({ code: "BLOCKED" });
-      }
+      responseData = dataAdapter(response.data, response);
     }
-    return Promise.reject(error);
+    if (!responseData[fieldNames.success] && !skipErrorHandler) {
+      errorNotifier.notify({
+        title: `${apiBehaviorName || (isDownload ? '下载' : '操作')}失败`,
+        description: responseData[fieldNames.message],
+        notifyType,
+        source: response.config?.url || ''
+      });
+    }
+    return responseData;
   },
+  (error: any) => {
+    // TODO 取消请求错误通知会出现异常，后续加
+    const { status, config } = (error.response as AxiosResponse) ?? {};
+    const { skipErrorHandler, authErrorHandler = 'redirectAndStore', notifyType = 'notification' } = config?.meta || {};
+    const UNAUTHORIZED = 401;
+    // 认证不可跳过，
+    if (status === UNAUTHORIZED) {
+      const { pathname } = window.location;
+      console.log(router.currentRoute.value);
+      // 当前页面在登录页的时候不再通知
+      if (pathname === noAccessRedirectPath) return Promise.reject(error);
+      // 只有符合其中一个才会通知
+      if (authErrorHandler === 'notify' || authErrorHandler === 'redirectAndFull') {
+        errorNotifier.notify({
+          notifyType,
+          title: '认证过期',
+          description: '即将跳转登录页',
+          source: config?.url || ''
+        });
+      }
+      // 只有符合其中一个才会清除全局store
+      if (
+        authErrorHandler === 'redirectAndStore' ||
+        authErrorHandler === 'redirectAndFull' ||
+        authErrorHandler === 'clearStore'
+      ) {
+        const accountStore = useAccountStore();
+        accountStore.clearAccountState();
+        if (authErrorHandler === 'clearStore') return Promise.reject(error);
+      }
+      if (
+        authErrorHandler === 'redirect' ||
+        authErrorHandler === 'redirectAndStore' ||
+        authErrorHandler === 'redirectAndFull'
+      ) {
+        const query = getQueryParams();
+        router.replace({
+          path: noAccessRedirectPath,
+          query: {
+            ...query,
+            redirect: pathname
+          }
+        });
+      }
+      return Promise.reject(error);
+    }
+    // config.meta.skipErrorHandler 为 true 跳过错误处理 ， 该属性可以单独接口中设置
+    if (skipErrorHandler) return Promise.reject(error);
+    // http status 非2xx情况下，响应体的错误信息不应该暴露给用户
+    const errorDescription = getMessage(status) ?? error.message;
+    // 优先使用接口返回的错误报告
+    errorNotifier.notify({
+      notifyType,
+      title: `接口错误代码：${status}`,
+      description: errorDescription,
+      source: config?.url || ''
+    });
+    return Promise.reject(error);
+  }
 );
 
-export const request = axios;
+export const request: RequestMethods = {
+  get: <T, P>(url: string, params?: P, config: AxiosRequestConfig<any, P> = {}) => {
+    return http.get<T, ApiResponse<T>, any, P>(url, {
+      ...config,
+      params
+    });
+  },
+  delete: <T, P>(url: string, params?: P, config: AxiosRequestConfig<any, P> = {}) => {
+    return http.delete<T, ApiResponse<T>, any, P>(url, {
+      ...config,
+      params
+    });
+  },
+  head: <T, P>(url: string, params?: P, config: AxiosRequestConfig<any, P> = {}) => {
+    return http.head<T, ApiResponse<T>, any, P>(url, {
+      ...config,
+      params
+    });
+  },
+  options: <T, P>(url: string, params?: P, config: AxiosRequestConfig<any, P> = {}) => {
+    return http.options<T, ApiResponse<T>, any, P>(url, {
+      ...config,
+      params
+    });
+  },
+  post: <T, D>(url: string, data?: D, config: AxiosRequestConfig<D> = {}) => {
+    return http.post<T, ApiResponse<T>, D>(url, data, config);
+  },
+  put: <T, D>(url: string, data?: D, config: AxiosRequestConfig<D> = {}) => {
+    return http.put<T, ApiResponse<T>, D>(url, data, config);
+  },
+  patch: <T, D>(url: string, data?: D, config: AxiosRequestConfig<D> = {}) => {
+    return http.patch<T, ApiResponse<T>, D>(url, data, config);
+  },
+  postForm: <T, D>(url: string, data?: D, config: AxiosRequestConfig<D> = {}) => {
+    return http.postForm<T, ApiResponse<T>, D>(url, data, config);
+  },
+  putForm: <T, D>(url: string, data?: D, config: AxiosRequestConfig<D> = {}) => {
+    return http.putForm<T, ApiResponse<T>, D>(url, data, config);
+  }
+};
 
 export default http;
