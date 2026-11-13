@@ -5,7 +5,6 @@ import { ContextProvider, InventoryPanel } from '@/components/low-code-toolkit';
 onMounted(() => {
   // console.log(1);
 });
-
 </script>
 
 <template>
@@ -40,5 +39,4 @@ onMounted(() => {
     height: 93vh;
   }
 }
-
 </style>

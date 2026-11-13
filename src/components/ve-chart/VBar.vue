@@ -10,17 +10,14 @@ import type { BarSeriesOption } from 'echarts/charts';
 type BarProps = {
   title: string;
   dataSource: BarSeriesOption[];
-}
+};
 defineProps<BarProps>();
 use([CanvasRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent]);
 provide(THEME_KEY, 'dark');
-
 </script>
 
 <template>
   <v-chart />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -5,4 +5,3 @@ window['$loading'].finish();
 </script>
 <!-- eslint-disable vue/valid-template-root -->
 <template></template>
-

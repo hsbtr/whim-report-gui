@@ -2,7 +2,7 @@ import { useRouter, useRoute } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 
 export function useCurrentRoutes(): RouteRecordRaw[] {
-  const { matched} = useRoute();
+  const { matched } = useRoute();
   const router = useRouter();
   const routes = router.getRoutes();
   const newRoutes: RouteRecordRaw[] = [];
@@ -15,4 +15,3 @@ export function useCurrentRoutes(): RouteRecordRaw[] {
   }
   return newRoutes;
 }
-

@@ -10,7 +10,7 @@ const { theme, primaryColor } = setting;
 
 export const useUiStore = defineStore('ui', () => {
   const lang = ref(setting.lang);
-  const style: Ref<StyleState> = ref({ theme, primaryColor  });
+  const style: Ref<StyleState> = ref({ theme, primaryColor });
   const getTheme = computed(() => {
     return style.value.theme;
   });

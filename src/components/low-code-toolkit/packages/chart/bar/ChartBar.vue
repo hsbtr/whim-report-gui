@@ -6,6 +6,4 @@ import VBar from '@/components/ve-chart/VBar.vue';
   <v-bar title="" :data-source="[]" />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

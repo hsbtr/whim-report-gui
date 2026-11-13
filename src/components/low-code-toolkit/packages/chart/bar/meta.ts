@@ -14,16 +14,16 @@ export interface BarMeta extends MetaCfg {
 const templates: Omit<BarProp, 'type' | 'series'>[] = [
   {
     title: '普通柱状图',
-    key: 'bar-1',
+    key: 'bar-1'
   },
   {
     title: '普通柱状图',
-    key: 'bar-2',
-  },
+    key: 'bar-2'
+  }
 ];
 
 export default {
   name: 'ChartBar',
   title: '柱状图',
-  templates: templates,
+  templates: templates
 };

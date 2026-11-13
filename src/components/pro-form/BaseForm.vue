@@ -4,13 +4,10 @@ import { NForm } from 'naive-ui';
 
 const formValue = ref();
 provide('formValue', formValue);
-
 </script>
 
 <template>
   <n-form></n-form>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

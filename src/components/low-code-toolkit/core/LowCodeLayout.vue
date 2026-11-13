@@ -11,7 +11,7 @@ type ChartCfgKey = keyof ChartCfg;
 
 const drawConfig = reactive({
   components: [],
-  selected: {},
+  selected: {}
 });
 
 const selectedLayer = reactive<ChartCfg>({ chartType: '', id: '', title: '' });

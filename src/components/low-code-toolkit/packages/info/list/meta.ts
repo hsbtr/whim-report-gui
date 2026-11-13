@@ -14,11 +14,11 @@ export interface ListMeta extends MetaCfg {
 const templates: Omit<ListProp, 'type' | 'series'>[] = [
   {
     title: '普通列表',
-    key: 'list-1',
+    key: 'list-1'
   }
 ];
 export default {
   name: 'List',
   title: '列表',
-  templates: templates,
+  templates: templates
 };

@@ -25,5 +25,5 @@ export default defineConfig(({ mode }) => {
       host: env.VITE_DEV_SERVER_HOST,
       port: Number(env.VITE_DEV_SERVER_PORT)
     }
-  }
+  };
 });

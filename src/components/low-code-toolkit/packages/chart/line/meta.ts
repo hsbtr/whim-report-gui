@@ -14,27 +14,27 @@ export interface LineMeta extends MetaCfg {
 const templates: Omit<LineProp, 'type' | 'series'>[] = [
   {
     title: '普通折线图',
-    key: 'line-1',
+    key: 'line-1'
   },
   {
     title: '普通折线图',
-    key: 'line-2',
+    key: 'line-2'
   },
   {
     title: '普通折线图',
-    key: 'line-3',
+    key: 'line-3'
   },
   {
     title: '普通折线图',
-    key: 'line-4',
+    key: 'line-4'
   },
   {
     title: '普通折线图',
-    key: 'line-5',
+    key: 'line-5'
   }
 ];
 export default {
   name: 'ChartLine',
   title: '折线图',
-  templates: templates,
+  templates: templates
 };

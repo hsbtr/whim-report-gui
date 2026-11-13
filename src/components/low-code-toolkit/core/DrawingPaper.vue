@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import Draggable from 'vuedraggable';
 import SchemaParser from './SchemaParser.vue';
-
-
 </script>
 
 <template>

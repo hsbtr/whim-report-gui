@@ -11,4 +11,3 @@ interface ImportMetaEnv {
   VITE_PRO_PATH: string;
   VITE_APP_HTTP_PREFIX: string;
 }
-

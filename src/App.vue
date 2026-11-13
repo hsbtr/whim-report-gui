@@ -20,21 +20,14 @@ const locale = computed(() => {
 const dateLocale = computed(() => {
   return uiStore.getLang === LanguageEnum.ZH ? dateZhCN : dateEnUS;
 });
-
 </script>
 
 <template>
-  <NConfigProvider
-    :theme="dark"
-    :locale="locale"
-    :date-locale="dateLocale"
-    :hljs="hlJS"
-  >
+  <NConfigProvider :theme="dark" :locale="locale" :date-locale="dateLocale" :hljs="hlJS">
     <AppProvider>
       <router-view />
     </AppProvider>
   </NConfigProvider>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -7,17 +7,17 @@ import NotificationInit from './NotificationInit.vue';
 </script>
 
 <template>
-<n-loading-bar-provider>
-  <n-dialog-provider>
-    <LoadingInit />
-    <DialogInit />
-    <n-notification-provider>
-      <n-message-provider>
-        <MessageInit />
-        <NotificationInit />
-        <slot />
-      </n-message-provider>
-    </n-notification-provider>
-  </n-dialog-provider>
-</n-loading-bar-provider>
+  <n-loading-bar-provider>
+    <n-dialog-provider>
+      <LoadingInit />
+      <DialogInit />
+      <n-notification-provider>
+        <n-message-provider>
+          <MessageInit />
+          <NotificationInit />
+          <slot />
+        </n-message-provider>
+      </n-notification-provider>
+    </n-dialog-provider>
+  </n-loading-bar-provider>
 </template>

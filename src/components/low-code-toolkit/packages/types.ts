@@ -13,5 +13,5 @@ export interface PkgCfg {
 export const enum PkgType {
   chart = 'chart',
   control = 'control',
-  info = 'info',
+  info = 'info'
 }

@@ -53,7 +53,12 @@ const onSearchChange = useDebounceFn((value: string) => {
             :value="currentCategory.key"
             @update:value="onCategoryChange"
           />
-          <n-select class="custom-select-size" :options="seriesOptions" :value="currentSeries" @update:value="onSeriesChange" />
+          <n-select
+            class="custom-select-size"
+            :options="seriesOptions"
+            :value="currentSeries"
+            @update:value="onSeriesChange"
+          />
         </div>
         <n-input class="search-input" type="text" placeholder="输入组件名" @update:value="onSearchChange">
           <template #suffix>
@@ -62,12 +67,18 @@ const onSearchChange = useDebounceFn((value: string) => {
         </n-input>
       </div>
       <n-scrollbar class="component-list">
-        <div class="component-list-item" v-for="item in componentGroup" :key="item.key" @dragstart="dragRegisterGraphics($event, item)" :draggable="true">
+        <div
+          class="component-list-item"
+          v-for="item in componentGroup"
+          :key="item.key"
+          @dragstart="dragRegisterGraphics($event, item)"
+          :draggable="true"
+        >
           <div class="thumbnail">
-            <img src="" alt="" >
+            <img src="" alt="" />
           </div>
           <div class="title">
-            <span>{{item.title}}</span>
+            <span>{{ item.title }}</span>
           </div>
         </div>
       </n-scrollbar>
@@ -137,7 +148,7 @@ const onSearchChange = useDebounceFn((value: string) => {
             border: 1px solid v-bind(primaryColor);
             img {
               width: 100%;
-              height:  100%;
+              height: 100%;
             }
           }
           .title {
@@ -152,5 +163,4 @@ const onSearchChange = useDebounceFn((value: string) => {
     }
   }
 }
-
 </style>

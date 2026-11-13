@@ -14,11 +14,11 @@ export interface FrameMeta extends MetaCfg {
 const templates: Omit<FrameProp, 'type' | 'series'>[] = [
   {
     title: '普通边框',
-    key: 'frame-1',
+    key: 'frame-1'
   }
 ];
 export default {
   name: 'Frame',
   title: '边框',
-  templates: templates,
+  templates: templates
 };
