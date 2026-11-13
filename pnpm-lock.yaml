@@ -56,6 +56,9 @@ importers:
       pinia:
         specifier: ^2.1.7
         version: 2.1.7(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3))
+      pinia-plugin-persistedstate:
+        specifier: ^4.7.1
+        version: 4.7.1(pinia@2.1.7(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3)))
       qs:
         specifier: ^6.17.1
         version: 6.17.1
@@ -98,7 +101,7 @@ importers:
         version: 10.2.0(eslint@10.8.1(supports-color@8.1.1))(prettier@3.9.6)
       '@vue/eslint-config-typescript':
         specifier: ^14.9.0
-        version: 14.9.0(eslint-plugin-vue@10.12.1(@typescript-eslint/parser@8.67.0(eslint@10.8.1(supports-color@8.1.1))(typescript@5.9.3))(eslint@10.8.1)(vue-eslint-parser@10.4.1(eslint@10.8.1(supports-color@8.1.1))))(eslint@10.8.1(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)
+        version: 14.9.0(eslint-plugin-vue@10.12.1(@typescript-eslint/parser@8.67.0(eslint@10.8.1(supports-color@8.1.1))(typescript@5.9.3))(eslint@10.8.1(supports-color@8.1.1))(vue-eslint-parser@10.4.1(eslint@10.8.1(supports-color@8.1.1))))(eslint@10.8.1(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)
       '@vue/test-utils':
         specifier: ^2.4.11
         version: 2.4.11(@vue/compiler-dom@3.5.41)(@vue/server-renderer@3.5.45)(vue@3.5.45(typescript@5.9.3))
@@ -122,7 +125,7 @@ importers:
         version: 7.0.0(@typescript-eslint/parser@8.67.0(eslint@10.8.1(supports-color@8.1.1))(typescript@5.9.3))(eslint@10.8.1(supports-color@8.1.1))
       eslint-plugin-vue:
         specifier: ^10.12.1
-        version: 10.12.1(@typescript-eslint/parser@8.67.0(eslint@10.8.1(supports-color@8.1.1))(typescript@5.9.3))(eslint@10.8.1)(vue-eslint-parser@10.4.1(eslint@10.8.1(supports-color@8.1.1)))
+        version: 10.12.1(@typescript-eslint/parser@8.67.0(eslint@10.8.1(supports-color@8.1.1))(typescript@5.9.3))(eslint@10.8.1(supports-color@8.1.1))(vue-eslint-parser@10.4.1(eslint@10.8.1(supports-color@8.1.1)))
       jsdom:
         specifier: ^31.0.0
         version: 31.0.0
@@ -1547,6 +1550,9 @@ packages:
     resolution: {integrity: sha512-N+MeXYoqr3pOgn8xfyRPREN7gHakLYjhsHhWGT3fWAiL4IkAt0iDw14QiiEm2bE30c5XX5q0FtAA3CK5f9/BUg==}
     engines: {node: '>=12'}
 
+  defu@6.1.7:
+    resolution: {integrity: sha512-7z22QmUWiQ/2d0KkdYmANbRUVABpZ9SNYyH5vx6PZ+nE5bcC0l7uFvEfHlyld/HcGBFTL536ClDt3DEcSlEJAQ==}
+
   delayed-stream@1.0.0:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
@@ -2493,6 +2499,20 @@ packages:
   pify@2.3.0:
     resolution: {integrity: sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==}
     engines: {node: '>=0.10.0'}
+
+  pinia-plugin-persistedstate@4.7.1:
+    resolution: {integrity: sha512-WHOqh2esDlR3eAaknPbqXrkkj0D24h8shrDPqysgCFR6ghqP/fpFfJmMPJp0gETHsvrh9YNNg6dQfo2OEtDnIQ==}
+    peerDependencies:
+      '@nuxt/kit': '>=3.0.0'
+      '@pinia/nuxt': '>=0.10.0'
+      pinia: '>=3.0.0'
+    peerDependenciesMeta:
+      '@nuxt/kit':
+        optional: true
+      '@pinia/nuxt':
+        optional: true
+      pinia:
+        optional: true
 
   pinia@2.1.7:
     resolution: {integrity: sha512-+C2AHFtcFqjPih0zpYuvof37SFxMQ7OEG2zV9jRI12i9BOy3YQVAHwdKtyyc8pDcDyIc33WCIsZaCFWU7WWxGQ==}
@@ -3532,7 +3552,7 @@ snapshots:
   '@esbuild/win32-x64@0.28.2':
     optional: true
 
-  '@eslint-community/eslint-utils@4.10.1(eslint@10.8.1)':
+  '@eslint-community/eslint-utils@4.10.1(eslint@10.8.1(supports-color@8.1.1))':
     dependencies:
       eslint: 10.8.1(supports-color@8.1.1)
       eslint-visitor-keys: 3.4.3
@@ -3905,7 +3925,7 @@ snapshots:
 
   '@typescript-eslint/utils@8.67.0(eslint@10.8.1(supports-color@8.1.1))(typescript@5.9.3)':
     dependencies:
-      '@eslint-community/eslint-utils': 4.10.1(eslint@10.8.1)
+      '@eslint-community/eslint-utils': 4.10.1(eslint@10.8.1(supports-color@8.1.1))
       '@typescript-eslint/scope-manager': 8.67.0
       '@typescript-eslint/types': 8.67.0
       '@typescript-eslint/typescript-estree': 8.67.0(typescript@5.9.3)
@@ -4152,11 +4172,11 @@ snapshots:
     transitivePeerDependencies:
       - '@types/eslint'
 
-  '@vue/eslint-config-typescript@14.9.0(eslint-plugin-vue@10.12.1(@typescript-eslint/parser@8.67.0(eslint@10.8.1(supports-color@8.1.1))(typescript@5.9.3))(eslint@10.8.1)(vue-eslint-parser@10.4.1(eslint@10.8.1(supports-color@8.1.1))))(eslint@10.8.1(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)':
+  '@vue/eslint-config-typescript@14.9.0(eslint-plugin-vue@10.12.1(@typescript-eslint/parser@8.67.0(eslint@10.8.1(supports-color@8.1.1))(typescript@5.9.3))(eslint@10.8.1(supports-color@8.1.1))(vue-eslint-parser@10.4.1(eslint@10.8.1(supports-color@8.1.1))))(eslint@10.8.1(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)':
     dependencies:
       '@typescript-eslint/utils': 8.67.0(eslint@10.8.1(supports-color@8.1.1))(typescript@5.9.3)
       eslint: 10.8.1(supports-color@8.1.1)
-      eslint-plugin-vue: 10.12.1(@typescript-eslint/parser@8.67.0(eslint@10.8.1(supports-color@8.1.1))(typescript@5.9.3))(eslint@10.8.1)(vue-eslint-parser@10.4.1(eslint@10.8.1(supports-color@8.1.1)))
+      eslint-plugin-vue: 10.12.1(@typescript-eslint/parser@8.67.0(eslint@10.8.1(supports-color@8.1.1))(typescript@5.9.3))(eslint@10.8.1(supports-color@8.1.1))(vue-eslint-parser@10.4.1(eslint@10.8.1(supports-color@8.1.1)))
       fast-glob: 3.3.3
       typescript-eslint: 8.67.0(eslint@10.8.1(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)
       vue-eslint-parser: 10.4.1(eslint@10.8.1(supports-color@8.1.1))
@@ -4613,6 +4633,8 @@ snapshots:
 
   define-lazy-prop@3.0.0: {}
 
+  defu@6.1.7: {}
+
   delayed-stream@1.0.0: {}
 
   detect-libc@2.1.2: {}
@@ -4740,9 +4762,9 @@ snapshots:
     optionalDependencies:
       eslint-config-prettier: 10.1.8(eslint@10.8.1(supports-color@8.1.1))
 
-  eslint-plugin-vue@10.12.1(@typescript-eslint/parser@8.67.0(eslint@10.8.1(supports-color@8.1.1))(typescript@5.9.3))(eslint@10.8.1)(vue-eslint-parser@10.4.1(eslint@10.8.1(supports-color@8.1.1))):
+  eslint-plugin-vue@10.12.1(@typescript-eslint/parser@8.67.0(eslint@10.8.1(supports-color@8.1.1))(typescript@5.9.3))(eslint@10.8.1(supports-color@8.1.1))(vue-eslint-parser@10.4.1(eslint@10.8.1(supports-color@8.1.1))):
     dependencies:
-      '@eslint-community/eslint-utils': 4.10.1(eslint@10.8.1)
+      '@eslint-community/eslint-utils': 4.10.1(eslint@10.8.1(supports-color@8.1.1))
       eslint: 10.8.1(supports-color@8.1.1)
       natural-compare: 1.4.0
       nth-check: 2.1.1
@@ -4766,7 +4788,7 @@ snapshots:
 
   eslint@10.8.1(supports-color@8.1.1):
     dependencies:
-      '@eslint-community/eslint-utils': 4.10.1(eslint@10.8.1)
+      '@eslint-community/eslint-utils': 4.10.1(eslint@10.8.1(supports-color@8.1.1))
       '@eslint-community/regexpp': 4.12.2
       '@eslint/config-array': 0.23.5(supports-color@8.1.1)
       '@eslint/config-helpers': 0.7.0
@@ -5523,6 +5545,12 @@ snapshots:
   pidtree@1.0.0: {}
 
   pify@2.3.0: {}
+
+  pinia-plugin-persistedstate@4.7.1(pinia@2.1.7(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3))):
+    dependencies:
+      defu: 6.1.7
+    optionalDependencies:
+      pinia: 2.1.7(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3))
 
   pinia@2.1.7(typescript@5.9.3)(vue@3.5.45(typescript@5.9.3)):
     dependencies:
