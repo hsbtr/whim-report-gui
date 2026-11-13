@@ -12,24 +12,26 @@ import router from '@/router';
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosRequestConfig } from 'axios';
 import type { ApiResponse, ApiReturn } from '@/app.config';
 
+type QueryMethod = <T = unknown, P = any>(url: string, params?: P, config?: AxiosRequestConfig<any, P>) => ApiReturn<T>;
+
+type BodyMethod = <T = unknown, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>) => ApiReturn<T>;
+
 export interface RequestMethods {
-  get: <T = unknown, P = any>(url: string, params?: P, config?: AxiosRequestConfig<any, P>) => ApiReturn<T>;
+  get: QueryMethod;
+  delete: QueryMethod;
+  head: QueryMethod;
+  options: QueryMethod;
 
-  delete: <T = unknown, P = any>(url: string, params?: P, config?: AxiosRequestConfig<any, P>) => ApiReturn<T>;
+  post: BodyMethod;
+  put: BodyMethod;
+  patch: BodyMethod;
+  postForm: BodyMethod;
+  putForm: BodyMethod;
+}
 
-  head: <T = unknown, P = any>(url: string, params?: P, config?: AxiosRequestConfig<any, P>) => ApiReturn<T>;
-
-  options: <T = unknown, P = any>(url: string, params?: P, config?: AxiosRequestConfig<any, P>) => ApiReturn<T>;
-
-  post: <T = unknown, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>) => ApiReturn<T>;
-
-  put: <T = unknown, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>) => ApiReturn<T>;
-
-  patch: <T = unknown, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>) => ApiReturn<T>;
-
-  postForm: <T = unknown, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>) => ApiReturn<T>;
-
-  putForm: <T = unknown, D = any>(url: string, data?: D, config?: AxiosRequestConfig<D>) => ApiReturn<T>;
+export interface Request extends RequestMethods {
+  <T = unknown, D = any, P = any>(config: AxiosRequestConfig<D, P>): ApiReturn<T>;
+  <T = unknown, D = any, P = any>(url: string, config?: AxiosRequestConfig<D, P>): ApiReturn<T>;
 }
 
 const { VITE_APP_HTTP_PREFIX } = getEnvCfg();
@@ -184,7 +186,19 @@ http.interceptors.response.use(
   }
 );
 
-export const request: RequestMethods = {
+function requestFn<T = unknown, D = any, P = any>(config: AxiosRequestConfig<D, P>): ApiReturn<T>;
+function requestFn<T = unknown, D = any, P = any>(url: string, config?: AxiosRequestConfig<D, P>): ApiReturn<T>;
+function requestFn<T, D, P>(
+  urlOrConfig: string | AxiosRequestConfig<D, P>,
+  config?: AxiosRequestConfig<D, P>
+): ApiReturn<T> {
+  if (typeof urlOrConfig === 'string') {
+    return http<T, ApiResponse<T>, D, P>(urlOrConfig, config);
+  }
+  return http<T, ApiResponse<T>, D, P>(urlOrConfig);
+}
+
+const requestMethods: RequestMethods = {
   get: <T, P>(url: string, params?: P, config: AxiosRequestConfig<any, P> = {}) => {
     return http.get<T, ApiResponse<T>, any, P>(url, {
       ...config,
@@ -225,5 +239,7 @@ export const request: RequestMethods = {
     return http.putForm<T, ApiResponse<T>, D>(url, data, config);
   }
 };
+
+export const request: Request = Object.assign(requestFn, requestMethods);
 
 export default http;
