@@ -1,68 +1,45 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { shallowRef, ref, computed } from 'vue';
 import { NSelect, NInput, NIcon, NScrollbar, useThemeVars } from 'naive-ui';
 import { SearchOutline } from '@vicons/ionicons5';
 import { useDebounceFn } from '@vueuse/core';
 import { materialSchemas } from '../packages';
 import { dragRegisterGraphics } from '../tools';
-import type { SchemaMetaCfg, ComponentType, ComponentCfg } from '../packages';
+import type { ComponentCfg } from '../packages';
 
-type ModuleType = ComponentType | 'all';
-type SelectedMenuItem = { key: ComponentType; components: SchemaMetaCfg['components'] };
-
-const [defaultSelected] = materialSchemas;
-
-const globalTheme = useThemeVars();
-const menuSelected = reactive<SelectedMenuItem>({ key: defaultSelected.key, components: defaultSelected.components });
-const currentType = ref({ ...defaultSelected });
-const currentSeries = ref<ModuleType>('all');
+const [defaultCategory] = materialSchemas;
+const currentCategory = shallowRef(defaultCategory);
+const currentSeries = ref('all');
 const searchValue = ref('');
 
-const supplementTypeOpt = { title: '全部', type: 'all' };
-const primaryColor = computed(() => {
-  return globalTheme.value.primaryColor;
-});
-const seriesOptions = computed(() => {
-  const { components } = currentType.value;
-  return [supplementTypeOpt, ...components];
-});
+const globalTheme = useThemeVars();
+const primaryColor = computed(() => globalTheme.value.primaryColor);
+const categoryOptions = materialSchemas.map(({ title, key }) => ({ label: title, value: key }));
+const seriesOptions = computed(() => [
+  { label: '全部', value: 'all' },
+  ...currentCategory.value.components.map(({ title, name }) => ({ label: title, value: name }))
+]);
 
-const componentGroup = computed(() => {
-  if (currentSeries.value === 'all') {
-    const array: ComponentCfg[] = [];
-    menuSelected.components.forEach((v) => {
-      if (Array.isArray(v.templates)) {
-        array.push(...v.templates);
-      }
-    });
-    if (searchValue.value) {
-      return array.filter((v) => v.title.includes(searchValue.value));
-    }
-    return array;
-  }
-  const current = menuSelected.components.find((v) => v.type === currentSeries.value);
-  if (current) {
-    if (searchValue.value) {
-      return (current.templates as ComponentCfg[]).filter((v) => v.title.includes(searchValue.value));
-    }
-    return current.templates;
-  }
-  return [];
-});
+const componentGroup = computed(() =>
+  currentCategory.value.components
+    .filter(({ name }) => currentSeries.value === 'all' || name === currentSeries.value)
+    .flatMap(({ templates }): ComponentCfg[] => templates)
+    .filter(({ title }) => title.includes(searchValue.value))
+);
 
-const onTypeChange = (value, option) => {
-  currentType.value = option;
+const onCategoryChange = (value: string | number | null) => {
+  const category = materialSchemas.find(({ key }) => key === value);
+  if (category) {
+    currentCategory.value = category;
+    currentSeries.value = 'all';
+  }
 };
-const onSeriesChange = (value) => {
-  currentSeries.value = value;
+const onSeriesChange = (value: string | number | null) => {
+  if (typeof value === 'string') currentSeries.value = value;
 };
-const onSearchChange = useDebounceFn((value) => {
+const onSearchChange = useDebounceFn((value: string) => {
   searchValue.value = value;
 }, 1000);
-const onDragStart = (event: DragEvent, item: ComponentCfg) => {
-  dragRegisterGraphics<ComponentCfg>(event, item);
-};
-
 </script>
 
 <template>
@@ -72,19 +49,11 @@ const onDragStart = (event: DragEvent, item: ComponentCfg) => {
         <div class="filter-space">
           <n-select
             class="custom-select-size"
-            :options="materialSchemas"
-            label-field="title"
-            value-field="key"
-            :value="currentType.key"
-            @update:value="onTypeChange"
+            :options="categoryOptions"
+            :value="currentCategory.key"
+            @update:value="onCategoryChange"
           />
-          <n-select
-            class="custom-select-size"
-            :options="seriesOptions"
-            label-field="title" value-field="type"
-            :value="currentSeries"
-            @update:value="onSeriesChange"
-          />
+          <n-select class="custom-select-size" :options="seriesOptions" :value="currentSeries" @update:value="onSeriesChange" />
         </div>
         <n-input class="search-input" type="text" placeholder="输入组件名" @update:value="onSearchChange">
           <template #suffix>
@@ -93,7 +62,7 @@ const onDragStart = (event: DragEvent, item: ComponentCfg) => {
         </n-input>
       </div>
       <n-scrollbar class="component-list">
-        <div class="component-list-item" v-for="item in componentGroup" :key="item.type" @dragstart="onDragStart($event, item)" :draggable="true">
+        <div class="component-list-item" v-for="item in componentGroup" :key="item.key" @dragstart="dragRegisterGraphics($event, item)" :draggable="true">
           <div class="thumbnail">
             <img src="" alt="" >
           </div>

@@ -2,25 +2,24 @@ import { generatedSchemas } from '../../tools';
 import { PkgType } from '../types';
 import type { FrameMeta, FrameProp } from './frame/meta';
 
-export type ControlType = FrameMeta['type'];
+export type ControlType = PkgType.control;
 export type ControlProp = FrameProp;
-type ControlSchema = FrameMeta;
-export type ControlPkgType = ControlSchema & {
-  type: PkgType.control;
-}
-type ChartModules = Record<string, { default: ControlType }>;
+type ControlSchema = Omit<FrameMeta, 'type'>;
+export type ControlPkgType = Omit<ControlSchema, 'templates'> & {
+  type: ControlType;
+  templates: ControlProp[];
+};
 
-const controlModules: ChartModules = import.meta.glob('./*/meta.ts', { eager: true });
+const controlModules = import.meta.glob<ControlSchema>('./*/meta.ts', { eager: true, import: 'default' });
 
-export const pkgSchema = generatedSchemas<ChartModules, ControlPkgType, Omit<ControlSchema, 'type'>>(controlModules, ({ templates, ...rest }) => {
-  const temps: ControlProp[] = templates.map((temp) => {
-    return { ...temp, type: PkgType.control, series: rest.name };
-  });
-  return { ...rest, type: PkgType.control, templates: temps };
-});
+export const pkgSchema = generatedSchemas(controlModules, ({ templates, ...meta }): ControlPkgType => ({
+  ...meta,
+  type: PkgType.control,
+  templates: templates.map((template) => ({ ...template, type: PkgType.control, series: meta.name }))
+}));
 
 export default {
   title: '控件',
-  key: 'control',
-  components: pkgSchema,
+  key: PkgType.control,
+  components: pkgSchema
 };

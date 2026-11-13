@@ -2,25 +2,24 @@ import { generatedSchemas } from '../../tools';
 import { PkgType } from '../types';
 import type { ListMeta, ListProp } from './list/meta';
 
-export type InfoType = ListMeta['type'];
+export type InfoType = PkgType.info;
 export type InfoProp = ListProp;
-type InfoSchema = ListMeta;
-export type InfoPkgType = InfoSchema & {
-  type: PkgType.info;
-}
-type InfoModules = Record<string, { default: InfoSchema }>;
+type InfoSchema = Omit<ListMeta, 'type'>;
+export type InfoPkgType = Omit<InfoSchema, 'templates'> & {
+  type: InfoType;
+  templates: InfoProp[];
+};
 
-const infoModules: InfoModules = import.meta.glob('./*/meta.ts', { eager: true });
+const infoModules = import.meta.glob<InfoSchema>('./*/meta.ts', { eager: true, import: 'default' });
 
-export const pkgSchema = generatedSchemas<InfoModules, InfoPkgType, Omit<InfoSchema, 'type'>>(infoModules, ({ templates, ...rest }) => {
-  const temps: InfoProp[] = templates.map((temp) => {
-    return { ...temp, type: PkgType.info, series: rest.name };
-  });
-  return { ...rest, type: PkgType.info, templates: temps };
-});
+export const pkgSchema = generatedSchemas(infoModules, ({ templates, ...meta }): InfoPkgType => ({
+  ...meta,
+  type: PkgType.info,
+  templates: templates.map((template) => ({ ...template, type: PkgType.info, series: meta.name }))
+}));
 
 export default {
   title: '信息',
-  key: 'info',
-  components: pkgSchema,
+  key: PkgType.info,
+  components: pkgSchema
 };

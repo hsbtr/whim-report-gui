@@ -10,10 +10,6 @@ export interface PkgCfg {
   icon?: DefineComponent;
 }
 
-export interface MaterialPackage {
-  ChartLine: any;
-}
-
 export const enum PkgType {
   chart = 'chart',
   control = 'control',
