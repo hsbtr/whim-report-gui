@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import { inject } from 'vue';
 import Draggable from 'vuedraggable';
 import SchemaParser from './SchemaParser.vue';
-import { editorCfg } from '../provider/context';
-
-const drawCfg = inject(editorCfg);
 
 
 </script>

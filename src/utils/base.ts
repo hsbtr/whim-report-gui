@@ -17,25 +17,24 @@ export const typeofs = (value: unknown): TypeofProValue => {
   return type;
 };
 
-type RefersToObject = Record<string, unknown>;
 /**
  * 格式化数组对象
  * @param array
  * @param processFn
  * @param conditionKey
  */
-export const mapArrayItem = <U extends RefersToObject, T extends RefersToObject = U>(
+export const mapArrayItem = <U extends object, T extends object = U>(
   array: U[],
   processFn: (item: U) => T,
-  conditionKey: keyof U = 'children'
+  conditionKey: keyof U | 'children' = 'children'
 ): Array<T> => {
   if (!Array.isArray(array) || array.length === 0) return [];
   if (typeof processFn !== 'function') return [];
   return array.map((item: U): T => {
     const newItem: T = { ...processFn(item) };
-    if (Array.isArray(item[conditionKey])) {
-      // @ts-expect-error 直接写入属性
-      newItem[conditionKey] = mapArrayItem(item[conditionKey], processFn);
+    const children: unknown = Reflect.get(item, conditionKey);
+    if (Array.isArray(children)) {
+      Object.assign(newItem, { [conditionKey]: mapArrayItem(children, processFn) });
     }
     return newItem;
   });

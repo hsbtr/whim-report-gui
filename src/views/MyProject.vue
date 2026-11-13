@@ -20,7 +20,6 @@ type OptionType = { label: string; value: string | number };
 type RenderTextConfig = { options: OptionType[] };
 
 const router = useRouter();
-const fitterQuery = reactive<ProjectPageQuery>({ current: 1, pageSize: 15 });
 const searchOpt = reactive<SearchOpt>({
   dataSource: [],
   total: 0
@@ -74,7 +73,7 @@ const getProjectDataSource = async (params: ProjectPageQuery) => {
       searchOpt.total = total;
       return;
     }
-  } catch (e) {
+  } catch {
     searchOpt.dataSource = [];
     searchOpt.total = 0;
   }

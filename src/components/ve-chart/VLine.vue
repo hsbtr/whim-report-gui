@@ -11,11 +11,6 @@ type LineProps = {
   title: string;
   dataSource: LineSeriesOption[];
 };
-const defaultOpt = {
-  title: {
-    text: 'Title',
-  },
-};
 
 const props = defineProps<LineProps>();
 use([CanvasRenderer, LineChart, TitleComponent, TooltipComponent, LegendComponent]);
@@ -30,12 +25,6 @@ const option = computed(() => {
   };
 });
 
-const item = {
-  name: '',
-  group: '',
-  xAxis: 'a',
-
-};
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 import { reactive } from 'vue';
 
-type SetStateFn<T extends Record<string, any>> = (newState: T) => T;
-export const useReactive = <T extends Record<string, any>>(initialState: T) => {
+type SetStateFn<T extends Record<string, unknown>> = (newState: T) => T;
+export const useReactive = <T extends Record<string, unknown>>(initialState: T) => {
   const state = reactive<T>(initialState);
 
   const setState = (newState: SetStateFn<T> | T) => {

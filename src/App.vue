@@ -6,7 +6,7 @@ import AppProvider from '@/components/popups/AppProvider.vue';
 import { useUiStore } from '@/stores/uiStore';
 import { LanguageEnum } from '@/config';
 import { useHLJSInit } from '@/hooks';
-import type { ConfigProviderProps, GlobalTheme } from 'naive-ui';
+import type { GlobalTheme } from 'naive-ui';
 
 const uiStore = useUiStore();
 const hlJS = useHLJSInit();

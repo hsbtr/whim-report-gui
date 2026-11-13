@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, computed } from 'vue';
+import { provide } from 'vue';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart } from 'echarts/charts';
@@ -11,14 +11,7 @@ type BarProps = {
   title: string;
   dataSource: BarSeriesOption[];
 }
-const props = defineProps<BarProps>();
-
-const option = computed(() => {
-  return {
-    title: props.title,
-    series: [],
-  };
-});
+defineProps<BarProps>();
 use([CanvasRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent]);
 provide(THEME_KEY, 'dark');
 

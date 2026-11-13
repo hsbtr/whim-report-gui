@@ -1,10 +1,10 @@
 <script setup lang="ts">
 
 type SchemaParserProps = {
-  renderType: String;
+  renderType: string;
 
 };
-const props = defineProps<SchemaParserProps>();
+defineProps<SchemaParserProps>();
 
 </script>
 
