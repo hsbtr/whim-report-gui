@@ -1,24 +1,20 @@
 <script setup lang="ts">
 import VLine from '@/components/ve-chart/VLine.vue';
-import http from '@/http';
+import { request } from '@/http';
 
 const props = defineProps({
   url: {
     type: String,
-    default: () => '',
+    default: () => ''
   }
 });
-const getDataSource = async (params) => {
-  const { result, code } = await http.get(props.url, { data: params });
-
+const getDataSource = async (params: Record<string, unknown>) => {
+  const { success, data } = await request.get(props.url, params);
 };
-
 </script>
 
 <template>
   <v-line title="" :data-source="[]" />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
