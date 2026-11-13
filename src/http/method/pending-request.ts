@@ -4,7 +4,7 @@ import type { InternalAxiosRequestConfig } from 'axios';
 /**
  * 请求记录map
  */
-const pendingRequest = new Map<any, AbortController>();
+const pendingRequest = new Map<string, AbortController>();
 
 /**
  * 用于根据当前请求的信息，生成请求 Key

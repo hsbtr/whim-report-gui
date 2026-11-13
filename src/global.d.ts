@@ -26,9 +26,6 @@ declare global {
     $KeyboardActive?: { [T: string]: boolean };
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     onKeySpacePressHold?: Function;
-
-    // 编辑 JSON 的存储对象
-    opener: any
   }
 }
 
