@@ -1,28 +1,19 @@
-/build
-/public
-/dist
+# Build and test output
+/build/
+/dist/
+/dist-ssr/
+/coverage/
+/cypress/downloads/
+/cypress/screenshots/
+/cypress/videos/
 
-.dockerignore
-.DS_Store
-.eslintignore
+# Editors and local worktrees
+/.vscode/
+/.idea/
+/.history/
+/.worktrees/
 
-*.png
-*.toml
-**/*.svg
-
-docker
-Dockerfile*
-
-.editorconfig
-.gitignore
-.eslintrc.cjs
-.prettierignore
-.eslintcache
-
-LICENSE
-
-*.lock
-yarn-error.log
-package.json
-.history
-CNAME
+# Static assets and generated lockfile
+/public/
+*.svg
+/pnpm-lock.yaml

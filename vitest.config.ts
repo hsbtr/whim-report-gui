@@ -6,7 +6,18 @@ export default defineConfig(({ mode }) => ({
   ...viteConfig({ mode, command: 'serve' }),
   test: {
     environment: 'jsdom',
-    exclude: [...configDefaults.exclude, 'e2e/**'],
+    exclude: [
+      ...configDefaults.exclude,
+      'build/**',
+      'dist/**',
+      'dist-ssr/**',
+      'coverage/**',
+      'cypress/**',
+      '.vscode/**',
+      '.idea/**',
+      '.history/**',
+      '.worktrees/**'
+    ],
     root: fileURLToPath(new URL('./', import.meta.url))
   }
 }));

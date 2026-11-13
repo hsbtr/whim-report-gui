@@ -1,0 +1,9 @@
+# Normalize text in Git and check it out with LF across platforms.
+* text=auto eol=lf
+
+# Windows batch scripts are checked out with CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Keep binary assets byte-for-byte.
+*.ico binary
