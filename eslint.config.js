@@ -15,6 +15,7 @@ export default withVueTs(
       eqeqeq: ['error', 'always'],
       'object-curly-spacing': ['error', 'always'],
       'comma-spacing': ['error', { before: false, after: true }],
+      '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': ['warn', { varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }]
     }
   },
