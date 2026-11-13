@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
       VueDevTools(),
       mode !== 'test' &&
         (env.VITE_MOCK_ENABLE === 'on' || env.VITE_APP_MOCK === 'enable') &&
-        viteMockServe({ mockPath: 'mock' }),
+        viteMockServe({ mockPath: 'mock' })
     ],
     resolve: {
       alias: {

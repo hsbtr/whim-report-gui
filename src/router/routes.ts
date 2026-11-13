@@ -7,77 +7,77 @@ const routes: RouteRecordRaw[] = [
     name: 'root',
     redirect() {
       return { path: '/base' };
-    },
+    }
   },
   {
     path: '/base',
     name: 'base',
     component: BaseLayout,
     redirect() {
-        return { path: '/base/home', };
+      return { path: '/base/home' };
     },
     children: [
       {
         path: 'home',
         name: 'home',
         meta: {
-          title: '首页',
+          title: '首页'
         },
-        component: () => import('@/views/HomeView.vue'),
+        component: () => import('@/views/HomeView.vue')
       },
       {
         path: 'test',
         name: 'test',
         meta: {
-          title: '测试',
+          title: '测试'
         },
         redirect() {
-            return { path: '/base/test/about' };
+          return { path: '/base/test/about' };
         },
         children: [
           {
             path: 'about',
             name: 'about',
             meta: {
-              title: '关于',
+              title: '关于'
             },
-            component: () => import('@/views/AboutView.vue'),
+            component: () => import('@/views/AboutView.vue')
           }
-        ],
+        ]
       },
       {
         path: 'project',
         name: 'project',
         meta: {
-          title: '项目',
+          title: '项目'
         },
-        component: () => import('@/views/MyProject.vue'),
+        component: () => import('@/views/MyProject.vue')
       },
       {
         path: 'data/source',
         name: 'data_source',
         meta: {
-          title: '数据源',
+          title: '数据源'
         },
-        component: () => import('@/views/DataSource.vue'),
-      },
-    ],
+        component: () => import('@/views/DataSource.vue')
+      }
+    ]
   },
   {
     path: '/chart/editor',
     name: 'chart_editor',
     meta: {
-      title: '项目编辑',
+      title: '项目编辑'
     },
-    component: () => import('@/views/ChartEditor.vue'),
+    component: () => import('@/views/ChartEditor.vue')
   },
   {
     path: '/chart/preview',
     name: 'chart_preview',
     meta: {
-      title: '项目预览',
+      title: '项目预览'
     },
-    component: () => import('@/views/ChartPreview.vue'),
-  },
+    component: () => import('@/views/ChartPreview.vue')
+  }
 ];
 export default routes;

@@ -9,7 +9,7 @@ const meta: PkgComponentMeta = {
   fieldProps: [
     {
       title: '普通边框',
-      uuid: 'VFrame-1',
+      uuid: 'VFrame-1'
     }
   ]
 };

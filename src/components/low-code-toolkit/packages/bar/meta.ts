@@ -14,8 +14,8 @@ const meta: PkgComponentMeta = {
     },
     {
       title: '普通柱状图2',
-      uuid: 'VBar-2',
-    },
+      uuid: 'VBar-2'
+    }
   ]
 };
 

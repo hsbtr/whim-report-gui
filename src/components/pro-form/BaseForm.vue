@@ -12,7 +12,6 @@ const update = (key: string, value: any) => {
 };
 provide('update', update);
 provide('formState', formState);
-
 </script>
 
 <template>
@@ -21,6 +20,4 @@ provide('formState', formState);
   </n-form>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -10,13 +10,13 @@ import type { BarSeriesOption } from 'echarts/charts';
 type BarProps = {
   title: string;
   dataSource: BarSeriesOption[];
-}
+};
 const props = defineProps<BarProps>();
 
 const option = computed(() => {
   return {
     title: {
-      text: props.title,
+      text: props.title
     },
     xAxis: {
       type: 'category',
@@ -28,14 +28,13 @@ const option = computed(() => {
     series: [
       {
         type: 'bar',
-        data: props.dataSource,
+        data: props.dataSource
       }
-    ],
+    ]
   };
 });
 use([CanvasRenderer, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 provide(THEME_KEY, 'dark');
-
 </script>
 
 <template>

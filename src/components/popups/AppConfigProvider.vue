@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { NConfigProvider, NLoadingBarProvider, NDialogProvider, NModalProvider, NMessageProvider, NNotificationProvider } from 'naive-ui';
+import {
+  NConfigProvider,
+  NLoadingBarProvider,
+  NDialogProvider,
+  NModalProvider,
+  NMessageProvider,
+  NNotificationProvider
+} from 'naive-ui';
 import PopupsInit from './PopupsInit.vue';
 import type { ConfigProviderProps } from 'naive-ui';
 const props = defineProps<ConfigProviderProps>();

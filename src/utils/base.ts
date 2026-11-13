@@ -1,18 +1,17 @@
-
-type TypeofProValue = "array" | "string" | "boolean" | "number" | "function" | "object" | "undefined" | "null";
+type TypeofProValue = 'array' | 'string' | 'boolean' | 'number' | 'function' | 'object' | 'undefined' | 'null';
 /**
  * 精准类型识别
  * @param value
  */
 export const typeofs = (value: unknown): TypeofProValue => {
   // 直接排除 null 和 undefined，避免不必要的调用
-  if (value === null) return "null";
-  if (value === undefined) return "undefined";
+  if (value === null) return 'null';
+  if (value === undefined) return 'undefined';
   // 使用 Object.prototype.toString 判断类型
   const type = Object.prototype.toString.call(value).slice(8, -1).toLowerCase() as TypeofProValue;
 
   // 特殊处理 array 类型
-  if (type === "array") return "array";
+  if (type === 'array') return 'array';
 
   return type;
 };
@@ -110,12 +109,12 @@ export const getQueryParams = (): Record<string, string> => {
  * @param name cookie 名称
  */
 export function getCookie(name: string): string | null {
-  if (typeof document === "undefined") return null;
+  if (typeof document === 'undefined') return null;
 
-  const cookies = document.cookie ? document.cookie.split("; ") : [];
+  const cookies = document.cookie ? document.cookie.split('; ') : [];
 
   for (const item of cookies) {
-    const [key, value] = item.split("=");
+    const [key, value] = item.split('=');
     if (key === decodeURIComponent(name) && value) {
       return decodeURIComponent(value);
     }

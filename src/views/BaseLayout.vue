@@ -22,8 +22,8 @@ const menuSelected = ref(typeof route.name === 'string' ? route.name : '');
 const dropdownItems: DropdownMixedOption[] = [
   {
     key: 'quit',
-    label: '退出',
-  },
+    label: '退出'
+  }
 ];
 const menuItems = mapArrayItem<RouteRecordRaw, MenuOption>(newRoutes, (item) => {
   const { meta, name, children } = item;
@@ -36,7 +36,7 @@ const menuItems = mapArrayItem<RouteRecordRaw, MenuOption>(newRoutes, (item) => 
     label,
     key: name as string,
     show: hideInMenu,
-    icon: renderIcon(icon),
+    icon: renderIcon(icon)
   };
 });
 // console.log(menuItems)
@@ -52,7 +52,7 @@ const onMenuUpdate = (key: string) => {
   <n-layout>
     <n-layout-header class="layout-head" bordered>
       <div class="head-logo">
-        <img :src="setting.logo"  alt="" />
+        <img :src="setting.logo" alt="" />
         <span>{{ setting.title }}</span>
       </div>
       <div class="head-content">

@@ -16,15 +16,12 @@ const props = defineProps<LineProps>();
 use([CanvasRenderer, LineChart, TitleComponent, TooltipComponent, LegendComponent]);
 provide(THEME_KEY, 'dark');
 
-
-
 const option = computed(() => {
   return {
     title: props.title,
-    series: props.dataSource,
+    series: props.dataSource
   };
 });
-
 </script>
 
 <template>

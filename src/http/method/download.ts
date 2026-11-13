@@ -13,14 +13,17 @@ type DownloadOpts = {
    * 该回调函数用检测伪装成 blob 的数据
    */
   validate?: (res: Blob) => Promise<{ allow: boolean; message: string }>;
-}
+};
 /**
  * 通用下载工具函数，自动识别文件流、提取文件名，并触发浏览器下载。
  * @param source
  * @param opts
  * @returns 下载结果 Promise；下载失败也正常返回 success: false。
  */
-export function download(source: AxiosResponse<Blob> | Blob, opts: DownloadOpts): Promise<{ success: boolean; message: string }> {
+export function download(
+  source: AxiosResponse<Blob> | Blob,
+  opts: DownloadOpts
+): Promise<{ success: boolean; message: string }> {
   const { fileType, customFileName } = opts;
   /**
    * 支持下载多种类型文件（ZIP、XLSX、DOCX、PDF、图片等）的工具方法。
@@ -61,7 +64,7 @@ export function download(source: AxiosResponse<Blob> | Blob, opts: DownloadOpts)
     }
     if (/^[^/\s]+\/[^/\s]+/.test(type)) return type;
     throw new Error(`不支持或尚未注册的文件扩展名：${type}`);
-  }
+  };
 
   const down = (blob: Blob, fileName: string) => {
     const link = document.createElement('a');

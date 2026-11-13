@@ -11,6 +11,6 @@ export function useApp() {
     dialog,
     notification,
     message,
-    modal,
+    modal
   };
 }

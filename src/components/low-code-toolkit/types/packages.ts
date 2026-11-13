@@ -33,14 +33,15 @@ export type ComponentPropsRaw = {
 };
 export type ComponentPropsExtra = ComponentPropsRaw & {
   loadPath: string;
-}
-// 渲染到画板中 节点的属性
-export type NodeProps = Omit<ComponentPropsRaw, 'attr'> & Pick<ComponentPropsExtra, 'loadPath'> & {
-  attr: ComponentAttr;
-  hide: boolean;
-  lock: boolean;
-  id?: string;
 };
+// 渲染到画板中 节点的属性
+export type NodeProps = Omit<ComponentPropsRaw, 'attr'> &
+  Pick<ComponentPropsExtra, 'loadPath'> & {
+    attr: ComponentAttr;
+    hide: boolean;
+    lock: boolean;
+    id?: string;
+  };
 export type PkgComponentMeta = {
   title: string;
   type: PkgComponentType;

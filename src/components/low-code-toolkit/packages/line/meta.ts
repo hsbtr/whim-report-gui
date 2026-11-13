@@ -9,24 +9,24 @@ const meta: PkgComponentMeta = {
   fieldProps: [
     {
       title: '普通折线图',
-      uuid: 'VLine-1',
+      uuid: 'VLine-1'
     },
     {
       title: '普通折线图',
-      uuid: 'VLine-2',
+      uuid: 'VLine-2'
     },
     {
       title: '普通折线图',
-      uuid: 'VLine-3',
+      uuid: 'VLine-3'
     },
     {
       title: '普通折线图',
-      uuid: 'VLine-4',
+      uuid: 'VLine-4'
     },
     {
       title: '普通折线图',
-      uuid: 'VLine-5',
+      uuid: 'VLine-5'
     }
-  ],
+  ]
 };
 export default meta;

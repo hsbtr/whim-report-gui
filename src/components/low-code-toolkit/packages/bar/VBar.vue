@@ -8,6 +8,4 @@ const props = defineProps<NodeProps>();
   <EChartBar :title="props.title" :data-source="props.dataSource" />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

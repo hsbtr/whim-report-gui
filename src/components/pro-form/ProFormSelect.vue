@@ -9,15 +9,12 @@ type ProFormSelectProps = FormItemProps & { filedProps: SelectProps };
 const formState = inject<FormState>('formState', {});
 const update = inject('update');
 const props = defineProps<ProFormSelectProps>();
-
 </script>
 
 <template>
-  <n-form-item :label="props.label" :path="props.path" >
+  <n-form-item :label="props.label" :path="props.path">
     <n-select v-model:value="formState[props.path || '']" />
   </n-form-item>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

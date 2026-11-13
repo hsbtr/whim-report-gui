@@ -8,7 +8,6 @@ const themes = useThemeVars();
 onMounted(() => {
   // console.log(1);
 });
-
 </script>
 
 <template>
@@ -28,9 +27,9 @@ onMounted(() => {
   height: 64px;
 }
 .editor-content :deep(.n-layout-scroll-container) {
-    width: 100%;
-    display: flex;
-    flex-wrap: nowrap;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
 }
 .sten-cli-panel {
   flex: 0 0 300px;

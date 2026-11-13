@@ -12,4 +12,3 @@ interface ImportMetaEnv {
   // 请求地址前缀
   VITE_APP_HTTP_PREFIX: string;
 }
-

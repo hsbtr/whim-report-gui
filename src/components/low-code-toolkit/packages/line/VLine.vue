@@ -4,16 +4,13 @@ import EChartLine from '@/components/ve-chart/EChartLine.vue';
 const props = defineProps({
   url: {
     type: String,
-    default: () => '',
+    default: () => ''
   }
 });
-
 </script>
 
 <template>
   <EChartLine title="" :data-source="[]" />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
