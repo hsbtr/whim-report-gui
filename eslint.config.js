@@ -5,7 +5,24 @@ import { withVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
 import skipFormattingConfig from '@vue/eslint-config-prettier/skip-formatting';
 
 export default withVueTs(
-  globalIgnores(['dist/**', 'dist-ssr/**', 'coverage/**', 'cypress/videos/**', 'cypress/screenshots/**', '.idea/**', '.vscode/**', '.husky/**', 'public/**', 'build/**', 'docs/_book/**', 'test/**', 'commitlint.config.cjs']),
+  globalIgnores([
+    'build/',
+    'dist/',
+    'dist-ssr/',
+    'coverage/',
+    'cypress/downloads/',
+    'cypress/screenshots/',
+    'cypress/videos/',
+    '.vscode/',
+    '.idea/',
+    '.history/',
+    '.worktrees/',
+    '.husky/',
+    'public/',
+    'docs/_book/',
+    'test/',
+    'commitlint.config.cjs'
+  ]),
   pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
   {
