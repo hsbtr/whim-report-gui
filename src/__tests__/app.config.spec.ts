@@ -11,7 +11,7 @@ describe('响应适配器', () => {
     });
   });
 
-  it.each([0, '0', ' 0 '])('将成功业务码 %j 转为布尔结果并隐藏原始码', (code) => {
+  it.each([0, '0', ' 0 ', 200, '200'])('将成功业务码 %j 转为布尔结果并隐藏原始码', (code) => {
     expect(HTTP_RUNTIME_CONFIG.dataAdapter({ code, data: { id: 1 }, message: '完成' })).toEqual({
       success: true,
       data: { id: 1 },

@@ -8,23 +8,23 @@
 
 ## 2. 技术栈
 
-| 领域     | 选型                           | 作用                               |
-| -------- | ------------------------------ | ---------------------------------- |
-| 应用框架 | Vue 3                          | Composition API 与 Vue SFC         |
-| 语言     | TypeScript                     | 应用、配置、测试和物料类型         |
-| 构建工具 | Vite 8                         | 开发服务、构建、别名和模块自动发现 |
-| UI       | Naive UI                       | 布局、菜单、表单、弹窗和主题       |
-| 路由     | Vue Router 4                   | 静态页面路由                       |
-| 状态管理 | Pinia                          | 当前用于 UI 主题和语言状态         |
-| HTTP     | Axios                          | 统一请求、响应和错误拦截           |
-| 图表     | ECharts 6 + vue-echarts 8      | 图表基础组件                       |
-| 拖拽     | vuedraggable                   | 低代码画布方向的拖拽能力           |
-| Mock     | vite-plugin-mock + better-mock | 本地接口模拟                       |
-| 单元测试 | Vitest 4 + Vue Test Utils      | jsdom 环境下的组件测试             |
-| E2E      | Cypress 15                     | 浏览器端流程测试                   |
-| 包管理   | pnpm                           | 依赖与脚本执行                     |
+| 领域     | 选型                                   | 作用                               |
+| -------- | -------------------------------------- | ---------------------------------- |
+| 应用框架 | Vue 3                                  | Composition API 与 Vue SFC         |
+| 语言     | TypeScript                             | 应用、配置、测试和物料类型         |
+| 构建工具 | Vite 8                                 | 开发服务、构建、别名和模块自动发现 |
+| UI       | Naive UI                               | 布局、菜单、表单、弹窗和主题       |
+| 路由     | Vue Router 4                           | 静态页面路由                       |
+| 状态管理 | Pinia 3                                | UI 主题、语言和账户状态            |
+| HTTP     | Axios                                  | 统一请求、响应和错误拦截           |
+| 图表     | ECharts 6 + vue-echarts 8              | 图表基础组件                       |
+| 画布     | HTML Drag and Drop + vue3-sketch-ruler | 物料拖入画布、标尺和缩放           |
+| Mock     | vite-plugin-mock + better-mock         | 本地接口模拟                       |
+| 单元测试 | Vitest 4 + Vue Test Utils              | jsdom 环境下的组件测试             |
+| E2E      | Cypress 16                             | 浏览器端流程测试                   |
+| 包管理   | pnpm                                   | 依赖与脚本执行                     |
 
-Node.js 版本要求以 `package.json` 为准，当前为 `>=22.13.0`。`pnpm dev` 默认只监听 `127.0.0.1:5173`；确需局域网访问时应显式传入 `--host`，不要默认暴露开发服务。
+Node.js 版本要求以 `package.json` 为准，当前为 `>=22.13.0`。Vite 的主机和端口由 `VITE_DEV_SERVER_HOST`、`VITE_DEV_SERVER_PORT` 配置。`.env.development` 默认监听 `0.0.0.0:5173`。
 
 ## 3. 运行时启动流程
 
@@ -32,14 +32,14 @@ Node.js 版本要求以 `package.json` 为准，当前为 `>=22.13.0`。`pnpm de
 
 1. 导入全局样式 `src/assets/main.css`。
 2. 通过 `createApp` 创建根应用。
-3. 注册 Pinia。
+3. 注册启用了持久化插件的 Pinia。
 4. 注册 Vue Router，并等待 `router.isReady()`。
 5. 将应用挂载到 `#app`。
 
 根组件 `src/App.vue` 负责两个全局横切能力：
 
-- `NConfigProvider`：根据 `uiStore` 选择明暗主题、中文或英文 locale，以及 Highlight.js 实例。
-- `AppProvider`：建立 Naive UI 的 loading、dialog、notification 和 message Provider，并把对应 API 暴露到 `window`。
+- `AppConfigProvider` 根据 `uiStore` 配置 Naive UI 的明暗主题、语言和 Highlight.js 实例。
+- `PopupsInit` 在 Provider 内初始化 dialog、modal、notification 和 message，并把对应 API 暴露到 `window`。
 
 因此，HTTP 错误通知等依赖 `window.$notification` 的逻辑只有在根 Provider 初始化后才可用。
 
@@ -96,7 +96,7 @@ Node.js 版本要求以 `package.json` 为准，当前为 `>=22.13.0`。`pnpm de
 
 编辑器和预览页位于基础布局之外，适合承载独立的全屏工作区。目前：
 
-- `ChartEditor.vue` 只挂载了编辑器上下文和左侧物料面板，主画布尚未接入。
+- `ChartEditor.vue` 在 `LowCode` 上下文中挂载左侧物料面板和画布。画布支持拖放、标尺和框选。
 - `ChartPreview.vue` 仍为空壳。
 - `MyProject.vue` 的“编辑”操作会把项目 ID 放入 `/chart/editor?id=...` 并打开新标签页；“预览”当前未传项目 ID。
 
@@ -106,7 +106,7 @@ Node.js 版本要求以 `package.json` 为准，当前为 `>=22.13.0`。`pnpm de
 
 ### 6.1 Pinia
 
-`src/stores/uiStore.ts` 管理：
+`src/stores/ui.ts` 管理：
 
 - 当前语言 `lang`；
 - 主题 `light` / `dark`；
@@ -114,14 +114,11 @@ Node.js 版本要求以 `package.json` 为准，当前为 `>=22.13.0`。`pnpm de
 
 初始值来自 `src/config/ui.ts` 的 `setting`。当前语言切换只影响根组件传给 Naive UI 的 locale，没有注册完整的业务文案 i18n 流程。
 
+`src/stores/account.ts` 管理账户状态和登录、退出操作，并通过 Pinia 持久化插件保存账户状态。
+
 ### 6.2 Naive UI Provider
 
-`src/components/popups/AppProvider.vue` 依次建立：
-
-- `NLoadingBarProvider` → `window.$loading`；
-- `NDialogProvider` → `window.$dialog`；
-- `NNotificationProvider` → `window.$notification`；
-- `NMessageProvider` → `window.$message`。
+`src/components/popups/AppConfigProvider.vue` 建立 Naive UI Provider。`PopupsInit.vue` 初始化 `window.$dialog`、`window.$modal`、`window.$notification` 和 `window.$message`。
 
 这些全局对象的类型声明位于 `src/global.d.ts`。需要全局反馈时应复用现有对象，不要在模块顶层自行创建脱离 Provider 的实例。
 
@@ -137,27 +134,27 @@ Node.js 版本要求以 `package.json` 为准，当前为 `>=22.13.0`。`pnpm de
 - 数组 query 参数使用 `repeat` 形式序列化；
 - 从 Cookie 或 `sessionStorage` 读取 `Token`，并写入同名请求头。
 
-文件中的具名导出 `request` 指向原始 `axios` 对象，不包含本实例的默认配置和拦截器。业务 API 应导入默认实例：
+具名导出 `request` 封装同一个实例，提供带响应类型的方法和 Axios 配置式调用。业务 API 使用该封装。
 
 ```ts
-import http from '@/http';
+import { request } from '@/http';
 ```
 
 ### 7.2 请求参数改写
 
 请求拦截器当前约定如下：
 
-| 方法       | 调用侧传入                    | 实际发送位置                     |
-| ---------- | ----------------------------- | -------------------------------- |
-| GET        | `{ data: params }`            | `config.params`，即 query string |
-| POST / PUT | `{ data: { data: payload } }` | body 中的 `payload`              |
-| DELETE     | `{ data: params }`            | `config.params`                  |
+| 调用                          | 实际发送位置 |
+| ----------------------------- | ------------ |
+| `request.get(url, params)`    | 查询字符串   |
+| `request.delete(url, params)` | 查询字符串   |
+| `request.post(url, data)`     | 请求体       |
 
 示例：
 
 ```ts
-export function getProjectPage(params: ProjectPageQuery): PagingType<ProjectInfo> {
-  return http.get('project/page', { data: params });
+export function getProjectPage(params: ProjectPageQuery): ApiPagingReturn<ProjectInfo> {
+  return request.get<PagingDataType<ProjectInfo>>('project/page', params);
 }
 ```
 
@@ -165,105 +162,60 @@ export function getProjectPage(params: ProjectPageQuery): PagingType<ProjectInfo
 
 ### 7.3 响应约定
 
-`src/config/fetch.ts` 通过 `DataConfig` 定义字段：
+`src/app.config.ts` 将业务响应整理为以下字段。
 
 ```text
-code  业务状态码
-msg   消息
-data  业务数据
+success  业务是否成功
+message  消息
+data     业务数据
 ```
 
-正常 JSON 响应由拦截器整理为 `{ code, msg, data }`。纯字符串响应被包装为成功响应；Blob 响应进入下载处理。`failureCodeGroup` 中的业务码会触发全局错误通知，HTTP 401 和其他网络错误也由响应拦截器报告。
-
-401 后的登录跳转和用户状态清理目前只有注释骨架，不能视为已经实现的鉴权流程。
+适配器兼容业务码 `0` 和 `200`，并优先使用响应中的布尔型 `success`。Blob 响应进入下载流程。错误通知可按请求配置。HTTP 401 默认清理账户状态并跳转到 `/login`，登录页路由有待接入。
 
 ### 7.4 Mock
 
-`vite.config.ts` 配置 `vite-plugin-mock` 从 `mock/` 加载接口，当前 `enable: true`。依赖名仍为 `mockjs`，但通过包别名解析到 API 兼容的 `better-mock@0.3.7`，因此现有 Mock 模板无需改写。`pnpm-workspace.yaml` 只为这一兼容别名放宽 `mockjs` peer 版本，并将插件允许范围内的 `path-to-regexp` 固定到已修复的 6.3.0。
+`pnpm dev:mock` 启用 `vite-plugin-mock`，从 `mock/` 加载接口。Vitest 禁用 Mock 文件监听。`mockjs` 依赖通过包别名指向 `better-mock@0.3.7`。`pnpm-workspace.yaml` 为该别名放宽 `mockjs` peer 版本，并将插件使用的 `path-to-regexp` 固定到 6.3.0。
 
-`mock/myProject.ts` 提供 `/api/project/page` 的 GET 分页数据，用于项目列表本地开发。该 Mock 当前返回 `message`，而公共响应协议读取 `msg`；分页数据不受影响，但调用侧取得的消息字段会是空值。
+`mock/myProject.ts` 提供 `/api/project/page` 的 GET 分页数据，用于项目列表本地开发。响应适配器兼容该 Mock 返回的 `message`。
 
 修改真实接口联调方式前，应先确认 Mock 是否仍会拦截相同 URL。
 
 ## 8. 低代码物料机制
 
-低代码相关代码集中在 `src/components/low-code-toolkit/`，分为五个部分：
+低代码相关代码集中在 `src/components/low-code-toolkit/`。
 
 ```text
 low-code-toolkit/
-├─ core/       编辑器上下文、画布和 Schema 解析入口
-├─ packages/   chart、control、info 物料分类与组件
-├─ provider/   provide/inject 使用的上下文键
-├─ showcase/   物料选择面板
-└─ tools/      Schema 生成和拖拽注册工具
+├─ common/     上下文键、分类和节点默认属性
+├─ core/       编辑器上下文、物料面板、画布和标尺
+├─ hooks/      上下文、框选和窗口尺寸监听
+├─ packages/   物料元数据和组件
+├─ tools/      节点属性合并、序列化和尺寸位置计算
+└─ types/      物料和画布状态类型
 ```
 
 ### 8.1 自动发现
 
-物料注册依赖两级 `import.meta.glob`：
+物料元数据和组件通过 `import.meta.glob` 收集。
 
-1. `packages/index.ts` 使用 `./*/index.ts` 收集分类入口，生成 `materialSchemas`。
-2. 每个分类入口使用 `./*/meta.ts` 收集具体物料元数据，并为模板补充分类 `type` 和组件系列 `series`。
-3. `packages/index.ts` 还会扫描 `./*/*/*.vue` 并按 Vue 组件名构建组件映射；该映射目前未导出，也未被 Schema 解析器消费。
+- `packages/index.ts` 读取 `./*/meta.ts` 的默认导出，生成 `pkgMetas`。
+- `LazyLoadNode.vue` 通过 `../packages/*/*.vue` 生成加载函数。只有节点进入画布时才加载对应组件。
 
-现有分类：
-
-- `chart`：图表，例如折线图、柱状图；
-- `control`：控件，例如容器；
-- `info`：信息展示，例如列表。
-
-物料元数据的核心关系是：
-
-```text
-分类入口
-  └─ meta.ts
-      └─ templates[]
-          ├─ key       模板唯一键
-          ├─ title     展示名称
-          ├─ type      分类，由入口补充
-          └─ series    对应组件系列，由入口补充
-```
-
-新增物料时应同时核对：
-
-- Vue 组件文件名与元数据中的组件系列名称；
-- 所属分类的类型联合；
-- `meta.ts` 默认导出结构；
-- 模板 `key` 在目标范围内是否唯一；
-- Schema 解析端是否已经支持该物料。
+现有分类包括图表 `chart`、控件 `control` 和展示 `exhibit`。每份 `meta.ts` 声明分类 `pkgType`、物料系列 `type` 和物料模板 `fieldProps`。模板的 `uuid` 必须唯一，前缀与组件文件名一致。
 
 ### 8.2 编辑器上下文
 
-`LowCodeLayout.vue` 以 `ContextProvider` 名称导出，提供三项上下文：
-
-- `editorCfg`：包含组件集合和选中配置的响应式对象；
-- `layerCurrentlySelected`：当前选中图层；
-- `layerSelectionEvent`：更新选中图层的函数。
-
-上下文键目前是字符串常量。扩展时应从 `provider/context.ts` 导入，避免在消费者中重复硬编码。
+`LowCode.vue` 提供画布、节点和选中项等响应式状态，以及添加和选择节点的操作。画布组件通过 `useLowCodeContext()` 读取这些状态和操作。
 
 ### 8.3 物料面板与拖拽
 
-`InventoryPanel.vue` 从 `materialSchemas` 渲染分类、系列筛选和搜索结果。开始拖拽时，`dragRegisterGraphics()` 将物料模板序列化到：
-
-```ts
-event.dataTransfer?.setData('low-code', JSON.stringify(item));
-```
-
-接收侧必须使用相同的 `low-code` 键，并对反序列化结果做结构校验。
+`StencilArea.vue` 从 `pkgMetas` 按分类、系列和名称筛选物料。拖拽时，它将模板及 `loadPath` 写入 `LowCodeShare.dragKey`。`SketchpadArea.vue` 读取数据，生成节点标识和画布位置，交给 `LazyLoadNode.vue` 加载组件。
 
 ### 8.4 当前未闭环部分
 
-以下模块仍是骨架：
+仍待接通的流程包括项目配置的保存、读取、发布和删除，以及 `ChartPreview.vue` 的配置加载与渲染。
 
-- `DrawingPaper.vue` 注入了编辑器配置并渲染 `vuedraggable`，但尚未绑定列表、接收物料面板的 drop 数据或更新配置。
-- `SchemaParser.vue` 只声明 `renderType` prop，模板为空。
-- 自动收集的 Vue 组件映射尚未提供给 Schema 解析器。
-- `ChartEditor.vue` 尚未挂载 `DrawingPaper`。
-- `ChartPreview.vue` 尚未实现配置加载与渲染。
-- 项目配置的保存、读取、发布和删除流程尚未接通。
-
-后续实现应先定义稳定的 Schema 类型和持久化协议，再打通“物料元数据 → 拖拽实例 → 编辑器状态 → 保存 → 预览渲染”的单向数据链路。
+保存与预览依赖稳定的 Schema 类型和持久化协议。
 
 ## 9. 测试与构建
 
@@ -284,7 +236,7 @@ pnpm test:e2e
 以下脚本会改写文件：
 
 ```sh
-pnpm lint     # ESLint --fix，范围是整个仓库
+pnpm lint:fix # ESLint --fix，范围是整个仓库
 pnpm format   # Prettier --write src/
 ```
 
@@ -299,12 +251,12 @@ pnpm run format:check -- <modified files>
 
 ### 9.3 当前测试覆盖
 
-仓库中的 Vitest 和 Cypress 用例主要来自项目模板。它们证明测试工具已配置，但不能证明项目列表、HTTP 拦截器或低代码编辑器已有有效业务覆盖。新增关键数据转换或编辑器状态逻辑时，应优先补充与该逻辑直接相关的测试。
+Vitest 覆盖响应适配、请求配置和文件下载。Cypress 覆盖首页导航、物料筛选和拖入画布后的组件渲染。
 
 ## 10. 变更边界与扩展原则
 
 - 页面级功能放在 `src/views`，可复用 UI 放在 `src/components`。
-- 业务接口放在 `src/api`，统一走默认 HTTP 实例。
+- 业务接口放在 `src/api`，统一使用 `request`。
 - 跨页面 UI 状态放在 Pinia；编辑器内部状态优先留在低代码上下文中，除非确实需要跨路由共享。
 - 物料定义应保持声明式，避免让物料面板依赖具体组件内部实现。
 - 在 Schema 格式稳定前，不要过早设计复杂插件系统、版本迁移层或远程物料协议。

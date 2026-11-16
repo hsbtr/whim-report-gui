@@ -54,5 +54,5 @@ export type SketchpadRulerProps = {
   };
 };
 export type SketchpadAreaProps = {
-  ruler: SketchpadRulerProps;
+  ruler?: SketchpadRulerProps;
 };

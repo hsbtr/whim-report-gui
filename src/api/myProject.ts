@@ -1,9 +1,9 @@
 import { request } from '@/http';
-import type { ApiPagingQuery, ApiPagingReturn, PagingDataType } from '@/app.config';
+import type { ApiPagingQuery, ApiPagingReturn, ApiReturn, PagingDataType } from '@/app.config';
 
 export type ProjectPageQuery = ApiPagingQuery;
 type ResourceStatus = 'unpublished' | 'published';
-export interface ProjectSchemas {}
+export type ProjectSchemas = Record<string, unknown>;
 export type ProjectInfo = {
   id: string | number;
   title: string;
@@ -15,6 +15,6 @@ export type ProjectInfo = {
 export function getProjectPage(params: ProjectPageQuery): ApiPagingReturn<ProjectInfo> {
   return request.get<PagingDataType<ProjectInfo>>('project/page', params);
 }
-export function addProject(data: ProjectSchemas): ApiDataType {
-  return http.post('project/add', data);
+export function addProject(data: ProjectSchemas): ApiReturn {
+  return request.post('project/add', data);
 }
