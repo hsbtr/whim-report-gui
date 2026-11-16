@@ -41,6 +41,8 @@ whim-report-gui/
 - Node.js 版本范围为 `^22.22.2 || ^24.15.0 || >=26.0.0`，以 [package.json](package.json) 中的 `engines.node` 为准。
 - 使用 [pnpm](https://pnpm.io) 安装依赖和运行脚本。
 
+使用 mise 时，在项目目录运行 `mise install node`，即可使用 [mise.toml](mise.toml) 固定的 Node.js `24.18.0`。如果该版本下的 pnpm 命令还不可用，运行 `mise exec -- corepack enable pnpm`。
+
 ### 安装依赖
 
 ```bash
