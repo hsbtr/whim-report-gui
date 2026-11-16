@@ -59,7 +59,7 @@ npm install
 # 常规开发，默认使用后端接口
 pnpm dev
 
-# 启用本地 Mock 服务
+# 启用本地 Mock 服务（设置 VITE_DEV_MOCK=on）
 pnpm dev:mock
 ```
 

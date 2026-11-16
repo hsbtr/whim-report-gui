@@ -174,7 +174,7 @@ data     业务数据
 
 ### 7.4 Mock
 
-`pnpm dev:mock` 启用 `vite-plugin-mock`，从 `mock/` 加载接口。Vitest 禁用 Mock 文件监听。`mockjs` 依赖通过包别名指向 `better-mock@0.3.7`。`pnpm-workspace.yaml` 为该别名放宽 `mockjs` peer 版本，并将插件使用的 `path-to-regexp` 固定到 6.3.0。
+`pnpm dev:mock` 设置 `VITE_DEV_MOCK=on`，启用 `vite-plugin-mock` 从 `mock/` 加载接口。Vitest 禁用 Mock 文件监听。`mockjs` 依赖通过包别名指向 `better-mock@0.3.7`。`pnpm-workspace.yaml` 为该别名放宽 `mockjs` peer 版本，并将插件使用的 `path-to-regexp` 固定到 6.3.0。
 
 `mock/myProject.ts` 提供 `/api/project/page` 的 GET 分页数据，用于项目列表本地开发。响应适配器兼容该 Mock 返回的 `message`。
 

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:mock": "cross-env VITE_MOCK_ENABLE=on vite",
+    "dev:mock": "cross-env VITE_DEV_MOCK=on vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",
