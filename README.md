@@ -87,8 +87,8 @@ pnpm lint:fix
 # 使用 Prettier 格式化 src 目录
 pnpm format
 
-# 仅执行 TypeScript 类型检查
-pnpm lint:tsc
+# 检查应用、工具配置和测试的 TypeScript 类型
+pnpm type-check
 ```
 
 ### 测试
