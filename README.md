@@ -113,13 +113,14 @@ pnpm build && pnpm test:e2e
 | `VITE_DEV_SERVER_PORT` | 开发服务器端口，默认 `5173`。                                           |
 | `VITE_DEV_MOCK`        | 设置为 `on` 时开启 Mock，`pnpm dev:mock` 会设置该值。Vitest 禁用 Mock。 |
 
-以下变量保留原名和类型声明，当前代码暂未读取这些配置。
+以下变量已有类型声明，运行时代码暂未读取。
 
-| 保留变量                          | 原用途                         |
+| 已声明的变量                      | 预留用途                       |
 | --------------------------------- | ------------------------------ |
-| `VITE_GLOB_APP_TITLE`             | 页面标题与默认品牌文案。       |
-| `VITE_DEV_PORT`                   | 本地开发服务器端口。           |
+| `VITE_APP_TITLE`                  | 应用标题。                     |
 | `VITE_DEV_PATH` / `VITE_PRO_PATH` | 开发和生产环境的资源基础路径。 |
+
+当前浏览器标签页的标题来自 `index.html`，导航栏标题来自 `src/config/ui.ts`。
 
 ### UI 设置
 
