@@ -24,7 +24,7 @@
 | E2E      | Cypress 16                             | 浏览器端流程测试                   |
 | 包管理   | pnpm                                   | 依赖与脚本执行                     |
 
-Node.js 版本要求以 `package.json` 为准，当前为 `>=22.13.0`。Vite 的主机和端口由 `VITE_DEV_SERVER_HOST`、`VITE_DEV_SERVER_PORT` 配置。`.env.development` 默认监听 `0.0.0.0:5173`。
+Node.js 版本范围为 `^22.22.2 || ^24.15.0 || >=26.0.0`，以 `package.json` 中的 `engines.node` 为准。开发服务器默认监听 `0.0.0.0:5173`，可通过 `VITE_DEV_SERVER_HOST` 和 `VITE_DEV_SERVER_PORT` 配置。 [环境变量说明](../README.md#环境变量)
 
 ## 3. 运行时启动流程
 
@@ -134,6 +134,8 @@ Node.js 版本要求以 `package.json` 为准，当前为 `>=22.13.0`。Vite 的
 - 数组 query 参数使用 `repeat` 形式序列化；
 - 从 Cookie 或 `sessionStorage` 读取 `Token`，并写入同名请求头。
 
+默认的 `/api/` 请求与前端同源。需要直连其他地址的后端时，通过 `VITE_APP_HTTP_PREFIX` 配置接口基础地址。Vite 开发配置未设置 API 代理。
+
 具名导出 `request` 封装同一个实例，提供带响应类型的方法和 Axios 配置式调用。业务 API 使用该封装。
 
 ```ts
@@ -199,7 +201,7 @@ low-code-toolkit/
 物料元数据和组件通过 `import.meta.glob` 收集。
 
 - `packages/index.ts` 读取 `./*/meta.ts` 的默认导出，生成 `pkgMetas`。
-- `LazyLoadNode.vue` 通过 `../packages/*/*.vue` 生成加载函数。只有节点进入画布时才加载对应组件。
+- `packages/material-loaders.ts` 使用 `./*/*.vue` 生成加载函数。画布和节点渲染组件共用这份映射，物料组件在节点渲染时按需加载。
 
 现有分类包括图表 `chart`、控件 `control` 和展示 `exhibit`。每份 `meta.ts` 声明分类 `pkgType`、物料系列 `type` 和物料模板 `fieldProps`。模板的 `uuid` 必须唯一，前缀与组件文件名一致。
 
@@ -209,7 +211,7 @@ low-code-toolkit/
 
 ### 8.3 物料面板与拖拽
 
-`StencilArea.vue` 从 `pkgMetas` 按分类、系列和名称筛选物料。拖拽时，它将模板及 `loadPath` 写入 `LowCodeShare.dragKey`。`SketchpadArea.vue` 读取数据，生成节点标识和画布位置，交给 `LazyLoadNode.vue` 加载组件。
+`StencilArea.vue` 从 `pkgMetas` 按分类、系列和名称筛选物料。拖拽时，它将模板及 `loadPath` 写入 `LowCodeShare.dragKey`。`SketchpadArea.vue` 先校验组件路径，通过后生成节点标识和画布位置。无效物料会在入画布前被拦截并提示原因。`LazyLoadNode.vue` 在已有节点的路径无效或组件加载失败时，按原节点尺寸显示「物料无法加载」。
 
 ### 8.4 当前未闭环部分
 
@@ -251,7 +253,7 @@ pnpm run format:check -- <modified files>
 
 ### 9.3 当前测试覆盖
 
-Vitest 覆盖响应适配、请求配置和文件下载。Cypress 覆盖首页导航、物料筛选和拖入画布后的组件渲染。
+Vitest 覆盖响应适配、请求配置、文件下载、物料路径解析和加载失败占位。Cypress 覆盖首页导航、物料筛选、拖入画布后的组件渲染和无效物料提示。
 
 ## 10. 变更边界与扩展原则
 
