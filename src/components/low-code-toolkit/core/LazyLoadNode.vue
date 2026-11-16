@@ -1,21 +1,45 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from 'vue';
-import type { Component } from 'vue';
+import { computed, defineAsyncComponent, h } from 'vue';
+import type { FunctionalComponent } from 'vue';
+import { getMaterialLoader } from '../packages/material-loaders';
 import type { NodeProps } from '../types';
 
 interface LazyLoadNodeProps {
-  path: string;
+  path?: string;
   fieldProps: NodeProps;
 }
 const props = defineProps<LazyLoadNodeProps>();
 
-const materialLoaders = import.meta.glob<Component>('../packages/*/*.vue', { import: 'default' });
-const loader = materialLoaders[props.path];
-const AsyncComponent = loader ? defineAsyncComponent(loader) : null;
+const UnavailableMaterial: FunctionalComponent = (_, { attrs }) =>
+  h('div', { class: 'material-unavailable', role: 'status', style: attrs.style }, '物料无法加载');
+UnavailableMaterial.inheritAttrs = false;
+
+const material = computed(() => {
+  const path = props.path;
+  const load = getMaterialLoader(path);
+  if (!load) {
+    if (import.meta.env.DEV) console.warn('找不到物料组件', path);
+    return UnavailableMaterial;
+  }
+
+  return defineAsyncComponent(() =>
+    load().catch((error: unknown) => {
+      if (import.meta.env.DEV) console.warn('物料组件加载失败', path, error);
+      return UnavailableMaterial;
+    })
+  );
+});
 </script>
 
 <template>
-  <component :is="AsyncComponent" v-if="AsyncComponent" v-bind="props.fieldProps" />
+  <component :is="material" v-bind="props.fieldProps" />
 </template>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.material-unavailable {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  outline: 1px dashed currentColor;
+}
+</style>

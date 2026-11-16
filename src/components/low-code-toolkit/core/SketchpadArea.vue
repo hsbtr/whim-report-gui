@@ -7,6 +7,7 @@ import SketchpadRuler from './SketchpadRuler.vue';
 import ShapeBox from './ShapeBox.vue';
 import { LowCodeShare } from './../common/constant';
 import { useLowCodeContext, useWindowResizeObserver } from '../hooks';
+import { getMaterialLoader } from '../packages/material-loaders';
 import { JSONParse, mergeNodeProps, getNodeSizeStyle, getPositionStyle, createUuid } from '../tools';
 import type { ComponentPropsExtra, SketchpadAreaProps } from '../types';
 
@@ -28,13 +29,19 @@ const adjustScale = useDebounceFn(() => {
     context.state.canvas.scale = scale > 1 ? 1 : scale;
   }
 }, 200);
-const onDrop = async (e: DragEvent) => {
+const onDrop = (e: DragEvent) => {
   e.preventDefault();
   try {
     const dataJson = e.dataTransfer?.getData(LowCodeShare.dragKey);
     if (!dataJson) return;
-    const componentProps = JSONParse<ComponentPropsExtra>(dataJson);
-    if (!componentProps) return;
+    const payload: unknown = JSON.parse(dataJson);
+    if (!payload || typeof payload !== 'object' || !('loadPath' in payload) || !getMaterialLoader(payload.loadPath)) {
+      window.$message?.error('物料路径无效，无法添加到画布');
+      return;
+    }
+
+    // 校验组件路径后再恢复物料配置中的函数。
+    const componentProps = JSONParse<ComponentPropsExtra>(dataJson, { exclude: ['loadPath'] });
     const uuid = createUuid(componentProps.uuid);
     const newNodeProps = mergeNodeProps(componentProps, { uuid });
     newNodeProps.attr.x = e.offsetX - newNodeProps.attr.w / 2;
@@ -64,7 +71,7 @@ useWindowResizeObserver(() => {
             <ShapeBox :is-point="false" :node-props="node" :style="getPositionStyle(node.attr, index)">
               <LazyLoadNode
                 :key="node.id || node.uuid"
-                :path="`${node.loadPath}.vue`"
+                :path="node.loadPath"
                 :field-props="node"
                 :style="getNodeSizeStyle(node.attr)"
               />

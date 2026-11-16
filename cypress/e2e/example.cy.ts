@@ -44,4 +44,21 @@ describe('图表编辑器物料面板', () => {
     });
     cy.contains('.shape-box', '边框').should('exist');
   });
+
+  it('拒绝组件路径无效的物料并提示原因', () => {
+    cy.visit('/chart/editor');
+    cy.get('.component-item').should('have.length', 7);
+
+    cy.window().then((window) => {
+      const dataTransfer = new window.DataTransfer();
+      dataTransfer.setData(
+        'DragKey',
+        JSON.stringify({ uuid: 'VFrame-1', title: '无效物料', loadPath: '../packages/frame/Missing' })
+      );
+      cy.get('.sketchpad-wrapper').trigger('drop', { dataTransfer });
+    });
+
+    cy.contains('物料路径无效，无法添加到画布').should('be.visible');
+    cy.get('.shape-box').should('not.exist');
+  });
 });
