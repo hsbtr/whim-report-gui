@@ -20,7 +20,7 @@ export type ThemeColorInfo = {
   pinyin: string;
 };
 export type SettingOpt = {
-  title: string;
+  title?: string;
   logo?: string;
   lang: LanguageEnum.EN | LanguageEnum.ZH;
   theme: ThemeEnum.LIGHT | ThemeEnum.DARK;
@@ -28,7 +28,6 @@ export type SettingOpt = {
   themeInfo?: ThemeColorInfo;
 };
 export const setting: SettingOpt = {
-  title: '低代码平台',
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
   lang: LanguageEnum.ZH,
   theme: ThemeEnum.DARK,

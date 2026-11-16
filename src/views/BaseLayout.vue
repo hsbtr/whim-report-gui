@@ -14,6 +14,7 @@ import type { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface';
 
 type LabelType = string | (() => VNodeChild);
 
+const appTitle = import.meta.env.VITE_APP_TITLE;
 const route = useRoute();
 const newRoutes = useCurrentRoutes();
 const uiStore = useUiStore();
@@ -53,7 +54,7 @@ const onMenuUpdate = (key: string) => {
     <n-layout-header class="layout-head" bordered>
       <div class="head-logo">
         <img :src="setting.logo" alt="" />
-        <span>{{ setting.title }}</span>
+        <span>{{ setting.title ?? appTitle }}</span>
       </div>
       <div class="head-content">
         <n-menu :options="menuItems" mode="horizontal" v-model:value="menuSelected" @update:value="onMenuUpdate" />
