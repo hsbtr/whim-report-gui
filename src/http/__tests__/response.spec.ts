@@ -130,8 +130,8 @@ describe('HTTP 统一响应', () => {
 
   it('适配器异常不能被当作非 JSON 放行下载', async () => {
     vi.resetModules();
-    const { HTTP_RUNTIME_CONFIG } = await import('@/app.config');
-    vi.spyOn(HTTP_RUNTIME_CONFIG, 'dataAdapter').mockImplementationOnce(() => {
+    const { httpConfig } = await import('@/app.config');
+    vi.spyOn(httpConfig, 'dataAdapter').mockImplementationOnce(() => {
       throw new Error('适配失败');
     });
     const { request: configuredRequest } = await import('@/http');

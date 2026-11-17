@@ -6,7 +6,7 @@ import { LightModeFilled, DarkModeOutlined } from '@vicons/material';
 import { useUiStore } from '@/stores';
 import { useCurrentRoutes } from '@/hooks';
 import { mapArrayItem, renderIcon } from '@/utils';
-import { setting } from '@/config';
+import { uiConfig } from '@/app.config';
 import type { VNodeChild } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
 import type { MenuOption } from 'naive-ui';
@@ -53,8 +53,8 @@ const onMenuUpdate = (key: string) => {
   <n-layout>
     <n-layout-header class="layout-head" bordered>
       <div class="head-logo">
-        <img :src="setting.logo" alt="" />
-        <span>{{ setting.title ?? appTitle }}</span>
+        <img :src="uiConfig.logo" alt="" />
+        <span>{{ uiConfig.title ?? appTitle }}</span>
       </div>
       <div class="head-content">
         <n-menu :options="menuItems" mode="horizontal" v-model:value="menuSelected" @update:value="onMenuUpdate" />

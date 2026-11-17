@@ -5,7 +5,7 @@ import Qs from 'qs';
 import { download } from './method/download';
 import { SmartErrorNotifier } from './method/error-notifier';
 import { createCoreCfg } from './method/default.config';
-import { HTTP_RUNTIME_CONFIG } from '@/app.config';
+import { httpConfig } from '@/app.config';
 import { getEnvCfg, getQueryParams } from '@/utils';
 import { useAccountStore } from '@/stores';
 import router from '@/router';
@@ -37,7 +37,7 @@ export interface Request extends RequestMethods {
 
 const { VITE_APP_HTTP_PREFIX } = getEnvCfg();
 const errorNotifier = new SmartErrorNotifier();
-const { fieldNames, dataAdapter, getAuth, getMessage, noAccessRedirectPath } = createCoreCfg(HTTP_RUNTIME_CONFIG);
+const { fieldNames, dataAdapter, getAuth, getMessage, noAccessRedirectPath } = createCoreCfg(httpConfig);
 
 const http: AxiosInstance = axios.create({
   baseURL: VITE_APP_HTTP_PREFIX || '/api/',

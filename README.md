@@ -5,7 +5,7 @@ Whim Report GUI 是一个基于 **Vue 3 + Vite** 的低代码数据可视化编�
 ## ✨ 项目特性
 
 - **现代化技术栈**：采用 Vue 3 组合式 API、TypeScript、Pinia 与 Vue Router 构建单页应用，并通过 Vite 提供极速的开发体验。 【F:src/main.ts†L1-L20】【F:package.json†L1-L82】
-- **Naive UI 设计体系**提供导航、布局、弹窗和明暗模式切换。主题色和语言的初始值来自 UI 配置。 [布局组件](src/views/BaseLayout.vue) [UI 配置](src/config/ui.ts)
+- **Naive UI 设计体系**提供导航、布局、弹窗和明暗模式切换。主题色和语言的初始值来自 UI 配置。 [布局组件](src/views/BaseLayout.vue) [UI 配置](src/app.config.ts)
 - **低代码图表编辑工作台**提供物料面板和画布，可拖入物料并在画布中查看渲染结果。独立的图表预览页仍待接入。 [编辑器](src/views/ChartEditor.vue) [预览页](src/views/ChartPreview.vue)
 - **灵活的接口层**：内置 Axios 实例、响应数据适配器以及认证/错误处理策略，统一管理接口请求与异常提示。 【F:src/http/index.ts†L1-L196】
 - **工程化保障**包括 Vitest 单元测试、Cypress 端到端测试、ESLint、Prettier 和 Husky。提交钩子运行暂存文件检查和 TypeScript 类型检查。 [项目脚本](package.json) [提交钩子](.husky/pre-commit)
@@ -18,7 +18,7 @@ whim-report-gui/
 │   ├── api/                 # 业务接口封装
 │   ├── assets/              # 静态资源
 │   ├── components/          # 通用组件（含 low-code 工具集、表单、弹窗等）
-│   ├── config/              # UI & 请求相关的全局配置
+│   ├── app.config.ts        # 应用配置、API 协议类型与公共枚举
 │   ├── hooks/               # 组合式函数
 │   ├── http/                # Axios 实例与工具函数
 │   ├── router/              # 路由定义
@@ -122,7 +122,7 @@ pnpm build && pnpm test:e2e
 
 ### UI 设置
 
-`src/config/ui.ts` 中维护了项目级别的主题、语言、品牌等配置，可结合 Pinia 的 `useUiStore` 进行运行时切换。 【F:src/config/ui.ts†L1-L31】【F:src/stores/ui.ts†L1-L33】
+`src/app.config.ts` 中的 `uiConfig` 维护项目级别的主题、语言、品牌等默认配置，配置类型为 `UiConfig`，可结合 Pinia 的 `useUiStore` 进行运行时切换。
 
 ### 接口请求
 

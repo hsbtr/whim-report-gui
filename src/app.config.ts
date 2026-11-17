@@ -1,16 +1,20 @@
 import type { AxiosResponse } from 'axios';
 
+// API 请求与响应协议类型
+/** 通用分页请求参数，分页接口会将其与业务参数合并。 */
 type ApiPagingParams = {
   pageSize: number;
   current: number;
   keyword?: string;
 };
+/** 分页接口返回的数据结构。 */
 export type PagingDataType<T = unknown> = {
   total: number;
   current: number;
   pageSize: number;
   data: T[];
 };
+/** API 请求类型：`'common'` 普通请求，`'paging'` 分页请求。 */
 type DataType = 'paging' | 'common';
 /**
  * API 请求参数工具类型。
@@ -64,16 +68,19 @@ export type ApiParams<P = unknown, T extends DataType = 'common'> = T extends 'p
  * // }
  */
 export type ApiPagingQuery<P = unknown> = ApiParams<P, 'paging'>;
+/** API 统一响应结构，`data` 用 `undefined` 抹平后端返回 `null` 的情况。 */
 export type ApiResponse<T = unknown> = {
   success: boolean;
   data: T | undefined;
   message: string;
 };
+/** 接口方法的返回值类型：解析为 `ApiResponse` 的 Promise。 */
 export type ApiReturn<T = unknown> = Promise<ApiResponse<T>>;
+/** 分页接口方法的返回值类型。 */
 export type ApiPagingReturn<T = unknown> = ApiReturn<PagingDataType<T>>;
 
 // HTTP 层业务协议与全局处理策略配置
-export const HTTP_RUNTIME_CONFIG = {
+export const httpConfig = {
   /** 供 HTTP 层读取适配结果，用于业务失败提示和下载校验。 */
   fieldNames: { success: 'success', message: 'message' } as const,
   auth: {
@@ -117,7 +124,7 @@ export const HTTP_RUNTIME_CONFIG = {
       return {
         success: true,
         data: undefined,
-        message: HTTP_RUNTIME_CONFIG.statusEnum[status] || ''
+        message: httpConfig.statusEnum[status] || ''
       };
     if (res === null || typeof res !== 'object' || Array.isArray(res)) {
       return {
@@ -140,5 +147,53 @@ export const HTTP_RUNTIME_CONFIG = {
   }
 };
 
-// 默认的主题
-export const THEME_CONFIG = {};
+// UI 外观与品牌配置
+/** 应用主题模式。 */
+export enum ThemeEnum {
+  DARK = 'dark',
+  LIGHT = 'light'
+}
+/** 界面语言。 */
+export enum LanguageEnum {
+  ZH = 'zh',
+  EN = 'en'
+}
+/** 主题色信息，包含多格式的颜色值与名称。 */
+export type ThemeColorInfo = {
+  CMYK: number[];
+  RGB: number[];
+  hex: string;
+  name: string;
+  pinyin: string;
+};
+/** UI 配置结构，作为 `uiConfig` 的类型并供运行时设置状态复用。 */
+export type UiConfig = {
+  title?: string;
+  logo?: string;
+  lang: LanguageEnum.EN | LanguageEnum.ZH;
+  theme: ThemeEnum.LIGHT | ThemeEnum.DARK;
+  primaryColor: string;
+  themeInfo?: ThemeColorInfo;
+};
+
+export const uiConfig: UiConfig = {
+  logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
+  lang: LanguageEnum.ZH,
+  theme: ThemeEnum.DARK,
+  primaryColor: '#51d6a9'
+};
+
+// 低代码与预览共用的公共枚举
+/** 物料数据来源：静态数据、HTTP 接口或数据池。 */
+export enum DataTypeEnum {
+  STATIC = 0,
+  HTTP = 1,
+  POND
+}
+/** 预览页画布的缩放模式。 */
+export enum PreviewEnum {
+  FIT = '',
+  SCROLL_Y = 'scrollY',
+  SCROLL_X = 'scrollX',
+  FULL = 'full'
+}

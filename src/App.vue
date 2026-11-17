@@ -4,7 +4,7 @@ import { RouterView } from 'vue-router';
 import { zhCN, enUS, dateEnUS, dateZhCN, darkTheme } from 'naive-ui';
 import AppConfigProvider from '@/components/popups/AppConfigProvider.vue';
 import { useUiStore } from '@/stores';
-import { LanguageEnum } from '@/config';
+import { LanguageEnum } from '@/app.config';
 import { useHLJSInit } from '@/hooks';
 import type { GlobalTheme } from 'naive-ui';
 

@@ -112,7 +112,7 @@ Node.js 版本范围为 `^22.22.2 || ^24.15.0 || >=26.0.0`，以 `package.json` 
 - 主题 `light` / `dark`；
 - 主色 `primaryColor`。
 
-初始值来自 `src/config/ui.ts` 的 `setting`。当前语言切换只影响根组件传给 Naive UI 的 locale，没有注册完整的业务文案 i18n 流程。
+初始值来自 `src/app.config.ts` 的 `uiConfig`。当前语言切换只影响根组件传给 Naive UI 的 locale，没有注册完整的业务文案 i18n 流程。
 
 `src/stores/account.ts` 管理账户状态和登录、退出操作，并通过 Pinia 持久化插件保存账户状态。
 

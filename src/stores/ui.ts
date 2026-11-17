@@ -1,15 +1,15 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
-import { LanguageEnum, setting, ThemeEnum } from '@/config';
+import { LanguageEnum, uiConfig, ThemeEnum } from '@/app.config';
 import type { Ref } from 'vue';
-import type { SettingOpt } from '@/config';
+import type { UiConfig } from '@/app.config';
 
-type StyleState = Pick<SettingOpt, 'theme' | 'primaryColor'>;
+type StyleState = Pick<UiConfig, 'theme' | 'primaryColor'>;
 
-const { theme, primaryColor } = setting;
+const { theme, primaryColor } = uiConfig;
 
 export const useUiStore = defineStore('ui', () => {
-  const lang = ref(setting.lang);
+  const lang = ref(uiConfig.lang);
   const style: Ref<StyleState> = ref({ theme, primaryColor });
   const getTheme = computed(() => {
     return style.value.theme;
